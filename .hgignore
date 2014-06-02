@@ -1,0 +1,4 @@
+syntax: glob
+ServerSync/obj/
+bin/
+ServerSync.Core/obj/

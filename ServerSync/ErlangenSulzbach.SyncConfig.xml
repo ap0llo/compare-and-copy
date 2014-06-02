@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<syncConfiguration>
+  <logDirectory></logDirectory>
+  <timeStampMargin ms="0"/>
+  <left name="Server-Andreas2" rootPath="\\server-andreas2\TV-Shows" />
+  <right name="Fileserver-Nerdcave" rootPath="\\fileserver-nerdcave\TV-Shows" />
+  <fileFilter>
+    <excludeFile pattern=".*Thumbs.db"/>
+  </fileFilter>
+  <directoryFilter>
+    <includeDirectory pattern="30 Rock"/>
+    <includeDirectory pattern="Agents of S.H.I.E.L.D"/>
+    <includeDirectory pattern="Angel"/>
+    <includeDirectory pattern="Arrested Development"/>
+    <includeDirectory pattern="Arrow"/>
+    <includeDirectory pattern="Babylon 5"/>
+    <includeDirectory pattern="Band of Brothers"/>
+    <includeDirectory pattern="Being Human (US)"/>
+    <includeDirectory pattern="Boardwalk Empire"/>
+    <includeDirectory pattern="Breaking Bad"/>
+    <includeDirectory pattern="Carnivale"/>
+    <includeDirectory pattern="Crusade"/>
+    <includeDirectory pattern="Defiance"/>
+    <includeDirectory pattern="Downton Abbey"/>
+    <includeDirectory pattern="Episodes"/>
+    <includeDirectory pattern="Fringe"/>
+    <includeDirectory pattern="Futurama"/>
+    <includeDirectory pattern="Helix"/>
+    <includeDirectory pattern="House Of Cards (2013)"/>
+    <includeDirectory pattern="House of Lies"/>
+    <includeDirectory pattern="How I Met Your Mother"/>
+    <includeDirectory pattern="Human Target"/>
+    <includeDirectory pattern="Life On Mars"/>
+    <includeDirectory pattern="Mad Men"/>
+    <includeDirectory pattern="Mike &amp; Molly"/>
+    <includeDirectory pattern="Modern Family"/>
+    <includeDirectory pattern="Numb3rs"/>
+    <includeDirectory pattern="Pushing Daisies"/>
+    <includeDirectory pattern="Revolution"/>
+    <includeDirectory pattern="Shameless (US)"/>
+    <includeDirectory pattern="Sherlock"/>
+    <includeDirectory pattern="Six Feet Under"/>
+    <includeDirectory pattern="Star Trek - The Next Generation"/>
+    <includeDirectory pattern="The Big Bang Theory"/>
+    <includeDirectory pattern="The Borgias"/>
+    <includeDirectory pattern="The Cape"/>
+    <includeDirectory pattern="The Walking Dead"/>
+    <includeDirectory pattern="The Wire"/>
+    <includeDirectory pattern="True Blood"/>
+    <includeDirectory pattern="True Detective"/>
+    <includeDirectory pattern="Veronica Mars"/>
+    <includeDirectory pattern="Vikings"/>
+    <includeDirectory pattern="Warehouse 13"/>
+  </directoryFilter>
+</syncConfiguration>
