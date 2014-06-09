@@ -1,55 +1,67 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <syncConfiguration>
-  <logDirectory></logDirectory>
+  <logDirectory>C:\Users\Andreas\Desktop</logDirectory>
   <timeStampMargin ms="0"/>
   <left name="Server-Andreas2" rootPath="\\server-andreas2\TV-Shows" />
   <right name="Fileserver-Nerdcave" rootPath="\\fileserver-nerdcave\TV-Shows" />
-  <fileFilter>
-    <excludeFile pattern=".*Thumbs.db"/>
-  </fileFilter>
-  <directoryFilter>
-    <includeDirectory pattern="30 Rock"/>
-    <includeDirectory pattern="Agents of S.H.I.E.L.D"/>
-    <includeDirectory pattern="Angel"/>
-    <includeDirectory pattern="Arrested Development"/>
-    <includeDirectory pattern="Arrow"/>
-    <includeDirectory pattern="Babylon 5"/>
-    <includeDirectory pattern="Band of Brothers"/>
-    <includeDirectory pattern="Being Human (US)"/>
-    <includeDirectory pattern="Boardwalk Empire"/>
-    <includeDirectory pattern="Breaking Bad"/>
-    <includeDirectory pattern="Carnivale"/>
-    <includeDirectory pattern="Crusade"/>
-    <includeDirectory pattern="Defiance"/>
-    <includeDirectory pattern="Downton Abbey"/>
-    <includeDirectory pattern="Episodes"/>
-    <includeDirectory pattern="Fringe"/>
-    <includeDirectory pattern="Futurama"/>
-    <includeDirectory pattern="Helix"/>
-    <includeDirectory pattern="House Of Cards (2013)"/>
-    <includeDirectory pattern="House of Lies"/>
-    <includeDirectory pattern="How I Met Your Mother"/>
-    <includeDirectory pattern="Human Target"/>
-    <includeDirectory pattern="Life On Mars"/>
-    <includeDirectory pattern="Mad Men"/>
-    <includeDirectory pattern="Mike &amp; Molly"/>
-    <includeDirectory pattern="Modern Family"/>
-    <includeDirectory pattern="Numb3rs"/>
-    <includeDirectory pattern="Pushing Daisies"/>
-    <includeDirectory pattern="Revolution"/>
-    <includeDirectory pattern="Shameless (US)"/>
-    <includeDirectory pattern="Sherlock"/>
-    <includeDirectory pattern="Six Feet Under"/>
-    <includeDirectory pattern="Star Trek - The Next Generation"/>
-    <includeDirectory pattern="The Big Bang Theory"/>
-    <includeDirectory pattern="The Borgias"/>
-    <includeDirectory pattern="The Cape"/>
-    <includeDirectory pattern="The Walking Dead"/>
-    <includeDirectory pattern="The Wire"/>
-    <includeDirectory pattern="True Blood"/>
-    <includeDirectory pattern="True Detective"/>
-    <includeDirectory pattern="Veronica Mars"/>
-    <includeDirectory pattern="Vikings"/>
-    <includeDirectory pattern="Warehouse 13"/>
-  </directoryFilter>
+  <!--<fileFilter>
+    <excludeFile pattern="^.*Thumbs.db"/>  
+  </fileFilter>-->
+  <filterList>
+    <filter>
+      <!--Include all files in the following folders of the root directory-->
+
+      <include>
+        <regex pattern="^30 Rock.*$"/>
+        <regex pattern="^Agents of S.H.I.E.L.D.*$"/>
+        <regex pattern="^Angel.*$"/>
+        <regex pattern="^Arrested Development.*$"/>
+        <regex pattern="^Arrow.*$"/>
+        <regex pattern="^Babylon 5.*$"/>
+        <regex pattern="^Band of Brothers.*$"/>
+        <regex pattern="^Being Human (US).*$"/>
+        <regex pattern="^Boardwalk Empire.*$"/>
+        <regex pattern="^Breaking Bad.*$"/>
+        <regex pattern="^Carnivale.*$"/>
+        <regex pattern="^Crusade.*$"/>
+        <regex pattern="^Defiance.*$"/>
+        <regex pattern="^Downton Abbey.*$"/>
+        <regex pattern="^Episodes.*$"/>
+        <regex pattern="^Fringe.*$"/>
+        <regex pattern="^Futurama.*$"/>
+        <regex pattern="^Helix.*$"/>
+        <regex pattern="^House Of Cards (2013).*$"/>
+        <regex pattern="^House of Lies.*$"/>
+        <regex pattern="^How I Met Your Mother.*$"/>
+        <regex pattern="^Human Target.*$"/>
+        <regex pattern="^Life On Mars.*$"/>
+        <regex pattern="^Mad Men.*$"/>
+        <regex pattern="^Mike &amp; Molly.*$"/>
+        <regex pattern="^Modern Family.*$"/>
+        <regex pattern="^Numb3rs.*$"/>
+        <regex pattern="^Pushing Daisies.*$"/>
+        <regex pattern="^Revolution.*$"/>
+        <regex pattern="^Shameless (US).*$"/>
+        <regex pattern="^Sherlock.*$"/>
+        <regex pattern="^Six Feet Under.*$"/>
+        <regex pattern="^Star Trek - The Next Generation.*$"/>
+        <regex pattern="^The Big Bang Theory.*$"/>
+        <regex pattern="^The Borgias.*$"/>
+        <regex pattern="^The Cape.*$"/>
+        <regex pattern="^The Walking Dead.*$"/>
+        <regex pattern="^The Wire.*$"/>
+        <regex pattern="^True Blood.*$"/>
+        <regex pattern="^True Detective.*$"/>
+        <regex pattern="^Veronica Mars.*$"/>
+        <regex pattern="^Vikings.*$"/>
+        <regex pattern="^Warehouse 13.*$"/>
+
+      </include>
+      <!--Exclude all "Thumbs.db" files-->
+      <exclude>
+        <regex pattern="^.*Thumbs.db$" />
+      </exclude>
+
+    </filter>
+  </filterList>
 </syncConfiguration>

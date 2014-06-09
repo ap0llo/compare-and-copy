@@ -8,13 +8,19 @@ using ServerSync.Core;
 using ServerSync.Core.Compare;
 using ServerSync.Core.Configuration;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace ServerSync
 {
     class Program
     {
         static int Main(string[] args)
-        {         
+        {
+
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+
             if(args.Length != 1)
             {
                 Console.WriteLine("You need to specify a Sync Configuration file");
@@ -59,6 +65,10 @@ namespace ServerSync
                 }
             }
 
+
+            stopWatch.Stop();
+
+            Console.WriteLine("Elapsed Time : " + stopWatch.Elapsed.ToString());
 
             return 0;
         }

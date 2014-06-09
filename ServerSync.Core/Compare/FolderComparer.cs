@@ -53,19 +53,16 @@ namespace ServerSync.Core.Compare
         #region Private Implementation
 
         private void CompareFolders(string relativePath)
-        {
-            Console.WriteLine("Scanning {0}", relativePath);
+        {            
 
             var leftAbsoulutePath = Path.Combine(config.Left.RootPath, relativePath);
             var rightAbsolutePath = Path.Combine(config.Right.RootPath, relativePath);
 
             //compare directories
-            var leftDirectories = Directory.GetDirectories(leftAbsoulutePath)
-                                           .Where(ApplyIncludeDirectoriesFilter)
+            var leftDirectories = Directory.GetDirectories(leftAbsoulutePath)                                           
                                            .Select(path => Path.GetFileName(path));
 
-            var rightDirectories = Directory.GetDirectories(rightAbsolutePath)
-                                            .Where(ApplyIncludeDirectoriesFilter)
+            var rightDirectories = Directory.GetDirectories(rightAbsolutePath)                                            
                                             .Select(path => Path.GetFileName(path));
 
             //get absolute paths of directories only found in the left folder
@@ -73,78 +70,79 @@ namespace ServerSync.Core.Compare
                                             .Select(name => Path.Combine(config.Left.RootPath, relativePath, name));
 
             //add all files in the subtree to the list of files only found in one location
-            this.filesMissingRight.AddRange(uniqueLeft.SelectMany(dir => GetAllFiles(dir)).Select(fullPath => GetRelativePath(fullPath, config.Left.RootPath, true)));
+            this.filesMissingRight.AddRange(uniqueLeft.SelectMany(dir => GetFiles(dir, true)).Select(fullPath => GetRelativePath(fullPath, config.Left.RootPath, true)));
 
             //get absolute paths of directories only found in the right folder
             var uniqueRight = rightDirectories.Where(rName => !leftDirectories.Contains(rName, StringComparer.InvariantCultureIgnoreCase))
                                               .Select(name => Path.Combine(config.Right.RootPath, relativePath, name));
 
             //add all files in the subtree to the list of files only found in one location
-            this.filesMissingLeft.AddRange(uniqueRight.SelectMany(dir => GetAllFiles(dir)).Select(fullPath => GetRelativePath(fullPath, config.Right.RootPath, true)));
+            this.filesMissingLeft.AddRange(uniqueRight.SelectMany(dir => GetFiles(dir, true)).Select(fullPath => GetRelativePath(fullPath, config.Right.RootPath, true)));
 
 
             //compare directories found on both sides
             var sameDirectories = leftDirectories.Where(lName => rightDirectories.Contains(lName, StringComparer.InvariantCultureIgnoreCase))
                                                  .Select(name => Path.Combine(relativePath, name));
-            foreach (var item in sameDirectories)
-            {                
-                CompareFolders(item);
-            }
+
+            sameDirectories.AsParallel()
+                           .WithDegreeOfParallelism(4)
+                           .ForAll(CompareFolders);
+
 
             //compare files
-            var filesLeft = Directory.GetFiles(leftAbsoulutePath)
-                                     .Select(path => Path.GetFileName(path))
-                                     .Where(name => !config.ExcludedFiles.Any(regex => regex.IsMatch(Path.Combine(config.Left.RootPath, relativePath, name)))); 
-
-            var filesRight = Directory.GetFiles(rightAbsolutePath)
-                                      .Select(path => Path.GetFileName(path))
-                                      .Where(name => !config.ExcludedFiles.Any(regex => regex.IsMatch(Path.Combine(config.Right.RootPath, relativePath, name)))); 
+            var filesLeft = GetFiles(leftAbsoulutePath, false)
+                                     .Select(path => Path.GetFileName(path));
 
 
-            filesMissingRight.AddRange(filesLeft.Where(lName => !filesRight.Contains(lName, StringComparer.InvariantCultureIgnoreCase))
-                                                .Select(name => Path.Combine(relativePath, name)));
+            var filesRight = GetFiles(rightAbsolutePath, false)
+                                      .Select(path => Path.GetFileName(path));
+                             
 
-            filesMissingLeft.AddRange(filesRight.Where(name => !filesLeft.Contains(name, StringComparer.InvariantCultureIgnoreCase))
-                                                .Select(name => Path.Combine(relativePath, name)));
+            lock(this)
+            {
+
+                filesMissingRight.AddRange(filesLeft.Where(lName => !filesRight.Contains(lName, StringComparer.InvariantCultureIgnoreCase))
+                                                    .Select(name => Path.Combine(relativePath, name)));
+
+                filesMissingLeft.AddRange(filesRight.Where(name => !filesLeft.Contains(name, StringComparer.InvariantCultureIgnoreCase))
+                                                    .Select(name => Path.Combine(relativePath, name)));
+            }
 
 
             //compare files that exist in both left and right directories
-            var sameFiles = filesLeft.Where(name => filesRight.Contains(name, StringComparer.InvariantCultureIgnoreCase))
-                                     .Select(name => Path.Combine(relativePath, name));
-
-            foreach (var filePath in sameFiles)
-            {
-                var leftAbsoluteFilePath = Path.Combine(config.Left.RootPath, filePath);
-                var rightAbsoluteFilePath = Path.Combine(config.Right.RootPath, filePath);
-
+            foreach(var name in filesLeft.Where(name => filesRight.Contains(name, StringComparer.InvariantCultureIgnoreCase)))
+            {                                         
+                var filePath = Path.Combine(relativePath, name);
                 if (!FilesAreEqual(filePath))
                 {
-                    this.conflicts.Add(filePath);
+                    lock(this)
+                    {
+                        this.conflicts.Add(filePath);
+                    }
                 }
                 else
                 {
-                    this.sameFiles.Add(filePath);
-                }                
-            }
-
+                    lock(this)
+                    {
+                        this.sameFiles.Add(filePath);
+                    }
+                }           
+            };            
         }
 
-
-        private IEnumerable<string> GetAllFiles(string dirAbsoultePath)
+        private IEnumerable<string> GetFiles(string dirAbsoultePath, bool recurse)
         {
-
             Console.WriteLine("Scanning {0}", dirAbsoultePath);
 
-            if(!ApplyIncludeDirectoriesFilter(dirAbsoultePath))
-            {
-                return Enumerable.Empty<string>();
-            }
 
-            var childFiles = Directory.GetDirectories(dirAbsoultePath).SelectMany(dir => GetAllFiles(dir));
+            var childFiles = recurse ?
+                Directory.GetDirectories(dirAbsoultePath).SelectMany(dir => GetFiles(dir, recurse)) :
+                Enumerable.Empty<string>();
+
             var allFiles = Directory.GetFiles(dirAbsoultePath).Union(childFiles);
 
             //apply filter
-            return allFiles.Where(filePath => !config.ExcludedFiles.Any(regex => regex.IsMatch(filePath)));
+            return ApplyFilters(allFiles);
         }
 
         private static string GetRelativePath(string absolutePath, string relativeTo, bool relativeToIsDirectory)
@@ -172,18 +170,38 @@ namespace ServerSync.Core.Compare
             return sizeDifference == 0 && Math.Abs(modifiedDifference) <= config.TimeStampMargin;
         }
 
-
-        private bool ApplyIncludeDirectoriesFilter(string path)
+        private IEnumerable<string> ApplyFilters(IEnumerable<string> allFiles)
         {
-            if(config.IncludeFolders.Any())
+            var result = Enumerable.Empty<string>();
+            var unfiltered = ConvertToRelativePaths(allFiles).ToList();
+
+            foreach (var filter in config.Filters)
             {
-                return config.IncludeFolders.Any(regex => regex.IsMatch(path));
+                //get the relative paths for all files
+                var currentResult = unfiltered.Where(path => filter.IncludeRules.Any(regex => regex.IsMatch(path)));                
+                currentResult = currentResult.Where(path => !filter.ExcludeRules.Any(regex => regex.IsMatch(path)));
+
+                result = result.Union(currentResult);
             }
-            else
-            {
-                return true;
-            }
+
+            return result;
         }
+
+        private IEnumerable<string> ConvertToRelativePaths(IEnumerable<string> absolutePaths)
+        {
+            return absolutePaths.Select(absolutePath =>
+                {
+                    if(absolutePath.StartsWith(config.Left.RootPath, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return GetRelativePath(absolutePath, config.Left.RootPath, true);
+                    }
+                    else
+                    {
+                        return GetRelativePath(absolutePath, config.Right.RootPath, true);
+                    }
+                });
+        }
+
 
         #endregion Private Implementation
     

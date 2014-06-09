@@ -10,40 +10,52 @@
     <xs:all>
       <xs:element name="left" type="typeSyncFolder" />
       <xs:element name="right" type="typeSyncFolder" />
-      <xs:element name="fileFilter" type="typeFileFilter"/>
-      <xs:element name="directoryFilter" type="typeDirectoryFilter" />
       <xs:element name="logDirectory" type="xs:string" />
       <xs:element name="timeStampMargin">
         <xs:complexType>
           <xs:attribute name="ms" type="xs:integer" use="required" />
         </xs:complexType>
       </xs:element>
+      <xs:element name="filterList" type="typeFilterList" />
     </xs:all>
   </xs:complexType>
 
+  
+  <!--SyncFolder type-->
   <xs:complexType name="typeSyncFolder">
     <xs:attribute name="name" type="xs:string" use="required" />
     <xs:attribute name="rootPath" type="xs:string" use="required" />
   </xs:complexType>
-
-  <xs:complexType name="typeFileFilter">
+  
+  <!--Filter Type-->
+  <xs:complexType name="typeFilter">
     <xs:sequence>
-      <xs:element name="excludeFile" minOccurs="0" maxOccurs="unbounded"  type="typeRegexRule"/>
+      <xs:element name="include" type="typeRegexRuleList" />
+      <xs:element name="exclude" type="typeRegexRuleList" />
+      </xs:sequence>
+  </xs:complexType>
+
+  <!--FilterList Type-->
+  <xs:complexType name="typeFilterList">
+    <xs:sequence>
+      <xs:element name="filter" type="typeFilter" minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
   
-  <xs:complexType name="typeDirectoryFilter">
-    <xs:sequence>
-      <xs:element name="includeDirectory" minOccurs="0" maxOccurs="unbounded"  type="typeRegexRule"/>
-    </xs:sequence>
-  </xs:complexType>
-    
+  <!--RegexRule Type-->
   <xs:complexType name="typeRegexRule">
     <xs:attribute name="pattern" type="xs:string" use="required" />
   </xs:complexType>
-                  
-  
 
+  <!--RegexRuleList Type-->
+  <xs:complexType name="typeRegexRuleList">
+    <xs:sequence>
+      <xs:element name="regex" type="typeRegexRule"  minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  
+  <!--Root Element-->
   <xs:element name="syncConfiguration" type="typeSyncConfiguration" />
   
 </xs:schema>

@@ -13,9 +13,7 @@ namespace ServerSync.Core.Configuration
 
         public SyncFolder Right { get; set; }
 
-        public IEnumerable<Regex> ExcludedFiles { get; set; }
-
-        public IEnumerable<Regex> IncludeFolders { get; set; }
+        public IEnumerable<Filter> Filters { get; set; }
 
         public string LogDirectory { get; set; }
 
@@ -24,8 +22,7 @@ namespace ServerSync.Core.Configuration
 
         public SyncConfiguration()
         {
-            this.ExcludedFiles = Enumerable.Empty<Regex>();
-            this.IncludeFolders = new List<Regex>(){ new Regex("[.]*") };
+            this.Filters = Enumerable.Empty<Filter>();
         }
 
     }
