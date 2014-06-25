@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ServerSync.Core.Compare;
+using ServerSync.Core.Copy;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +26,7 @@ namespace ServerSync.Core.Configuration
             configuration = ReadLogDirectory(configFile, configuration);            
             configuration = ReadTimeStampMargin(configFile, configuration);
             configuration = ReadFilterList(configFile, configuration);
+            configuration = ReadActionList(configFile, configuration);
 
             return configuration;            
         }
@@ -115,7 +118,6 @@ namespace ServerSync.Core.Configuration
                            .Select(pattern => new Regex(pattern));
         }
 
-
         private Filter GetDefaultFilter()
         {
             Filter defaultFilter = new Filter();
@@ -123,6 +125,80 @@ namespace ServerSync.Core.Configuration
                 new Regex(FILTER_DEFAULT)
             };
             return defaultFilter;
+        }
+
+        private SyncConfiguration ReadActionList(XDocument document, SyncConfiguration currentConfiguration)
+        {
+            var actionList = document.Root.Element(XmlConstants.ActionList);
+
+            List<IAction> actions = new List<IAction>();
+
+            foreach(var actionNode in actionList.Elements())
+            {
+                IAction action;
+                switch (actionNode.Name.LocalName)
+                {
+                    case XmlConstants.Compare:
+                        action = ReadCompareAction(actionNode);
+                        break;
+                    case XmlConstants.Copy:
+                        action = ReadCopyAction(actionNode);
+                        break;
+                    default:
+                        throw new NotSupportedException("Unknown action name: " + actionNode.Name.LocalName);
+                }                
+                actions.Add(action);
+            }
+
+            currentConfiguration.Actions = actions;
+            return currentConfiguration;
+        }
+
+        private IAction ReadCompareAction(XElement actionElement)
+        {
+            bool enable = bool.Parse(actionElement.Attribute(XmlConstants.Enable).Value);
+            var action = new CompareAction();
+            action.IsEnabled = enable;
+            return action;
+        }
+
+
+        private IAction ReadCopyAction(XElement actionElement)
+        {
+            bool enable = bool.Parse(actionElement.Attribute(XmlConstants.Enable).Value);
+            var itemStateStr = actionElement.Attribute(XmlConstants.ItemType).Value;
+            var setStateStr = actionElement.Attribute(XmlConstants.SetState).Value;
+            var dir = actionElement.Attribute(XmlConstants.TargetDirectory).Value;
+            var sourceStr = actionElement.Attribute(XmlConstants.Source).Value;
+
+            var action = new CopyAction();
+            action.IsEnabled = enable;
+            action.ItemType = ParseFileState(itemStateStr);
+            action.TargetDirectory = dir;
+            action.SetStateTo = ParseFileState(setStateStr);
+            action.Source = ParseSource(sourceStr);
+            return action;
+
+        }
+
+        private FileState ParseFileState(string value)
+        {
+            FileState fileState;
+            if (!Enum.TryParse<FileState>(value, true, out fileState))
+            {
+                throw new ArgumentException("Could not parse '" + value + "' as FileState");
+            }
+            return fileState;
+        }
+
+        private Source ParseSource(string value)
+        {
+            Source source;
+            if (!Enum.TryParse<Source>(value, true, out source))
+            {
+                throw new ArgumentException("Could not parse '" + value + "' as Source");
+            }
+            return source;
         }
 
         private class XmlConstants
@@ -144,6 +220,16 @@ namespace ServerSync.Core.Configuration
             public const string Filter = "filter";
             public const string Include = "include";
             public const string Exclude = "exclude";
+            public const string ActionList = "actionList";
+            public const string Compare = "compare";
+            public const string Copy = "copy";
+
+            public const string Enable = "enable";
+
+            public const string ItemType = "itemType";
+            public const string TargetDirectory = "targetDirectory";
+            public const string SetState = "setState";
+            public const string Source = "source";
         }
 
         #endregion Private Implementation

@@ -35,7 +35,7 @@ namespace ServerSync.Core.Compare
 
         #region Public Methods
 
-        public FolderComparisonResult Run()
+        public SyncState Run()
         {
             filesMissingLeft = new List<string>();
             filesMissingRight = new List<string>();
@@ -44,7 +44,7 @@ namespace ServerSync.Core.Compare
 
             CompareFolders("");
 
-            return new FolderComparisonResult(filesMissingLeft, filesMissingRight, conflicts, sameFiles);
+            return new SyncState(filesMissingLeft, filesMissingRight, conflicts, sameFiles);
         }
 
         #endregion
@@ -136,10 +136,16 @@ namespace ServerSync.Core.Compare
 
 
             var childFiles = recurse ?
-                Directory.GetDirectories(dirAbsoultePath).SelectMany(dir => GetFiles(dir, recurse)) :
+                Directory.GetDirectories(dirAbsoultePath).SelectMany(dir => GetFiles(dir, recurse)).Select(relPath => Path.Combine(dirAbsoultePath, relPath)) :
                 Enumerable.Empty<string>();
 
             var allFiles = Directory.GetFiles(dirAbsoultePath).Union(childFiles);
+
+
+            if(!allFiles.All(x => x.StartsWith("\\")))
+            {
+
+            }
 
             //apply filter
             return ApplyFilters(allFiles);
@@ -172,8 +178,9 @@ namespace ServerSync.Core.Compare
 
         private IEnumerable<string> ApplyFilters(IEnumerable<string> allFiles)
         {
+            string root = "";
             var result = Enumerable.Empty<string>();
-            var unfiltered = ConvertToRelativePaths(allFiles).ToList();
+            var unfiltered = ConvertToRelativePaths(allFiles, out root).ToList();
 
             foreach (var filter in config.Filters)
             {
@@ -184,22 +191,36 @@ namespace ServerSync.Core.Compare
                 result = result.Union(currentResult);
             }
 
-            return result;
+
+            return result.Select(relativePath => Path.Combine(root, relativePath));
         }
 
-        private IEnumerable<string> ConvertToRelativePaths(IEnumerable<string> absolutePaths)
+        private IEnumerable<string> ConvertToRelativePaths(IEnumerable<string> absolutePaths, out string root)
         {
-            return absolutePaths.Select(absolutePath =>
+            root = null;
+            string rootCopy = root;
+            if(absolutePaths.Any())
+            {
+                var absolutePath = absolutePaths.First();
+                if (absolutePath.StartsWith(config.Left.RootPath, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if(absolutePath.StartsWith(config.Left.RootPath, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        return GetRelativePath(absolutePath, config.Left.RootPath, true);
-                    }
-                    else
-                    {
-                        return GetRelativePath(absolutePath, config.Right.RootPath, true);
-                    }
-                });
+                    root = config.Left.RootPath;
+                    rootCopy = root;
+                }
+                else
+                {
+                    root = config.Right.RootPath;
+                    rootCopy = root;
+                }
+
+                return absolutePaths.Select(item => GetRelativePath(item, rootCopy, true));
+            }
+            else
+            {
+                root = null;
+                return Enumerable.Empty<string>();
+            }
+            
         }
 
 

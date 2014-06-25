@@ -20,6 +20,8 @@ namespace ServerSync.Core.Configuration
         public long TimeStampMargin { get; set; }
 
 
+        public IEnumerable<IAction> Actions { get; set; }
+
         public SyncConfiguration()
         {
             this.Filters = Enumerable.Empty<Filter>();

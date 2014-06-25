@@ -16,7 +16,6 @@ namespace ServerSync
     {
         static int Main(string[] args)
         {
-
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 
@@ -38,33 +37,31 @@ namespace ServerSync
             var config = new ConfigurationReader().ReadConfiguration(configFilePath);
 
 
-            FolderComparer comparer = new FolderComparer(config);
-            var result = comparer.Run();
+            var currentState = new SyncState();
 
-            using (var writer = new StreamWriter(File.Open(Path.Combine(config.LogDirectory, String.Format("Missing from {0}.txt", config.Left.Name)), FileMode.Create)))
+            if(File.Exists(GetSyncStateFilePath(config)))
             {
-                foreach (var item in result.MissingLeft)
+                var reader = new SyncStateStateReader();
+                currentState = reader.ReadSyncState(GetSyncStateFilePath(config));
+            }
+
+
+            foreach(var action in config.Actions)
+            {
+                if(action.IsEnabled)
                 {
-                    writer.WriteLine(item);
+                    action.Configuration = config;
+                    action.State = currentState;
+
+                    action.Run();
+
+                    currentState = action.State;
                 }
             }
 
-            using (var writer = new StreamWriter(File.Open(Path.Combine(config.LogDirectory, String.Format("Missing from {0}.txt", config.Right.Name)), FileMode.Create)))
-            {
-                foreach (var item in result.MissingRight)
-                {
-                    writer.WriteLine(item);
-                }
-            }
 
-            using (var writer = new StreamWriter(File.Open(Path.Combine(config.LogDirectory, "Conflicts.txt"), FileMode.Create)))
-            {
-                foreach (var item in result.Conflicts)
-                {
-                    writer.WriteLine(item);
-                }
-            }
-
+            SyncStateWriter writer = new SyncStateWriter();
+            writer.WriteSyncState(GetSyncStateFilePath(config), currentState);
 
             stopWatch.Stop();
 
@@ -72,6 +69,14 @@ namespace ServerSync
 
             return 0;
         }
+
+
+        private static string GetSyncStateFilePath(SyncConfiguration config)
+        {
+            return Path.Combine(config.LogDirectory, "SyncState.xml");
+        }
+
+
 
 
     }

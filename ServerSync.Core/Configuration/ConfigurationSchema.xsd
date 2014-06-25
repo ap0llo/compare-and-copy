@@ -17,9 +17,45 @@
         </xs:complexType>
       </xs:element>
       <xs:element name="filterList" type="typeFilterList" />
-    </xs:all>
+      <xs:element name="actionList" type="typeActionList" />
+    </xs:all>    
   </xs:complexType>
 
+
+  <!--Actions-->
+  <xs:complexType name="typeActionList">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="compare" type="typeCompareAction" />
+      <xs:element name="copy" type="typeCopyAction" />
+    </xs:choice>
+  </xs:complexType>
+  
+  <xs:complexType name="typeCompareAction">
+    <xs:attribute name="enable" type="xs:boolean" />
+  </xs:complexType>
+
+  <xs:complexType name="typeCopyAction">
+    <xs:attribute name="enable" type="xs:boolean" />
+    <xs:attribute name="targetDirectory" type="xs:string" />
+    <xs:attribute name="itemType" type="typeFileState" />
+    <xs:attribute name="setState" type="typeFileState" />
+    <xs:attribute name="source" type="typeSource" />
+  </xs:complexType>
+
+  <xs:simpleType name="typeFileState">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="MissingLeft" />
+      <xs:enumeration value="MissingRight" />
+      <xs:enumeration value="Conflict" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="typeSource">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Left" />
+      <xs:enumeration value="Right" />
+    </xs:restriction>
+  </xs:simpleType>
   
   <!--SyncFolder type-->
   <xs:complexType name="typeSyncFolder">
