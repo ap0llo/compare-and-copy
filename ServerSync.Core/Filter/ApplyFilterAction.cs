@@ -8,16 +8,14 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core.Filters
 {
-    class ApplyFilterAction : IAction
+    class ApplyFilterAction : AbstractAction
     {
         #region Properties
 
-        public bool IsEnabled { get; set; }
-
-        public SyncConfiguration Configuration { get; set; }
-
-        public SyncState State { get; set; }
-
+        public override string Name
+        {
+            get { return "ApplyFilter"; }
+        }
 
         public string FilterName { get; set; }
 
@@ -26,7 +24,7 @@ namespace ServerSync.Core.Filters
 
         #region Public Methods
 
-        public void Run()
+        public override void Run()
         {
             Filter filter = this.Configuration.GetFilter(this.FilterName);
 

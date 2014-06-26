@@ -43,6 +43,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AbstractAction.cs" />
     <Compile Include="Compare\CompareAction.cs" />
     <Compile Include="Filter\ApplyFilterAction.cs" />
     <Compile Include="State\FileItem.cs" />
@@ -57,7 +58,7 @@
     <Compile Include="Configuration\ConfigurationReader.cs" />
     <Compile Include="Compare\FolderComparer.cs" />
     <Compile Include="Filter\Filter.cs" />
-    <Compile Include="Copy\CopyAction.cs" />
+    <Compile Include="Copy\ExportAction.cs" />
     <Compile Include="Copy\Source.cs" />
     <Compile Include="IAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

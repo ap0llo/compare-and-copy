@@ -53,7 +53,7 @@ namespace ServerSync.Core.Configuration
 
         public void AddFilter(Filter filter)
         {
-            string key = filter.Name.ToLower().Trim();
+            string key = GetFilterKey(filter.Name);
             if(this.filters.ContainsKey(key))
             {
                 this.filters[key] = filter;
@@ -66,7 +66,7 @@ namespace ServerSync.Core.Configuration
 
         public Filter GetFilter(string name)
         {
-            return this.filters[name];
+            return this.filters[GetFilterKey(name)];
         }
 
         public void AddAction(IAction action)
@@ -76,5 +76,14 @@ namespace ServerSync.Core.Configuration
 
         #endregion Public Methods
 
+
+        #region Private Implementation
+
+        private string GetFilterKey(string name)
+        {
+            return name.ToLower().Trim();
+        }
+
+        #endregion Private Implementation
     }
 }

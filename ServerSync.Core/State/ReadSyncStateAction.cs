@@ -2,18 +2,21 @@
 
 namespace ServerSync.Core.State
 {
-    class ReadSyncStateAction : IAction
+    class ReadSyncStateAction : AbstractAction
     {
 
         #region Properties
 
-        public bool IsEnabled { get; set; }
 
-        public SyncConfiguration Configuration { get; set; }
+        public override string Name
+        {
+            get { return "ReadSyncState"; }
+        }
 
-        public SyncState State { get; set; }
 
-
+        /// <summary>
+        /// The file to read the state from
+        /// </summary>
         public string FileName { get; set; }
 
         #endregion Properties
@@ -21,7 +24,7 @@ namespace ServerSync.Core.State
 
         #region Public Methods
 
-        public void Run()
+        public override void Run()
         {
             var stateReader = new SyncStateReader();
             this.State = stateReader.ReadSyncState(this.FileName);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,12 +13,15 @@ namespace ServerSync.Core.State
 
         public SyncState ReadSyncState(string fileName)
         {
-            var document = XDocument.Load(fileName);
+            if(!File.Exists(fileName))
+            {
+                return new SyncState();
+            }
 
+            var document = XDocument.Load(fileName);
             var files = document.Descendants(XmlConstants.File).Select(ReadFileItem);
 
             return new SyncState() { Files = files.ToList() };
-
         }
 
 

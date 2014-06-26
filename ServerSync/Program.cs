@@ -10,16 +10,18 @@ using ServerSync.Core.Configuration;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 using ServerSync.Core.State;
+using System.Reflection;
 
 namespace ServerSync
 {
     class Program
     {
-        static int Main(string[] args)
+        public static int Main(string[] args)
         {
+            WriteVersionInfo();            
+
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-
 
             if(args.Length != 1)
             {
@@ -36,23 +38,8 @@ namespace ServerSync
             }
 
             var config = new ConfigurationReader().ReadConfiguration(configFilePath);
+            ExecuteJob(config);
 
-
-            var currentState = new SyncState();
-
-            foreach(var action in config.Actions)
-            {
-                if(action.IsEnabled)
-                {
-                    action.Configuration = config;
-                    action.State = currentState;
-
-                    action.Run();
-
-                    currentState = action.State;
-                }
-            }
-            
             stopWatch.Stop();
 
             Console.WriteLine("Elapsed Time : " + stopWatch.Elapsed.ToString());
@@ -61,8 +48,32 @@ namespace ServerSync
         }
 
 
+        private static void WriteVersionInfo()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            Console.WriteLine("{0}, Version {1}", assembly.GetName().Name, assembly.GetName().Version);
+            Console.WriteLine();
+        }
 
+        private static void ExecuteJob(SyncConfiguration configuration)
+        {
+            var currentState = new SyncState();
 
+            foreach (var action in configuration.Actions)
+            {
+                if (action.IsEnabled)
+                {
+                    action.Configuration = configuration;
+                    action.State = currentState;
+
+                    Console.WriteLine("Starting Action '{0}'", action.Name);
+
+                    action.Run();
+
+                    currentState = action.State;
+                }
+            }            
+        }
 
     }
 

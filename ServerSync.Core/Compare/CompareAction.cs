@@ -8,16 +8,21 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core.Compare
 {
-    class CompareAction : IAction
+    class CompareAction : AbstractAction
     {
 
-        public bool IsEnabled { get; set; }
+        #region Properties
 
-        public SyncConfiguration Configuration { get; set; }
+        public override string Name
+        {
+            get { return "Compare"; }
+        }
 
-        public SyncState State { get; set; }
+        #endregion
 
-        public void Run()
+        #region Public Methods
+
+        public override void Run()
         {
             FolderComparer comparer = new FolderComparer(this.Configuration);
             var comparisonResult = comparer.Run();
@@ -27,7 +32,10 @@ namespace ServerSync.Core.Compare
             this.State = combinedState;
         }
 
+        #endregion
 
+
+        #region Private Implementation        
 
         private static SyncState MergeSyncStates(SyncState exisiting, SyncState newSyncState)
         {
@@ -65,6 +73,7 @@ namespace ServerSync.Core.Compare
             return newSyncState;
         }
 
+        #endregion
 
     }
 }

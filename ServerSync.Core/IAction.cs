@@ -11,6 +11,8 @@ namespace ServerSync.Core
 {
     public interface IAction
     {
+        string Name { get; }
+
         bool IsEnabled { get; set; }
 
         SyncConfiguration Configuration { get; set; }

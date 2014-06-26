@@ -55,8 +55,8 @@ namespace ServerSync.Core.Configuration
                         configuration.AddAction(ReadCompareAction(element));
                         break;
 
-                    case XmlConstants.Copy:
-                        configuration.AddAction(ReadCopyAction(element));
+                    case XmlConstants.Export:
+                        configuration.AddAction(ReadExportAction(element));
                         break;
 
                     case XmlConstants.ReadSyncState:
@@ -117,19 +117,17 @@ namespace ServerSync.Core.Configuration
             return action;
         }
 
-        private IAction ReadCopyAction(XElement actionElement)
+        private IAction ReadExportAction(XElement actionElement)
         {
             bool enable = bool.Parse(actionElement.Attribute(XmlConstants.Enable).Value);
-            var itemStateStr = actionElement.Attribute(XmlConstants.ItemType).Value;
-            var setStateStr = actionElement.Attribute(XmlConstants.SetState).Value;
+            var fileStateStr = actionElement.Attribute(XmlConstants.FileState).Value;           
             var dir = actionElement.Attribute(XmlConstants.TargetDirectory).Value;
             var sourceStr = actionElement.Attribute(XmlConstants.Source).Value;
 
-            var action = new CopyAction();
+            var action = new ExportAction();
             action.IsEnabled = enable;
-            action.ItemType = ParseFileState(itemStateStr);
-            action.TargetDirectory = dir;
-            action.SetStateTo = ParseFileState(setStateStr);
+            action.FileState = ParseFileState(fileStateStr);
+            action.TargetDirectory = dir;            
             action.Source = ParseSource(sourceStr);
             return action;
 
@@ -200,7 +198,7 @@ namespace ServerSync.Core.Configuration
             
             public const string Enable = "enable";
 
-            public const string ItemType = "itemType";
+            public const string FileState = "fileState";
             public const string TargetDirectory = "targetDirectory";
             public const string SetState = "setState";
             public const string Source = "source";
@@ -212,7 +210,7 @@ namespace ServerSync.Core.Configuration
             //Action Names
 
             public const string Compare = "compare";
-            public const string Copy = "copy";
+            public const string Export = "export";
             public const string ReadSyncState = "readSyncState";
             public const string WriteSyncState = "writeSyncState";
             public const string ApplyFilter = "applyFilter";

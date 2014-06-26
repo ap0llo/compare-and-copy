@@ -8,17 +8,21 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core.State
 {
-    class WriteSyncStateAction : IAction
+    class WriteSyncStateAction : AbstractAction
     {
 
         #region Properties
 
-        public bool IsEnabled { get; set; }
 
-        public SyncConfiguration Configuration { get; set; }
+        public override string Name
+        {
+            get { return "WriteSyncState"; }
+        }
 
-        public SyncState State { get; set; }
 
+        /// <summary>
+        /// The file to write the current state to
+        /// </summary>
         public string FileName { get; set; }
 
         #endregion
@@ -26,11 +30,10 @@ namespace ServerSync.Core.State
 
         #region Public Methods
 
-        public void Run()
+        public override void Run()
         {
             var writer = new SyncStateWriter();
             writer.WriteSyncState(this.FileName, this.State);
-
         }
 
         #endregion

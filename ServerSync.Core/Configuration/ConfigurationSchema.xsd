@@ -18,7 +18,7 @@
       <xs:element name="filter" type="typeFilter" />
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="compare" type="typeCompareAction" />
-        <xs:element name="copy" type="typeCopyAction" />
+        <xs:element name="export" type="typeExportAction" />
         <xs:element name="readSyncState" type="typeReadWriteSyncStateAction" />
         <xs:element name="writeSyncState" type="typeReadWriteSyncStateAction" />
         <xs:element name="applyFiler" type="typeApplyFilterAction" />
@@ -27,15 +27,15 @@
   </xs:complexType>
 
   <!-- Actions -->
+  
   <xs:complexType name="typeCompareAction">
     <xs:attribute name="enable" type="xs:boolean" />
   </xs:complexType>
 
-  <xs:complexType name="typeCopyAction">
+  <xs:complexType name="typeExportAction" >
     <xs:attribute name="enable" type="xs:boolean" />
     <xs:attribute name="targetDirectory" type="xs:string" />
-    <xs:attribute name="itemType" type="typeFileState" />
-    <xs:attribute name="setState" type="typeFileState" />
+    <xs:attribute name="fileState" type="typeFileState" />    
     <xs:attribute name="source" type="typeSource" />
   </xs:complexType>
 
@@ -57,6 +57,7 @@
       <xs:enumeration value="Conflict" />
     </xs:restriction>
   </xs:simpleType>
+
 
   <xs:simpleType name="typeSource">
     <xs:restriction base="xs:string">

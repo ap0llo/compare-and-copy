@@ -148,13 +148,8 @@ namespace ServerSync.Core.Compare
             var allFiles = Directory.GetFiles(dirAbsoultePath).Union(childFiles);
 
 
-            if(!allFiles.All(x => x.StartsWith("\\")))
-            {
-
-            }
-
             //apply filter
-            return ApplyFilters(allFiles);
+            return allFiles; 
         }
 
         private static string GetRelativePath(string absolutePath, string relativeTo, bool relativeToIsDirectory)
@@ -182,52 +177,8 @@ namespace ServerSync.Core.Compare
             return sizeDifference == 0 && Math.Abs(modifiedDifference) <= config.TimeStampMargin;
         }
 
-        private IEnumerable<string> ApplyFilters(IEnumerable<string> allFiles)
-        {
-            string root = "";
-            var result = Enumerable.Empty<string>();
-            var unfiltered = ConvertToRelativePaths(allFiles, out root).ToList();
 
-            foreach (var filter in config.Filters)
-            {
-                //get the relative paths for all files
-                var currentResult = unfiltered.Where(path => filter.IncludeRules.Any(regex => regex.IsMatch(path)));                
-                currentResult = currentResult.Where(path => !filter.ExcludeRules.Any(regex => regex.IsMatch(path)));
-
-                result = result.Union(currentResult);
-            }
-
-
-            return result.Select(relativePath => Path.Combine(root, relativePath));
-        }
-
-        private IEnumerable<string> ConvertToRelativePaths(IEnumerable<string> absolutePaths, out string root)
-        {
-            root = null;
-            string rootCopy = root;
-            if(absolutePaths.Any())
-            {
-                var absolutePath = absolutePaths.First();
-                if (absolutePath.StartsWith(config.Left.RootPath, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    root = config.Left.RootPath;
-                    rootCopy = root;
-                }
-                else
-                {
-                    root = config.Right.RootPath;
-                    rootCopy = root;
-                }
-
-                return absolutePaths.Select(item => GetRelativePath(item, rootCopy, true));
-            }
-            else
-            {
-                root = null;
-                return Enumerable.Empty<string>();
-            }
-            
-        }
+        
 
 
         #endregion Private Implementation

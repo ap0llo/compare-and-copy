@@ -12,6 +12,5 @@ namespace ServerSync.Core.State
         public const string File = "file";
         public const string Path = "path";
         public const string Type = "type";
-
     }
 }
