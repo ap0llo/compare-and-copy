@@ -14,36 +14,30 @@ namespace ServerSync.Core.State
         {
             var document = XDocument.Load(fileName);
 
-            var allItems = document.Descendants(XmlConstants.File).Select(ReadFileItem);
+            var files = document.Descendants(XmlConstants.File).Select(ReadFileItem);
 
-            var missingLeft = allItems.Where(tuple => tuple.Item2 == FileState.MissingLeft).Select(tuple => tuple.Item1);
-            var missingRight = allItems.Where(tuple => tuple.Item2 == FileState.MissingRight).Select(tuple => tuple.Item1);
-            var conflicts = allItems.Where(tuple => tuple.Item2 == FileState.Conflict).Select(tuple => tuple.Item1);
-            var inTransferToLeft = allItems.Where(tuple => tuple.Item2 == FileState.InTransferToLeft).Select(tuple => tuple.Item1);
-            var inTransferToRight = allItems.Where(tuple => tuple.Item2 == FileState.InTransferToRight).Select(tuple => tuple.Item1);
-
-
-            return new SyncState(missingLeft.ToList(), missingRight.ToList(), conflicts.ToList(), Enumerable.Empty<string>(), inTransferToLeft, inTransferToRight);
+            return new SyncState() { Files = files.ToList() };
 
         }
 
 
-        private Tuple<String, FileState> ReadFileItem( XElement item)
+        private FileItem ReadFileItem( XElement item)
         {
-                string path = item.Attribute(XmlConstants.Path).Value;
-                string typeStr = item.Attribute(XmlConstants.Type).Value;
+            string path = item.Attribute(XmlConstants.Path).Value;
+            string stateStr = item.Attribute(XmlConstants.Type).Value;
 
-                if(String.IsNullOrEmpty(path))
-                {
-                    throw new SyncStateException("Empty path found in item list");
-                }
-                FileState type;
-                if(!Enum.TryParse<FileState>(typeStr, true, out type))
-                {
-                    throw new SyncStateException("Unknwon type: " + typeStr);
-                }
+            if(String.IsNullOrEmpty(path))
+            {
+                throw new SyncStateException("Empty path found in item list");
+            }
 
-                return new Tuple<string, FileState>(path, type);         
+            FileState fileState;
+            if(!Enum.TryParse<FileState>(stateStr, true, out fileState))
+            {
+                throw new SyncStateException("Unknwon type: " + stateStr);
+            }
+
+            return new FileItem() { RelativePath = path, State = fileState };      
         }
 
     }

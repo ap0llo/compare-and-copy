@@ -9,23 +9,72 @@ namespace ServerSync.Core.Configuration
 {
     public class SyncConfiguration
     {
+        #region Fields
+
+        private Dictionary<string, Filter> filters = new Dictionary<string,Filter>();
+        private List<IAction> actions = new List<IAction>();
+
+        #endregion Fields
+
+
+        #region Properties
+
         public SyncFolder Left { get; set; }
 
         public SyncFolder Right { get; set; }
 
-        public IEnumerable<Filter> Filters { get; set; }
-
-        public string LogDirectory { get; set; }
-
         public long TimeStampMargin { get; set; }
+        
+        public IEnumerable<Filter> Filters
+        {
+            get
+            {
+                return this.filters.Values;
+            }
+        }        
+
+        public IEnumerable<IAction> Actions { get { return this.actions; } }
+
+        #endregion Properties
 
 
-        public IEnumerable<IAction> Actions { get; set; }
+        #region Constructor
 
         public SyncConfiguration()
         {
-            this.Filters = Enumerable.Empty<Filter>();
+            
         }
+
+
+        #endregion
+
+
+        #region Public Methods
+
+        public void AddFilter(Filter filter)
+        {
+            string key = filter.Name.ToLower().Trim();
+            if(this.filters.ContainsKey(key))
+            {
+                this.filters[key] = filter;
+            }
+            else
+            {
+                this.filters.Add(key, filter);
+            }
+        }
+
+        public Filter GetFilter(string name)
+        {
+            return this.filters[name];
+        }
+
+        public void AddAction(IAction action)
+        {
+            this.actions.Add(action);
+        }
+
+        #endregion Public Methods
 
     }
 }

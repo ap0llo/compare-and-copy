@@ -6,13 +6,10 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core.State
 {
-    public class SyncState
+    public class FileItem
     {
-        public IEnumerable<FileItem> Files
-        {
-            get;
-            set;
-        }
+        public string RelativePath { get; set; }
 
+        public FileState State { get; set; }
     }
 }

@@ -40,13 +40,6 @@ namespace ServerSync
 
             var currentState = new SyncState();
 
-            if(File.Exists(GetSyncStateFilePath(config)))
-            {
-                var reader = new SyncStateReader();
-                currentState = reader.ReadSyncState(GetSyncStateFilePath(config));
-            }
-
-
             foreach(var action in config.Actions)
             {
                 if(action.IsEnabled)
@@ -59,11 +52,7 @@ namespace ServerSync
                     currentState = action.State;
                 }
             }
-
-
-            SyncStateWriter writer = new SyncStateWriter();
-            writer.WriteSyncState(GetSyncStateFilePath(config), currentState);
-
+            
             stopWatch.Stop();
 
             Console.WriteLine("Elapsed Time : " + stopWatch.Elapsed.ToString());
@@ -71,11 +60,6 @@ namespace ServerSync
             return 0;
         }
 
-
-        private static string GetSyncStateFilePath(SyncConfiguration config)
-        {
-            return Path.Combine(config.LogDirectory, "SyncState.xml");
-        }
 
 
 

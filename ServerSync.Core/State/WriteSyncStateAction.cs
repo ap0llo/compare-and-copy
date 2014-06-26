@@ -11,16 +11,20 @@ namespace ServerSync.Core.State
     class WriteSyncStateAction : IAction
     {
 
+        #region Properties
+
         public bool IsEnabled { get; set; }
 
         public SyncConfiguration Configuration { get; set; }
 
         public SyncState State { get; set; }
 
-
         public string FileName { get; set; }
 
+        #endregion
 
+
+        #region Public Methods
 
         public void Run()
         {
@@ -29,5 +33,6 @@ namespace ServerSync.Core.State
 
         }
 
+        #endregion
     }
 }

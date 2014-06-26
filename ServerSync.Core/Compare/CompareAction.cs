@@ -31,12 +31,38 @@ namespace ServerSync.Core.Compare
 
         private static SyncState MergeSyncStates(SyncState exisiting, SyncState newSyncState)
         {
-            var missingLeft = newSyncState.MissingLeft.Where(x => !exisiting.InTransferToLeft.Contains(x, StringComparer.InvariantCultureIgnoreCase));
-            var missingRight = newSyncState.MissingRight.Where(x => !exisiting.InTransferToRight.Contains(x, StringComparer.InvariantCultureIgnoreCase));
-            var conflicts = newSyncState.Conflicts.Where(x => !exisiting.InTransferToLeft.Contains(x, StringComparer.InvariantCultureIgnoreCase) &&
-                                    !exisiting.InTransferToRight.Contains(x, StringComparer.InvariantCultureIgnoreCase));
+            var filesExisitng = exisiting.Files.ToDictionary(fileItem => fileItem.RelativePath.Trim().ToLower());
+            var filesNewState = exisiting.Files.ToDictionary(fileItem => fileItem.RelativePath.Trim().ToLower());
 
-            return new SyncState(missingLeft, missingRight, conflicts, newSyncState.SameFiles, exisiting.InTransferToLeft, exisiting.InTransferToRight);
+            foreach (var fileItem in newSyncState.Files.Where(x => x.State == FileState.MissingLeft))
+            {
+                var key = fileItem.RelativePath.ToLower().Trim();
+                if(filesExisitng.ContainsKey(key) && filesExisitng[key].State == FileState.InTransferToLeft)
+                {
+                    fileItem.State = FileState.InTransferToLeft;
+                }
+            }
+
+            foreach (var fileItem in newSyncState.Files.Where(x => x.State == FileState.MissingRight))
+            {
+                var key = fileItem.RelativePath.ToLower().Trim();
+                if (filesExisitng.ContainsKey(key) && filesExisitng[key].State == FileState.InTransferToRight)
+                {
+                    fileItem.State = FileState.InTransferToRight;
+                }
+            }
+
+            foreach (var fileItem in newSyncState.Files.Where(x => x.State == FileState.Conflict))
+            {
+                var key = fileItem.RelativePath.ToLower().Trim();
+                if (filesExisitng.ContainsKey(key) && (filesExisitng[key].State == FileState.InTransferToRight || filesExisitng[key].State == FileState.InTransferToLeft))
+                {
+                    fileItem.State = filesExisitng[key].State;
+                }
+            }
+
+
+            return newSyncState;
         }
 
 

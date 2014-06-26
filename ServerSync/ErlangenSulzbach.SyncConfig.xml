@@ -1,14 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<syncConfiguration>
-  <logDirectory>\\Fileserver-Nerdcave\transfer\caprica-picon\TV-Shows</logDirectory>
+<syncConfiguration>  
   <timeStampMargin ms="0"/>
   <left name="Server-Andreas2" rootPath="\\server-andreas2\TV-Shows" />
   <right name="Fileserver-Nerdcave" rootPath="\\fileserver-nerdcave\TV-Shows" />
-  <!--<fileFilter>
-    <excludeFile pattern="^.*Thumbs.db"/>  
-  </fileFilter>-->
-  <filterList>
-    <filter>
+  
+    <filter name="defaultFilter">
       <!--Include all files in the following folders of the root directory-->
 
       <include>
@@ -63,10 +59,13 @@
       </exclude>
 
     </filter>
-  </filterList>
-  <actionList>
-    <compare enable="false" />
+  
+  
+    <readSyncState enable="true" fileName="\\Fileserver-Nerdcave\transfer\caprica-picon\TV-Shows\SyncState.xml" />
+    <compare enable="true" />
+    <applyFilter enable="true" filterName="defaultFilter" />
     <copy enable="true" targetDirectory="\\fileserver-nerdcave\transfer\caprica-picon\TV-Shows" itemType="MissingLeft" setState="InTransferToLeft" source="right"/>
     <copy enable="true" targetDirectory="\\fileserver-nerdcave\transfer\caprica-picon\TV-Shows" itemType="Conflict" setState="InTransferToLeft" source="right"/>
-  </actionList>
+    <writeSyncState enable="true" fileName="\\Fileserver-Nerdcave\transfer\caprica-picon\TV-Shows\SyncState.xml" />
+  
 </syncConfiguration>

@@ -1,15 +1,11 @@
 ﻿using ServerSync.Core.Configuration;
-using ServerSync.Core.Copy;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerSync.Core.State
 {
     class ReadSyncStateAction : IAction
     {
+
+        #region Properties
 
         public bool IsEnabled { get; set; }
 
@@ -20,15 +16,18 @@ namespace ServerSync.Core.State
 
         public string FileName { get; set; }
 
+        #endregion Properties
 
+
+        #region Public Methods
 
         public void Run()
         {
-
             var stateReader = new SyncStateReader();
             this.State = stateReader.ReadSyncState(this.FileName);
-
         }
 
+        #endregion Public Methods
+    
     }
 }

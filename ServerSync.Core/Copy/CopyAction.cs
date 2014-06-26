@@ -13,13 +13,6 @@ namespace ServerSync.Core.Copy
     class CopyAction : IAction
     {
 
-        private List<string> missingLeft;
-        private List<string> missingRight;
-        private List<string> conflict;
-        private List<string> inTransferToRight;
-        private List<string> inTransferToLeft;
-
-
 
 
         public bool IsEnabled { get; set; }
@@ -39,91 +32,28 @@ namespace ServerSync.Core.Copy
 
         public void Run()
         {
-            this.missingLeft = State.MissingLeft.ToList();
-            this.missingRight = State.MissingRight.ToList();
-            this.conflict = State.Conflicts.ToList();
-            this.inTransferToLeft = State.InTransferToLeft.ToList();
-            this.inTransferToRight = State.InTransferToRight.ToList();
-
             var root = Source == Source.Left ? Configuration.Left.RootPath : Configuration.Right.RootPath;
 
             var copyItems = GetItemsToCopy();
             foreach (var item in copyItems)
             {
-                var absSource = Path.Combine(root, item);
-                var absTarget = Path.Combine(TargetDirectory, item);
+                var absSource = Path.Combine(root, item.RelativePath);
+                var absTarget = Path.Combine(TargetDirectory, item.RelativePath);
 
-                Console.WriteLine("Copying {0}", item);
+                Console.WriteLine("Copying {0}", item.RelativePath);
 
                 EnsureDirectoryExists(Path.GetDirectoryName(absTarget));
                 File.Copy(absSource, absTarget);
-                SetNewState(item);
-            }
-            
-
-            this.State = new SyncState(missingLeft, missingRight, conflict, Enumerable.Empty<string>(), inTransferToLeft, inTransferToRight);
-
+                item.State = SetStateTo;
+            }                       
         }
 
 
-
-        private IEnumerable<string> GetItemsToCopy()
+        private IEnumerable<FileItem> GetItemsToCopy()
         {
-            switch (ItemType)
-            {
-                case FileState.MissingLeft:
-                    this.missingLeft = new List<string>();
-                    return this.State.MissingLeft;
-
-                case FileState.MissingRight:
-                    this.missingRight = new List<string>();
-                    return this.State.MissingRight;
-                    
-                case FileState.Conflict:
-                    this.conflict = new List<string>();
-                    return this.State.Conflicts;
-
-                case FileState.InTransferToLeft:
-                    this.inTransferToLeft = new List<string>();
-                    return this.State.InTransferToLeft;
-                    
-                case FileState.InTransferToRight:
-                    this.inTransferToRight = new List<string>();
-                    return this.State.InTransferToRight;
-
-                default:
-                    throw new NotImplementedException();                    
-            }
+            return this.State.Files.Where(fileItem => fileItem.State == this.ItemType);         
         }
-
-        private void SetNewState(string item)
-        {
-            switch (this.SetStateTo)
-            {
-                case FileState.MissingLeft:
-                    missingLeft.Add(item);
-                    break;
-
-                case FileState.MissingRight:
-                    missingRight.Add(item);
-                    break;
-
-                case FileState.Conflict:
-                    conflict.Add(item);
-                    break;
-
-                case FileState.InTransferToLeft:
-                    inTransferToLeft.Add(item);
-                    break;
-
-                case FileState.InTransferToRight:
-                    inTransferToRight.Add(item);
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
-        }
+      
 
 
         private void EnsureDirectoryExists(string path)

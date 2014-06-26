@@ -9,29 +9,30 @@ namespace ServerSync.Core.State
 {
     public class SyncStateWriter
     {
-        public void WriteSyncState(string fileName, SyncState result)
-        {
-            var missingLeft = result.MissingLeft.Select(path => GetFileNode(path, FileState.MissingLeft));
-            var missingRight = result.MissingRight.Select(path => GetFileNode(path, FileState.MissingRight));
-            var conflicts = result.Conflicts.Select(path => GetFileNode(path, FileState.Conflict));
-            var inTransferToLeft = result.InTransferToLeft.Select(path => GetFileNode(path, FileState.InTransferToLeft));
-            var inTransferToRight = result.InTransferToRight.Select(path => GetFileNode(path, FileState.InTransferToRight));
 
-            XElement fileList = new XElement(XmlConstants.FileList, missingLeft.Union(missingRight).Union(conflicts).Union(inTransferToLeft).Union(inTransferToRight));
+        #region Public Methods
+
+        public void WriteSyncState(string fileName, SyncState state)
+        {        
+            XElement fileList = new XElement(XmlConstants.FileList, state.Files.Select(GetFileItemElement));
 
             var document = new XDocument(new XElement(fileList));
             document.Save(fileName);
         }
 
+        #endregion 
 
 
-        private XElement GetFileNode(string path, FileState type)
+        #region Private Implementation
+
+        private XElement GetFileItemElement(FileItem file)
         {
             return new XElement( XmlConstants.File, 
-                                 new XAttribute(XmlConstants.Path, path), 
-                                 new XAttribute(XmlConstants.Type, type) );
+                                 new XAttribute(XmlConstants.Path, file.RelativePath), 
+                                 new XAttribute(XmlConstants.Type, file.State) );
         }
 
+        #endregion Private Implementation
 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ServerSync.Core.Compare;
 using ServerSync.Core.Copy;
+using ServerSync.Core.Filters;
 using ServerSync.Core.State;
 using System;
 using System.Collections.Generic;
@@ -13,21 +14,14 @@ namespace ServerSync.Core.Configuration
 {
     public class ConfigurationReader
     {
-        private const long TIMESTAMPMARGIN_DEFAULT = 0;
-        private const string FILTER_DEFAULT = "^[.]*$";
-        private const string LOGDIRECTORY_DEFAULT = ".";
-
-
+        
         public SyncConfiguration ReadConfiguration(string fileName)
         {
             XDocument configFile = XDocument.Load(fileName);
 
             SyncConfiguration configuration = new SyncConfiguration();
-            configuration = ReadSyncFolders(configFile, configuration);
-            configuration = ReadLogDirectory(configFile, configuration);            
-            configuration = ReadTimeStampMargin(configFile, configuration);
-            configuration = ReadFilterList(configFile, configuration);
-            configuration = ReadActionList(configFile, configuration);
+
+            ReadSyncConfiguration(configFile, configuration);
 
             return configuration;            
         }
@@ -35,12 +29,53 @@ namespace ServerSync.Core.Configuration
 
         #region Private Implementation
 
-        private SyncConfiguration ReadSyncFolders(XDocument document, SyncConfiguration currentConfiguration)
+        private void ReadSyncConfiguration(XDocument configFile, SyncConfiguration configuration)
         {
-            currentConfiguration.Left = ReadSyncFolder(document.Root.Element(XmlConstants.Left));
-            currentConfiguration.Right = ReadSyncFolder(document.Root.Element(XmlConstants.Right));
+            foreach (var element in configFile.Root.Elements())
+            {
+                switch (element.Name.LocalName)
+                {
+                    case XmlConstants.Left:
+                        configuration.Left = ReadSyncFolder(element);
+                        break;
 
-            return currentConfiguration;
+                    case XmlConstants.Right:
+                        configuration.Right = ReadSyncFolder(element);
+                        break;
+
+                    case XmlConstants.TimeStampMargin:
+                        configuration.TimeStampMargin = ReadTimeStampMargin(element);
+                        break;
+                    case XmlConstants.Filter:
+                        var filter = ReadFilter(element);
+                        configuration.AddFilter(filter);
+                        break;
+
+                    case XmlConstants.Compare:
+                        configuration.AddAction(ReadCompareAction(element));
+                        break;
+
+                    case XmlConstants.Copy:
+                        configuration.AddAction(ReadCopyAction(element));
+                        break;
+
+                    case XmlConstants.ReadSyncState:
+                        configuration.AddAction(ReadReadSyncStateAction(element));
+                        break;
+
+                    case XmlConstants.WriteSyncState:
+                        configuration.AddAction(ReadWriteSyncStateAction(element));
+                        break;
+
+                    case XmlConstants.ApplyFilter:
+                        configuration.AddAction(ReadApplyFilterAction(element));
+                        break;
+
+                    default:
+                        throw new NotImplementedException("Unknwon element " + element.Name.LocalName + " in Configuration");                        
+                }
+            }
+            
         }
 
         private SyncFolder ReadSyncFolder(XElement xmlNode)
@@ -51,64 +86,19 @@ namespace ServerSync.Core.Configuration
             return result;
         }
 
-        private SyncConfiguration ReadTimeStampMargin(XDocument configDocument, SyncConfiguration currentConfiguration)
+        private long ReadTimeStampMargin(XElement element)
         {
-            var node = configDocument.Root.Element(XmlConstants.TimeStampMargin);
-
-            if(node == null)
-            {
-                currentConfiguration.TimeStampMargin = TIMESTAMPMARGIN_DEFAULT;
-            }
-            else
-            {
-                currentConfiguration.TimeStampMargin = long.Parse(node.Attribute("ms").Value);
-            }
-
-            return currentConfiguration;
-        }
-
-        private SyncConfiguration ReadLogDirectory(XDocument document, SyncConfiguration currentConfiguration)
-        {
-            var node = document.Root.Element(XmlConstants.LogDirectory);
-            if(node == null)
-            {
-                currentConfiguration.LogDirectory = LOGDIRECTORY_DEFAULT;
-            }
-            else
-            {
-                currentConfiguration.LogDirectory = node.Value;
-            }
+            return long.Parse(element.Attribute("ms").Value);
             
-            return currentConfiguration;
         }
-
-        private SyncConfiguration ReadFilterList(XDocument document, SyncConfiguration currentConfiguration)
-        {
-            var filterListNode = document.Root.Element(XmlConstants.FilterList);
-
-            //set default filter
-            if(filterListNode == null || !filterListNode.Elements(XmlConstants.Filter).Any())
-            {
-                Filter defaultFilter = GetDefaultFilter();
-                currentConfiguration.Filters = new List<Filter>(){ defaultFilter}; 
-            }
-            else
-            {
-                var filterNodes = filterListNode.Elements(XmlConstants.Filter);
-                currentConfiguration.Filters = filterNodes.Select(filterNode => ReadFilter(filterNode)).ToList();
-            }
-
-            
-
-            return currentConfiguration;
-        }
-
+         
         private Filter ReadFilter(XElement filterNode)
         {
             var newFilter = new Filter();
 
             newFilter.IncludeRules = ReadRegexRuleList(filterNode.Element(XmlConstants.Include));
             newFilter.ExcludeRules = ReadRegexRuleList(filterNode.Element(XmlConstants.Exclude));
+            newFilter.Name = filterNode.Attribute(XmlConstants.Name).Value;
 
             return newFilter;
         }
@@ -117,52 +107,6 @@ namespace ServerSync.Core.Configuration
         {
             return listNode.Elements(XmlConstants.Regex).Select(node => node.Attribute(XmlConstants.Pattern).Value)
                            .Select(pattern => new Regex(pattern));
-        }
-
-        private Filter GetDefaultFilter()
-        {
-            Filter defaultFilter = new Filter();
-            defaultFilter.IncludeRules = new List<Regex>() {
-                new Regex(FILTER_DEFAULT)
-            };
-            return defaultFilter;
-        }
-
-        private SyncConfiguration ReadActionList(XDocument document, SyncConfiguration currentConfiguration)
-        {
-            var actionList = document.Root.Element(XmlConstants.ActionList);
-
-            List<IAction> actions = new List<IAction>();
-
-            foreach(var actionElement in actionList.Elements())
-            {
-                IAction action;
-                switch (actionElement.Name.LocalName)
-                {
-                    case XmlConstants.Compare:
-                        action = ReadCompareAction(actionElement);
-                        break;
-
-                    case XmlConstants.Copy:
-                        action = ReadCopyAction(actionElement);
-                        break;
-
-                    case XmlConstants.ReadSyncState:
-                        action = ReadReadSyncStateAction(actionElement);
-                        break;
-
-                    case XmlConstants.WriteSyncState:
-                        action = ReadWriteSyncStateAction(actionElement);
-                        break;
-
-                    default:
-                        throw new NotSupportedException("Unknown action name: " + actionElement.Name.LocalName);
-                }                
-                actions.Add(action);
-            }
-
-            currentConfiguration.Actions = actions;
-            return currentConfiguration;
         }
 
         private IAction ReadCompareAction(XElement actionElement)
@@ -207,6 +151,13 @@ namespace ServerSync.Core.Configuration
             return new WriteSyncStateAction() { IsEnabled = enable, FileName = fileName };          
         }
 
+        private IAction ReadApplyFilterAction(XElement actionElement)
+        {
+            bool enable = bool.Parse(actionElement.Attribute(XmlConstants.Enable).Value);
+            var filterName = actionElement.Attribute(XmlConstants.FilterName).Value;
+
+            return new ApplyFilterAction() { IsEnabled = enable, FilterName = filterName };     
+        }
 
         private FileState ParseFileState(string value)
         {
@@ -238,7 +189,6 @@ namespace ServerSync.Core.Configuration
 
             public const string Pattern = "pattern";
 
-            public const string LogDirectory = "logDirectory";
 
             public const string TimeStampMargin = "timeStampMargin";
 
@@ -247,10 +197,7 @@ namespace ServerSync.Core.Configuration
             public const string Filter = "filter";
             public const string Include = "include";
             public const string Exclude = "exclude";
-            public const string ActionList = "actionList";
-            public const string Compare = "compare";
-            public const string Copy = "copy";
-
+            
             public const string Enable = "enable";
 
             public const string ItemType = "itemType";
@@ -260,8 +207,18 @@ namespace ServerSync.Core.Configuration
 
             public const string FileName = "fileName";
 
+            public const string FilterName = "filterName";
+
+            //Action Names
+
+            public const string Compare = "compare";
+            public const string Copy = "copy";
             public const string ReadSyncState = "readSyncState";
             public const string WriteSyncState = "writeSyncState";
+            public const string ApplyFilter = "applyFilter";
+
+
+            
         }
 
         #endregion Private Implementation

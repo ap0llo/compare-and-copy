@@ -13,6 +13,7 @@ namespace ServerSync.Core.Configuration
 
         public IEnumerable<Regex> ExcludeRules { get; set; }
 
+        public string Name { get; set; }
 
         public Filter()
         {

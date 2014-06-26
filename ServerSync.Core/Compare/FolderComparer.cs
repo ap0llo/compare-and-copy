@@ -45,7 +45,12 @@ namespace ServerSync.Core.Compare
 
             CompareFolders("");
 
-            return new SyncState(filesMissingLeft, filesMissingRight, conflicts, sameFiles);
+
+            var files = filesMissingLeft.Select(path => new FileItem() { RelativePath = path, State = FileState.MissingLeft });
+            files = files.Union(filesMissingRight.Select(path => new FileItem() { RelativePath = path, State = FileState.MissingRight }));
+            files = files.Union(conflicts.Select(path => new FileItem() { RelativePath = path, State = FileState.Conflict }));
+
+            return new SyncState() { Files = files.ToList() };
         }
 
         #endregion

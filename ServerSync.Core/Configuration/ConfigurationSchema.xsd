@@ -1,37 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema id="ConfigurationSchema"   
-    elementFormDefault="qualified"    
+<xs:schema id="ConfigurationSchema"
+    elementFormDefault="qualified"
     xmlns:mstns="http://tempuri.org/XMLSchema1.xsd"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
-  
+
   <!--Types-->
   <xs:complexType name="typeSyncConfiguration">
-    <xs:all>
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="left" type="typeSyncFolder" />
       <xs:element name="right" type="typeSyncFolder" />
-      <xs:element name="logDirectory" type="xs:string" />
       <xs:element name="timeStampMargin">
         <xs:complexType>
           <xs:attribute name="ms" type="xs:integer" use="required" />
         </xs:complexType>
       </xs:element>
-      <xs:element name="filterList" type="typeFilterList" />
-      <xs:element name="actionList" type="typeActionList" />
-    </xs:all>    
-  </xs:complexType>
-
-
-  <!--Actions-->
-  <xs:complexType name="typeActionList">
-    <xs:choice minOccurs="1" maxOccurs="unbounded">
-      <xs:element name="compare" type="typeCompareAction" />
-      <xs:element name="copy" type="typeCopyAction" />
-      <xs:element name="readSyncState" type="typeReadWriteSyncStateAction" />
-      <xs:element name="writeSyncState" type="typeReadWriteSyncStateAction" />
+      <xs:element name="filter" type="typeFilter" />
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="compare" type="typeCompareAction" />
+        <xs:element name="copy" type="typeCopyAction" />
+        <xs:element name="readSyncState" type="typeReadWriteSyncStateAction" />
+        <xs:element name="writeSyncState" type="typeReadWriteSyncStateAction" />
+        <xs:element name="applyFiler" type="typeApplyFilterAction" />
+      </xs:choice>
     </xs:choice>
   </xs:complexType>
-  
+
+  <!-- Actions -->
   <xs:complexType name="typeCompareAction">
     <xs:attribute name="enable" type="xs:boolean" />
   </xs:complexType>
@@ -49,6 +44,12 @@
     <xs:attribute name="fileName" type="xs:string" use="required" />
   </xs:complexType>
 
+  <xs:complexType name="typeApplyFilterAction">
+    <xs:attribute name="enable" type="xs:boolean" use="required" />
+    <xs:attribute name="filterName" type="xs:string" use="required" />
+  </xs:complexType>
+  
+  
   <xs:simpleType name="typeFileState">
     <xs:restriction base="xs:string">
       <xs:enumeration value="MissingLeft" />
@@ -63,28 +64,23 @@
       <xs:enumeration value="Right" />
     </xs:restriction>
   </xs:simpleType>
-  
+
   <!--SyncFolder type-->
   <xs:complexType name="typeSyncFolder">
     <xs:attribute name="name" type="xs:string" use="required" />
     <xs:attribute name="rootPath" type="xs:string" use="required" />
   </xs:complexType>
-  
+
   <!--Filter Type-->
   <xs:complexType name="typeFilter">
     <xs:sequence>
       <xs:element name="include" type="typeRegexRuleList" />
       <xs:element name="exclude" type="typeRegexRuleList" />
-      </xs:sequence>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
   </xs:complexType>
 
-  <!--FilterList Type-->
-  <xs:complexType name="typeFilterList">
-    <xs:sequence>
-      <xs:element name="filter" type="typeFilter" minOccurs="0" maxOccurs="unbounded" />
-    </xs:sequence>
-  </xs:complexType>
-  
+
   <!--RegexRule Type-->
   <xs:complexType name="typeRegexRule">
     <xs:attribute name="pattern" type="xs:string" use="required" />
@@ -97,8 +93,8 @@
     </xs:sequence>
   </xs:complexType>
 
-  
+
   <!--Root Element-->
   <xs:element name="syncConfiguration" type="typeSyncConfiguration" />
-  
+
 </xs:schema>

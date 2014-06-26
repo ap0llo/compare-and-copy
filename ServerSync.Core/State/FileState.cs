@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core.State
 {
-    enum FileState
+    public enum FileState
     {
         MissingLeft,
         MissingRight,
