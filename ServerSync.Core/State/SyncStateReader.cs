@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace ServerSync.Core.Compare
+namespace ServerSync.Core.State
 {
-    public class SyncStateStateReader
+    public class SyncStateReader
     {
 
         public SyncState ReadSyncState(string fileName)

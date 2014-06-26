@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ServerSync.Core.Configuration;
+using ServerSync.Core.State;
 
 namespace ServerSync.Core.Compare
 {

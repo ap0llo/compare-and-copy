@@ -9,6 +9,7 @@ using ServerSync.Core.Compare;
 using ServerSync.Core.Configuration;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using ServerSync.Core.State;
 
 namespace ServerSync
 {
@@ -41,7 +42,7 @@ namespace ServerSync
 
             if(File.Exists(GetSyncStateFilePath(config)))
             {
-                var reader = new SyncStateStateReader();
+                var reader = new SyncStateReader();
                 currentState = reader.ReadSyncState(GetSyncStateFilePath(config));
             }
 

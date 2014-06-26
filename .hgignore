@@ -7,3 +7,5 @@ Build.proj
 GeneratedAssemblyInfo.cs
 packages/
 .build\MSBuild.Community.Tasks.targets
+*.suo
+*.user

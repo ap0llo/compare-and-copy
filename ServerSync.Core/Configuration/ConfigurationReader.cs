@@ -1,5 +1,6 @@
 ﻿using ServerSync.Core.Compare;
 using ServerSync.Core.Copy;
+using ServerSync.Core.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -133,19 +134,29 @@ namespace ServerSync.Core.Configuration
 
             List<IAction> actions = new List<IAction>();
 
-            foreach(var actionNode in actionList.Elements())
+            foreach(var actionElement in actionList.Elements())
             {
                 IAction action;
-                switch (actionNode.Name.LocalName)
+                switch (actionElement.Name.LocalName)
                 {
                     case XmlConstants.Compare:
-                        action = ReadCompareAction(actionNode);
+                        action = ReadCompareAction(actionElement);
                         break;
+
                     case XmlConstants.Copy:
-                        action = ReadCopyAction(actionNode);
+                        action = ReadCopyAction(actionElement);
                         break;
+
+                    case XmlConstants.ReadSyncState:
+                        action = ReadReadSyncStateAction(actionElement);
+                        break;
+
+                    case XmlConstants.WriteSyncState:
+                        action = ReadWriteSyncStateAction(actionElement);
+                        break;
+
                     default:
-                        throw new NotSupportedException("Unknown action name: " + actionNode.Name.LocalName);
+                        throw new NotSupportedException("Unknown action name: " + actionElement.Name.LocalName);
                 }                
                 actions.Add(action);
             }
@@ -161,7 +172,6 @@ namespace ServerSync.Core.Configuration
             action.IsEnabled = enable;
             return action;
         }
-
 
         private IAction ReadCopyAction(XElement actionElement)
         {
@@ -180,6 +190,23 @@ namespace ServerSync.Core.Configuration
             return action;
 
         }
+
+        private IAction ReadReadSyncStateAction(XElement actionElement)
+        {
+            bool enable = bool.Parse(actionElement.Attribute(XmlConstants.Enable).Value);
+            var fileName = actionElement.Attribute(XmlConstants.FileName).Value;
+
+            return new ReadSyncStateAction() { IsEnabled = enable, FileName = fileName};            
+        }
+
+        private IAction ReadWriteSyncStateAction(XElement actionElement)
+        {
+            bool enable = bool.Parse(actionElement.Attribute(XmlConstants.Enable).Value);
+            var fileName = actionElement.Attribute(XmlConstants.FileName).Value;
+
+            return new WriteSyncStateAction() { IsEnabled = enable, FileName = fileName };          
+        }
+
 
         private FileState ParseFileState(string value)
         {
@@ -230,6 +257,11 @@ namespace ServerSync.Core.Configuration
             public const string TargetDirectory = "targetDirectory";
             public const string SetState = "setState";
             public const string Source = "source";
+
+            public const string FileName = "fileName";
+
+            public const string ReadSyncState = "readSyncState";
+            public const string WriteSyncState = "writeSyncState";
         }
 
         #endregion Private Implementation
