@@ -28,8 +28,8 @@ namespace ServerSync.Core.Filters
         {
             Filter filter = this.Configuration.GetFilter(this.FilterName);
 
-            var filtered = this.State.Files.Where(file => filter.IncludeRules.Any(rule => rule.IsMatch(file.RelativePath)))
-                                           .Where(file => !filter.ExcludeRules.Any(rule => rule.IsMatch(file.RelativePath)));
+            var filtered = this.State.Files.Where(file => filter.IncludeRules.Any(rule => rule.IsMatch(file)))
+                                           .Where(file => !filter.ExcludeRules.Any(rule => rule.IsMatch(file)));
 
             this.State.Files = filtered.ToList();
             

@@ -46,6 +46,9 @@
     <Compile Include="AbstractAction.cs" />
     <Compile Include="Compare\CompareAction.cs" />
     <Compile Include="Filter\ApplyFilterAction.cs" />
+    <Compile Include="Filter\FileStateFilterElement.cs" />
+    <Compile Include="Filter\IFilterElement.cs" />
+    <Compile Include="Filter\RegexFilterElement.cs" />
     <Compile Include="State\FileItem.cs" />
     <Compile Include="State\WriteSyncStateAction.cs" />
     <Compile Include="State\ReadSyncStateAction.cs" />

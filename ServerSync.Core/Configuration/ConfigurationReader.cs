@@ -96,17 +96,39 @@ namespace ServerSync.Core.Configuration
         {
             var newFilter = new Filter();
 
-            newFilter.IncludeRules = ReadRegexRuleList(filterNode.Element(XmlConstants.Include));
-            newFilter.ExcludeRules = ReadRegexRuleList(filterNode.Element(XmlConstants.Exclude));
+            newFilter.IncludeRules = ReadFilterElementList(filterNode.Element(XmlConstants.Include));
+            newFilter.ExcludeRules = ReadFilterElementList(filterNode.Element(XmlConstants.Exclude));
             newFilter.Name = filterNode.Attribute(XmlConstants.Name).Value;
 
             return newFilter;
         }
 
-        private IEnumerable<Regex> ReadRegexRuleList(XElement listNode)
+        private IEnumerable<IFilterElement> ReadFilterElementList(XElement listNode)
         {
-            return listNode.Elements(XmlConstants.Regex).Select(node => node.Attribute(XmlConstants.Pattern).Value)
-                           .Select(pattern => new Regex(pattern));
+            List<IFilterElement> filterElements = new List<IFilterElement>();
+
+            foreach (var elementNode in listNode.Elements())
+            {
+                switch (elementNode.Name.LocalName)
+                {
+                    case XmlConstants.Regex:
+                        var pattern = elementNode.Attribute(XmlConstants.Pattern).Value;
+                        filterElements.Add(new RegexFilterElement(pattern));
+                        break;
+
+                    case XmlConstants.FileState:
+                        var stateString = elementNode.Attribute(XmlConstants.State).Value;
+                        var state = ParseFileState(stateString);
+                        filterElements.Add(new FileStateFilterElement(state));
+                        break;
+
+                    default:
+                        throw new NotImplementedException("Unimplemented filter element: " + elementNode.Name.LocalName);
+
+                }
+            }
+
+            return filterElements;
         }
 
         private IAction ReadCompareAction(XElement actionElement)
@@ -214,6 +236,7 @@ namespace ServerSync.Core.Configuration
             public const string ReadSyncState = "readSyncState";
             public const string WriteSyncState = "writeSyncState";
             public const string ApplyFilter = "applyFilter";
+            public const string State ="state";
 
 
             

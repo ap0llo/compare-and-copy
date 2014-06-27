@@ -59,6 +59,10 @@
   </xs:simpleType>
 
 
+  <xs:complexType name="typeFileStateElement">
+    <xs:attribute name="state" type="typeFileState" use="required" />
+  </xs:complexType>
+  
   <xs:simpleType name="typeSource">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Left" />
@@ -75,8 +79,8 @@
   <!--Filter Type-->
   <xs:complexType name="typeFilter">
     <xs:sequence>
-      <xs:element name="include" type="typeRegexRuleList" />
-      <xs:element name="exclude" type="typeRegexRuleList" />
+      <xs:element name="include" type="typeFilterElementList" />
+      <xs:element name="exclude" type="typeFilterElementList" />
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required"/>
   </xs:complexType>
@@ -88,10 +92,11 @@
   </xs:complexType>
 
   <!--RegexRuleList Type-->
-  <xs:complexType name="typeRegexRuleList">
-    <xs:sequence>
-      <xs:element name="regex" type="typeRegexRule"  minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
+  <xs:complexType name="typeFilterElementList">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="regex" type="typeRegexRule"  />
+      <xs:element name="fileState" type="typeFileStateElement" />
+    </xs:choice>
   </xs:complexType>
 
 
