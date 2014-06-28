@@ -61,11 +61,24 @@ namespace ServerSync.Core.Compare
         private void CompareFolders(string relativePath)
         {            
 
-            var leftAbsoulutePath = Path.Combine(config.Left.RootPath, relativePath);
+            var leftAbsolutePath = Path.Combine(config.Left.RootPath, relativePath);
             var rightAbsolutePath = Path.Combine(config.Right.RootPath, relativePath);
 
+            if(!Directory.Exists(leftAbsolutePath))
+            {
+                filesMissingLeft.AddRange(GetFiles(rightAbsolutePath, true).Select(absPath => GetRelativePath(absPath, rightAbsolutePath, true)));
+                return;
+            }
+
+
+            if(!Directory.Exists(rightAbsolutePath))
+            {
+                filesMissingRight.AddRange(GetFiles(leftAbsolutePath, true).Select(absPath => GetRelativePath(absPath, leftAbsolutePath, true)));
+                return;
+            }
+
             //compare directories
-            var leftDirectories = Directory.GetDirectories(leftAbsoulutePath)                                           
+            var leftDirectories = Directory.GetDirectories(leftAbsolutePath)                                           
                                            .Select(path => Path.GetFileName(path));
 
             var rightDirectories = Directory.GetDirectories(rightAbsolutePath)                                            
@@ -96,7 +109,7 @@ namespace ServerSync.Core.Compare
 
 
             //compare files
-            var filesLeft = GetFiles(leftAbsoulutePath, false)
+            var filesLeft = GetFiles(leftAbsolutePath, false)
                                      .Select(path => Path.GetFileName(path));
 
 
