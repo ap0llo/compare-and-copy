@@ -1,4 +1,5 @@
 ﻿using ServerSync.Core.Configuration;
+using ServerSync.Core.Filters;
 using ServerSync.Core.State;
 using System;
 using System.Collections.Generic;
@@ -30,10 +31,8 @@ namespace ServerSync.Core
         /// </summary>
         public SyncState State { get; set; }
 
-        /// <summary>
-        /// Specifies the state of files to include in the operation
-        /// </summary>
-        public FileState FileState { get; set; }
+        public string InputFilterName { get; set; }
+
 
         #endregion IAction Properties
 
@@ -41,6 +40,24 @@ namespace ServerSync.Core
         #region Public Methods
 
         public abstract void Run();
+
+        #endregion
+
+        #region Protected Members
+
+        protected IEnumerable<FileItem> GetFilteredInput()
+        {
+            if(String.IsNullOrEmpty(this.InputFilterName))
+            {
+                return this.State.Files;
+            }
+            else
+            {
+                Filter filter = Configuration.GetFilter(this.InputFilterName);
+                return this.State.Files.ApplyFilter(filter);
+            }
+        }
+
 
         #endregion
 

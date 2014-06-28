@@ -20,9 +20,9 @@ namespace ServerSync.Core.Configuration
 
         #region Properties
 
-        public SyncFolder Left { get; set; }
+        public SyncFolderDefinition Left { get; set; }
 
-        public SyncFolder Right { get; set; }
+        public SyncFolderDefinition Right { get; set; }
 
         public long TimeStampMargin { get; set; }
         

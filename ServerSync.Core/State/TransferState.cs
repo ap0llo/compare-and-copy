@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core.State
 {
-    public enum FileState
+    public enum TransferState
     {
-        MissingLeft,
-        MissingRight,
-        Conflict,
-        InTransferToLeft,
-        InTransferToRight
+        None = 0,
+        InTransferToLeft = 1,
+        InTransferToRight = 2
     }
 }

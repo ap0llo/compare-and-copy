@@ -10,6 +10,8 @@ namespace ServerSync.Core.State
     {
         public string RelativePath { get; set; }
 
-        public FileState State { get; set; }
+        public CompareState CompareState { get; set; }
+
+        public TransferState TransferState { get; set; }
     }
 }

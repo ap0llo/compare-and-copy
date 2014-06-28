@@ -46,11 +46,11 @@ namespace ServerSync.Core.Compare
             CompareFolders("");
 
 
-            var files = filesMissingLeft.Select(path => new FileItem() { RelativePath = path, State = FileState.MissingLeft });
-            files = files.Union(filesMissingRight.Select(path => new FileItem() { RelativePath = path, State = FileState.MissingRight }));
-            files = files.Union(conflicts.Select(path => new FileItem() { RelativePath = path, State = FileState.Conflict }));
+            var files = filesMissingLeft.Select(path => new FileItem() { RelativePath = path, CompareState = CompareState.MissingLeft });
+            files = files.Union(filesMissingRight.Select(path => new FileItem() { RelativePath = path, CompareState = CompareState.MissingRight }));
+            files = files.Union(conflicts.Select(path => new FileItem() { RelativePath = path, CompareState = CompareState.Conflict }));
 
-            return new SyncState() { Files = files.ToList() };
+            return new SyncState(files.ToList());
         }
 
         #endregion

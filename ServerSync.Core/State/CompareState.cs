@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerSync.Core.Copy
+namespace ServerSync.Core.State
 {
-    enum Source
+    public enum CompareState
     {
-        Left, 
-        Right
+        MissingLeft,
+        MissingRight,
+        Conflict
     }
 }

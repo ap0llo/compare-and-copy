@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core.Configuration
 {
-    public class SyncFolder
+    public class SyncFolderDefinition
     {
         public String Name { get; set; }
 
         public String RootPath { get; set; }
+
     }
 }

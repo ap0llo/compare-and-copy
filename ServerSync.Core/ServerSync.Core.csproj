@@ -45,28 +45,33 @@
     </Compile>
     <Compile Include="AbstractAction.cs" />
     <Compile Include="Compare\CompareAction.cs" />
-    <Compile Include="Filter\ApplyFilterAction.cs" />
-    <Compile Include="Filter\FileStateFilterElement.cs" />
-    <Compile Include="Filter\IFilterElement.cs" />
-    <Compile Include="Filter\RegexFilterElement.cs" />
+    <Compile Include="Copy\ImportExportAction.cs" />
+    <Compile Include="Copy\ImportAction.cs" />
+    <Compile Include="Filters\TransferStateFilterElement.cs" />
+    <Compile Include="Filters\CompareStateFilterElement.cs" />
+    <Compile Include="Filters\IFilterElement.cs" />
+    <Compile Include="Filters\RegexFilterElement.cs" />
+    <Compile Include="Filters\ApplyFilterAction.cs" />
     <Compile Include="State\FileItem.cs" />
+    <Compile Include="State\TransferState.cs" />
     <Compile Include="State\WriteSyncStateAction.cs" />
     <Compile Include="State\ReadSyncStateAction.cs" />
     <Compile Include="State\SyncStateException.cs" />
     <Compile Include="State\SyncStateReader.cs" />
-    <Compile Include="State\FileState.cs" />
+    <Compile Include="State\CompareState.cs" />
     <Compile Include="State\SyncStateWriter.cs" />
     <Compile Include="State\SyncState.cs" />
     <Compile Include="State\XmlConstants.cs" />
     <Compile Include="Configuration\ConfigurationReader.cs" />
     <Compile Include="Compare\FolderComparer.cs" />
-    <Compile Include="Filter\Filter.cs" />
+    <Compile Include="Filters\Filter.cs" />
     <Compile Include="Copy\ExportAction.cs" />
-    <Compile Include="Copy\Source.cs" />
+    <Compile Include="Copy\SyncFolder.cs" />
     <Compile Include="IAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\SyncConfiguration.cs" />
-    <Compile Include="Configuration\SyncFolder.cs" />
+    <Compile Include="Configuration\SyncFolderDefinition.cs" />
+    <Compile Include="Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Configuration\ConfigurationSchema.xsd">

@@ -15,6 +15,8 @@ namespace ServerSync.Core
 
         bool IsEnabled { get; set; }
 
+        string InputFilterName { get; set; }
+
         SyncConfiguration Configuration { get; set; }
 
         SyncState State { get; set; }

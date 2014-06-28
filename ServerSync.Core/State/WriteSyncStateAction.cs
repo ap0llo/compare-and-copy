@@ -33,7 +33,7 @@ namespace ServerSync.Core.State
         public override void Run()
         {
             var writer = new SyncStateWriter();
-            writer.WriteSyncState(this.FileName, this.State);
+            writer.WriteSyncState(this.FileName, new SyncState(GetFilteredInput()));
         }
 
         #endregion

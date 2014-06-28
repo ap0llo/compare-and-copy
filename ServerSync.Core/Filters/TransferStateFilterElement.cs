@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core.Filters
 {
-    class FileStateFilterElement : IFilterElement
+    class TransferStateFilterElement : IFilterElement
     {
 
-        private FileState state;
+        private TransferState state;
 
 
-        public FileStateFilterElement(FileState state)
+        public TransferStateFilterElement(TransferState state)
         {
             this.state = state;
         }
@@ -21,7 +21,7 @@ namespace ServerSync.Core.Filters
 
         public bool IsMatch(FileItem item)
         {
-            return item.State == this.state;
+            return item.TransferState == this.state;
         }
     }
 }

@@ -16,8 +16,7 @@ namespace ServerSync.Core.Filters
         {
             get { return "ApplyFilter"; }
         }
-
-        public string FilterName { get; set; }
+        
 
         #endregion Properties
 
@@ -25,14 +24,8 @@ namespace ServerSync.Core.Filters
         #region Public Methods
 
         public override void Run()
-        {
-            Filter filter = this.Configuration.GetFilter(this.FilterName);
-
-            var filtered = this.State.Files.Where(file => filter.IncludeRules.Any(rule => rule.IsMatch(file)))
-                                           .Where(file => !filter.ExcludeRules.Any(rule => rule.IsMatch(file)));
-
-            this.State.Files = filtered.ToList();
-            
+        { 
+            this.State = new SyncState(GetFilteredInput());            
         }
 
         #endregion Public Methods

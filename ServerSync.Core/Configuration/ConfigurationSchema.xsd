@@ -5,11 +5,11 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
 
-  <!--Types-->
+  <!--Root element type-->
   <xs:complexType name="typeSyncConfiguration">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="left" type="typeSyncFolder" />
-      <xs:element name="right" type="typeSyncFolder" />
+      <xs:element name="left" type="typeSyncFolderDefinition" />
+      <xs:element name="right" type="typeSyncFolderDefinition" />
       <xs:element name="timeStampMargin">
         <xs:complexType>
           <xs:attribute name="ms" type="xs:integer" use="required" />
@@ -18,10 +18,11 @@
       <xs:element name="filter" type="typeFilter" />
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="compare" type="typeCompareAction" />
-        <xs:element name="export" type="typeExportAction" />
-        <xs:element name="readSyncState" type="typeReadWriteSyncStateAction" />
+        <xs:element name="export"  type="typeImportExportAction" />
+        <xs:element name="import"  type="typeImportExportAction" />
+        <xs:element name="readSyncState"  type="typeReadWriteSyncStateAction" />
         <xs:element name="writeSyncState" type="typeReadWriteSyncStateAction" />
-        <xs:element name="applyFiler" type="typeApplyFilterAction" />
+        <xs:element name="applyFilter" type="typeApplyFilterAction" />        
       </xs:choice>
     </xs:choice>
   </xs:complexType>
@@ -30,40 +31,56 @@
   
   <xs:complexType name="typeCompareAction">
     <xs:attribute name="enable" type="xs:boolean" />
-  </xs:complexType>
-
-  <xs:complexType name="typeExportAction" >
-    <xs:attribute name="enable" type="xs:boolean" />
-    <xs:attribute name="targetDirectory" type="xs:string" />
-    <xs:attribute name="fileState" type="typeFileState" />    
-    <xs:attribute name="source" type="typeSource" />
-  </xs:complexType>
-
-  <xs:complexType name="typeReadWriteSyncStateAction">
-    <xs:attribute name="enable" type="xs:boolean" use="required" />
-    <xs:attribute name="fileName" type="xs:string" use="required" />
+    <xs:attribute name="inputFilter" type="xs:string" />
   </xs:complexType>
 
   <xs:complexType name="typeApplyFilterAction">
-    <xs:attribute name="enable" type="xs:boolean" use="required" />
-    <xs:attribute name="filterName" type="xs:string" use="required" />
+    <xs:attribute name="enable" type="xs:boolean" />
+    <xs:attribute name="inputFilter" type="xs:string" />
+  </xs:complexType>
+
+  <xs:complexType name="typeImportExportAction" >
+    <xs:attribute name="enable" type="xs:boolean" />
+    <xs:attribute name="inputFilter" type="xs:string" />
+    <xs:attribute name="transferLocation" type="xs:string" />     
+    <xs:attribute name="syncFolder" type="typeSyncFolder" />
   </xs:complexType>
   
-  
-  <xs:simpleType name="typeFileState">
+
+  <xs:complexType name="typeReadWriteSyncStateAction">
+    <xs:attribute name="enable" type="xs:boolean" use="required" />
+    <xs:attribute name="inputFilter" type="xs:string" />
+    <xs:attribute name="fileName" type="xs:string" use="required" />
+  </xs:complexType>
+ 
+    
+  <xs:simpleType name="typeCompareState">
     <xs:restriction base="xs:string">
       <xs:enumeration value="MissingLeft" />
       <xs:enumeration value="MissingRight" />
-      <xs:enumeration value="Conflict" />
+      <xs:enumeration value="Conflict" />      
     </xs:restriction>
   </xs:simpleType>
 
-
-  <xs:complexType name="typeFileStateElement">
-    <xs:attribute name="state" type="typeFileState" use="required" />
+  <xs:complexType name="typeCompareStateElement">
+    <xs:attribute name="value" type="typeCompareState" use="required" />
   </xs:complexType>
   
-  <xs:simpleType name="typeSource">
+  
+  <xs:simpleType name="typeTransferState">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="InTransferToLeft" />
+      <xs:enumeration value="InTransferToRight" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="typeTransferStateElement">
+    <xs:attribute name="value" type="typeTransferState" use="required" />
+  </xs:complexType>
+  
+  
+  <xs:simpleType name="typeSyncFolder">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Left" />
       <xs:enumeration value="Right" />
@@ -71,7 +88,7 @@
   </xs:simpleType>
 
   <!--SyncFolder type-->
-  <xs:complexType name="typeSyncFolder">
+  <xs:complexType name="typeSyncFolderDefinition">
     <xs:attribute name="name" type="xs:string" use="required" />
     <xs:attribute name="rootPath" type="xs:string" use="required" />
   </xs:complexType>
@@ -95,7 +112,8 @@
   <xs:complexType name="typeFilterElementList">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="regex" type="typeRegexRule"  />
-      <xs:element name="fileState" type="typeFileStateElement" />
+      <xs:element name="compareState" type="typeCompareStateElement" />
+      <xs:element name="transferState" type="typeTransferStateElement" />
     </xs:choice>
   </xs:complexType>
 

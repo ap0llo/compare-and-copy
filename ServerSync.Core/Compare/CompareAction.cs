@@ -20,6 +20,7 @@ namespace ServerSync.Core.Compare
 
         #endregion
 
+
         #region Public Methods
 
         public override void Run()
@@ -35,40 +36,21 @@ namespace ServerSync.Core.Compare
         #endregion
 
 
-        #region Private Implementation        
+        #region Private Implementation
 
-        private static SyncState MergeSyncStates(SyncState exisiting, SyncState newSyncState)
+        private SyncState MergeSyncStates(SyncState exisiting, SyncState newSyncState)
         {
-            var filesExisitng = exisiting.Files.ToDictionary(fileItem => fileItem.RelativePath.Trim().ToLower());
-            var filesNewState = exisiting.Files.ToDictionary(fileItem => fileItem.RelativePath.Trim().ToLower());
+            var filesExisitng = GetFilteredInput().ToDictionary(fileItem => fileItem.RelativePath.Trim().ToLower());           
 
-            foreach (var fileItem in newSyncState.Files.Where(x => x.State == FileState.MissingLeft))
+            foreach (var fileItem in newSyncState.Files.Where(x => x.CompareState == CompareState.MissingLeft))
             {
                 var key = fileItem.RelativePath.ToLower().Trim();
-                if(filesExisitng.ContainsKey(key) && filesExisitng[key].State == FileState.InTransferToLeft)
+                if (filesExisitng.ContainsKey(key))
                 {
-                    fileItem.State = FileState.InTransferToLeft;
+                    fileItem.TransferState = filesExisitng[key].TransferState;
                 }
             }
-
-            foreach (var fileItem in newSyncState.Files.Where(x => x.State == FileState.MissingRight))
-            {
-                var key = fileItem.RelativePath.ToLower().Trim();
-                if (filesExisitng.ContainsKey(key) && filesExisitng[key].State == FileState.InTransferToRight)
-                {
-                    fileItem.State = FileState.InTransferToRight;
-                }
-            }
-
-            foreach (var fileItem in newSyncState.Files.Where(x => x.State == FileState.Conflict))
-            {
-                var key = fileItem.RelativePath.ToLower().Trim();
-                if (filesExisitng.ContainsKey(key) && (filesExisitng[key].State == FileState.InTransferToRight || filesExisitng[key].State == FileState.InTransferToLeft))
-                {
-                    fileItem.State = filesExisitng[key].State;
-                }
-            }
-
+         
 
             return newSyncState;
         }

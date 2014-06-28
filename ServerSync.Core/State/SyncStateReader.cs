@@ -21,7 +21,7 @@ namespace ServerSync.Core.State
             var document = XDocument.Load(fileName);
             var files = document.Descendants(XmlConstants.File).Select(ReadFileItem);
 
-            return new SyncState() { Files = files.ToList() };
+            return new SyncState(files.ToList());
         }
 
 
@@ -35,13 +35,13 @@ namespace ServerSync.Core.State
                 throw new SyncStateException("Empty path found in item list");
             }
 
-            FileState fileState;
-            if(!Enum.TryParse<FileState>(stateStr, true, out fileState))
+            CompareState fileState;
+            if(!Enum.TryParse<CompareState>(stateStr, true, out fileState))
             {
                 throw new SyncStateException("Unknwon type: " + stateStr);
             }
 
-            return new FileItem() { RelativePath = path, State = fileState };      
+            return new FileItem() { RelativePath = path, CompareState = fileState };      
         }
 
     }

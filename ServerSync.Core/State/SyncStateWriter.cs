@@ -29,7 +29,7 @@ namespace ServerSync.Core.State
         {
             return new XElement( XmlConstants.File, 
                                  new XAttribute(XmlConstants.Path, file.RelativePath), 
-                                 new XAttribute(XmlConstants.Type, file.State) );
+                                 new XAttribute(XmlConstants.Type, file.CompareState) );
         }
 
         #endregion Private Implementation

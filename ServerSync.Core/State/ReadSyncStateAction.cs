@@ -7,7 +7,6 @@ namespace ServerSync.Core.State
 
         #region Properties
 
-
         public override string Name
         {
             get { return "ReadSyncState"; }
