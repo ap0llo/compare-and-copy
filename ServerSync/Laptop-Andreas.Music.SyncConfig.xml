@@ -71,12 +71,17 @@
     <exclude>
       <regex pattern=".flac$"/>
       <regex pattern="Thumbs.db$"/>
+      <regex pattern="^Epica\\Storm The Sorrow.*$" />
+      <regex pattern="^Epica\\The Essence Of Silence.*$" />
     </exclude>/
   </filter>
 
   <!--<compare enable="true" />-->
-  <readSyncState enable="true" fileName="C:\Users\Andreas\Desktop\FullStateMusic.xml" />
+  <!--<readSyncState enable="true" fileName="C:\Users\Andreas\Desktop\FullStateMusic.xml" />-->
   <!--<writeSyncState enable="true" fileName="C:\Users\Andreas\Desktop\FullStateMusic.xml" />-->
+  <readSyncState enable="true" fileName="C:\Users\Andreas\Desktop\FullStateMusic.xml" />
   <writeSyncState enable="true" fileName="C:\Users\Andreas\Desktop\Music.xml" inputFilter="default"/>
+  <copy enable="true" syncFolder="Right" inputFilter="default" />
+  <writeSyncState enable="true" fileName="C:\Users\Andreas\Desktop\Music_PostCopy.xml" inputFilter="default"/>
   
 </syncConfiguration>

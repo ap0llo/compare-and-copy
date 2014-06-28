@@ -53,7 +53,7 @@ namespace ServerSync.Core.Copy
                 Console.WriteLine("Copying {0}", item.RelativePath);
 
                 //copy the file to the target
-                EnsureDirectoryExists(Path.GetDirectoryName(absTarget));
+                IOHelper.EnsureDirectoryExists(Path.GetDirectoryName(absTarget));
                 File.Copy(absSource, absTarget, true);
 
                 //set the item's new state

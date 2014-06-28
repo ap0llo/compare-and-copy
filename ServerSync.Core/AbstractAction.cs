@@ -49,12 +49,12 @@ namespace ServerSync.Core
         {
             if(String.IsNullOrEmpty(this.InputFilterName))
             {
-                return this.State.Files;
+                return this.State.Files.ToList();
             }
             else
             {
                 Filter filter = Configuration.GetFilter(this.InputFilterName);
-                return this.State.Files.ApplyFilter(filter);
+                return this.State.Files.ApplyFilter(filter).ToList();
             }
         }
 

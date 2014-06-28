@@ -78,6 +78,10 @@ namespace ServerSync.Core.Configuration
                         configuration.AddAction(ReadApplyFilerAction(element));
                         break;
 
+                    case XmlConstants.Copy:
+                        configuration.AddAction(ReadCopyAction(element));
+                        break;
+
                     default:
                         throw new NotImplementedException("Unknwon element " + element.Name.LocalName + " in Configuration");                        
                 }
@@ -178,14 +182,28 @@ namespace ServerSync.Core.Configuration
             return action;
         }
 
-        private void ApplyCommonImportExportActionProperties(XElement actionElement, ImportExportAction actionInstance)
+        private IAction ReadCopyAction(XElement actionElement)
+        {
+            var actionInstance = new CopyAction();
+            ApplyCommonIOActionProperties(actionElement, actionInstance);
+            return actionInstance;
+        }
+
+        private void ApplyCommonIOActionProperties(XElement actionElement, IOAction actionInstance)
         {
             ApplyCommonActionProperties(actionElement, actionInstance);
-
             actionInstance.SyncFolder = ParseSource(actionElement.RequireAttributeValue(XmlConstants.SyncFolder));
-            actionInstance.TransferLocation = actionElement.RequireAttributeValue(XmlConstants.TransferLocation);
+        }
 
+        private void ApplyCommonImportExportActionProperties(XElement actionElement, ImportExportAction actionInstance)
+        {
+
+            ApplyCommonIOActionProperties(actionElement, actionInstance);
+            
+            actionInstance.TransferLocation = actionElement.RequireAttributeValue(XmlConstants.TransferLocation);
         }     
+
+
 
         private IAction ReadReadSyncStateAction(XElement actionElement)
         {
@@ -312,6 +330,8 @@ namespace ServerSync.Core.Configuration
             public const string WriteSyncState = "writeSyncState";
             
             public const string ApplyFilter = "applyFilter";
+
+            public const string Copy = "copy";
 
         }
 

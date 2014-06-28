@@ -35,7 +35,7 @@ namespace ServerSync.Core.Copy
                 if(File.Exists(absSource))
                 {
                     var dir = Path.GetDirectoryName(absTarget);
-                    EnsureDirectoryExists(dir);
+                    IOHelper.EnsureDirectoryExists(dir);
                     File.Copy(absSource, absTarget);
                     State.RemoveFile(file);
                 }
