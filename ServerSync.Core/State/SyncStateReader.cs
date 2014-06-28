@@ -28,20 +28,27 @@ namespace ServerSync.Core.State
         private FileItem ReadFileItem( XElement item)
         {
             string path = item.Attribute(XmlConstants.Path).Value;
-            string stateStr = item.Attribute(XmlConstants.Type).Value;
 
             if(String.IsNullOrEmpty(path))
             {
                 throw new SyncStateException("Empty path found in item list");
             }
 
-            CompareState fileState;
-            if(!Enum.TryParse<CompareState>(stateStr, true, out fileState))
+            string compareStateStr = item.RequireAttributeValue(XmlConstants.CompareState);
+            CompareState compareState;
+            if(!Enum.TryParse<CompareState>(compareStateStr, true, out compareState))
             {
-                throw new SyncStateException("Unknwon type: " + stateStr);
+                throw new SyncStateException("Unknwon type: " + compareStateStr);
             }
 
-            return new FileItem() { RelativePath = path, CompareState = fileState };      
+            var transferStateStr = item.RequireAttributeValue(XmlConstants.TransferState);
+            TransferState transferState;
+            if(!Enum.TryParse<TransferState>(transferStateStr, out transferState))
+            {
+                throw new SyncStateException("Unknwon type: " + transferStateStr);
+            }
+
+            return new FileItem() { RelativePath = path, CompareState = compareState };      
         }
 
     }
