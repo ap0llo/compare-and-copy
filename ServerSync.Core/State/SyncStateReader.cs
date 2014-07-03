@@ -48,7 +48,7 @@ namespace ServerSync.Core.State
                 throw new SyncStateException("Unknwon type: " + transferStateStr);
             }
 
-            return new FileItem() { RelativePath = path, CompareState = compareState };      
+            return new FileItem() { RelativePath = path, CompareState = compareState, TransferState = transferState };      
         }
 
     }

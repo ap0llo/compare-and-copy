@@ -42,7 +42,7 @@ namespace ServerSync.Core.Compare
         {
             var filesExisitng = GetFilteredInput().ToDictionary(fileItem => fileItem.RelativePath.Trim().ToLower());           
 
-            foreach (var fileItem in newSyncState.Files.Where(x => x.CompareState == CompareState.MissingLeft))
+            foreach (var fileItem in newSyncState.Files)
             {
                 var key = fileItem.RelativePath.ToLower().Trim();
                 if (filesExisitng.ContainsKey(key))

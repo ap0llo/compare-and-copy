@@ -49,7 +49,7 @@
     <Compile Include="Copy\ImportExportAction.cs" />
     <Compile Include="Copy\ImportAction.cs" />
     <Compile Include="Copy\IOAction.cs" />
-    <Compile Include="Copy\IOHelper.cs" />
+    <Compile Include="IOHelper.cs" />
     <Compile Include="Filters\TransferStateFilterElement.cs" />
     <Compile Include="Filters\CompareStateFilterElement.cs" />
     <Compile Include="Filters\IFilterElement.cs" />

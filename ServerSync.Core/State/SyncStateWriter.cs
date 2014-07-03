@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,10 @@ namespace ServerSync.Core.State
             XElement fileList = new XElement(XmlConstants.FileList, state.Files.Select(GetFileItemElement));
 
             var document = new XDocument(new XElement(fileList));
+
+            var dir = Path.GetDirectoryName(fileName);
+            IOHelper.EnsureDirectoryExists(dir);
+
             document.Save(fileName);
         }
 

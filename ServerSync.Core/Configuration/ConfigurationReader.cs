@@ -149,8 +149,14 @@ namespace ServerSync.Core.Configuration
         {
             var newFilter = new Filter();
 
-            newFilter.IncludeRules = ReadFilterElementList(filterNode.Element(XmlConstants.Include));
-            newFilter.ExcludeRules = ReadFilterElementList(filterNode.Element(XmlConstants.Exclude));
+            if (filterNode.Element(XmlConstants.Include) != null)
+            {
+                newFilter.IncludeRules = ReadFilterElementList(filterNode.Element(XmlConstants.Include));
+            }
+            if (filterNode.Element(XmlConstants.Exclude) != null)
+            {
+                newFilter.ExcludeRules = ReadFilterElementList(filterNode.Element(XmlConstants.Exclude));
+            }
             newFilter.Name = filterNode.Attribute(XmlConstants.Name).Value;
 
             return newFilter;

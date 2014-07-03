@@ -36,9 +36,9 @@ namespace ServerSync.Core.Copy
             var rootDir = GetSyncFolderDefinition().RootPath;
 
             //determine the state to set for the items once they have been exported
-            var newTransferState = SyncFolder == SyncFolder.Left ? 
-                    TransferState.InTransferToLeft : 
-                    TransferState.InTransferToRight;
+            var newTransferState = SyncFolder == SyncFolder.Left ?
+                    TransferState.InTransferToRight :
+                    TransferState.InTransferToLeft;
 
             //determine all file times to copy
             var copyItems = GetFilteredInput();
@@ -46,6 +46,12 @@ namespace ServerSync.Core.Copy
 
             foreach (var item in copyItems)
             {
+
+                if(item.TransferState == newTransferState)
+                {
+                    continue;
+                }
+
                 //determine absolute paths for the copy operation
                 var absSource = Path.Combine(rootDir, item.RelativePath);
                 var absTarget = Path.Combine(TransferLocation, item.RelativePath);
