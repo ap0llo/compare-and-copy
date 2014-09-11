@@ -66,14 +66,14 @@ namespace ServerSync.Core.Compare
 
             if(!Directory.Exists(leftAbsolutePath))
             {
-                filesMissingLeft.AddRange(GetFiles(rightAbsolutePath, true).Select(absPath => GetRelativePath(absPath, rightAbsolutePath, true)));
+                filesMissingLeft.AddRange(GetFiles(rightAbsolutePath, true).Select(absPath => IOHelper.GetRelativePath(absPath, rightAbsolutePath, true)));
                 return;
             }
 
 
             if(!Directory.Exists(rightAbsolutePath))
             {
-                filesMissingRight.AddRange(GetFiles(leftAbsolutePath, true).Select(absPath => GetRelativePath(absPath, leftAbsolutePath, true)));
+                filesMissingRight.AddRange(GetFiles(leftAbsolutePath, true).Select(absPath => IOHelper.GetRelativePath(absPath, leftAbsolutePath, true)));
                 return;
             }
 
@@ -89,14 +89,14 @@ namespace ServerSync.Core.Compare
                                             .Select(name => Path.Combine(config.Left.RootPath, relativePath, name));
 
             //add all files in the subtree to the list of files only found in one location
-            this.filesMissingRight.AddRange(uniqueLeft.SelectMany(dir => GetFiles(dir, true)).Select(fullPath => GetRelativePath(fullPath, config.Left.RootPath, true)));
+            this.filesMissingRight.AddRange(uniqueLeft.SelectMany(dir => GetFiles(dir, true)).Select(fullPath => IOHelper.GetRelativePath(fullPath, config.Left.RootPath, true)));
 
             //get absolute paths of directories only found in the right folder
             var uniqueRight = rightDirectories.Where(rName => !leftDirectories.Contains(rName, StringComparer.InvariantCultureIgnoreCase))
                                               .Select(name => Path.Combine(config.Right.RootPath, relativePath, name));
 
             //add all files in the subtree to the list of files only found in one location
-            this.filesMissingLeft.AddRange(uniqueRight.SelectMany(dir => GetFiles(dir, true)).Select(fullPath => GetRelativePath(fullPath, config.Right.RootPath, true)));
+            this.filesMissingLeft.AddRange(uniqueRight.SelectMany(dir => GetFiles(dir, true)).Select(fullPath => IOHelper.GetRelativePath(fullPath, config.Right.RootPath, true)));
 
 
             //compare directories found on both sides
@@ -165,19 +165,7 @@ namespace ServerSync.Core.Compare
             return allFiles; 
         }
 
-        private static string GetRelativePath(string absolutePath, string relativeTo, bool relativeToIsDirectory)
-        {
-            if (relativeToIsDirectory)
-            {
-                relativeTo = Path.Combine(relativeTo, "dummy");
-            }
-
-            Uri fileUri = new Uri(absolutePath);
-            Uri relativeToUri = new Uri(relativeTo);
-
-            var resultUri = relativeToUri.MakeRelativeUri(fileUri);
-            return Uri.UnescapeDataString(resultUri.ToString());
-        }
+        
 
         private bool FilesAreEqual(string relativePath)
         {

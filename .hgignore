@@ -9,3 +9,4 @@ packages/
 .build\MSBuild.Community.Tasks.targets
 *.suo
 *.user
+TransferToAgent/obj/

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core
 {
-    class IOHelper
+    public class IOHelper
     {
         public static void EnsureDirectoryExists(string path)
         {
@@ -18,6 +18,21 @@ namespace ServerSync.Core
 
                 Directory.CreateDirectory(path);
             }
+        }
+
+
+        public static string GetRelativePath(string absolutePath, string relativeTo, bool relativeToIsDirectory)
+        {
+            if (relativeToIsDirectory)
+            {
+                relativeTo = Path.Combine(relativeTo, "dummy");
+            }
+
+            Uri fileUri = new Uri(absolutePath);
+            Uri relativeToUri = new Uri(relativeTo);
+
+            var resultUri = relativeToUri.MakeRelativeUri(fileUri);
+            return Uri.UnescapeDataString(resultUri.ToString());
         }
     }
 }

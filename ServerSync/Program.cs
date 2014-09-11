@@ -23,27 +23,31 @@ namespace ServerSync
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            if(args.Length != 1)
+            if(args.Length < 1)
             {
                 Console.WriteLine("You need to specify a Sync Configuration file");
                 return 1;
             }
 
-            var configFilePath = Path.GetFullPath(args[0]);
 
-            if(!File.Exists(configFilePath))
+            for(int i = 0; i < args.Length; i++)
             {
-                Console.WriteLine("Could not find config file at '{0}'", configFilePath);
-                return 2;
+                var configFilePath = Path.GetFullPath(args[i]);
+
+                if (!File.Exists(configFilePath))
+                {
+                    Console.WriteLine("Could not find config file at '{0}'", configFilePath);
+                    return 2;
+                }
+
+                var config = new ConfigurationReader().ReadConfiguration(configFilePath);
+                ExecuteJob(config);
+
+                stopWatch.Stop();
+
+                Console.WriteLine("Elapsed Time : " + stopWatch.Elapsed.ToString());
             }
-
-            var config = new ConfigurationReader().ReadConfiguration(configFilePath);
-            ExecuteJob(config);
-
-            stopWatch.Stop();
-
-            Console.WriteLine("Elapsed Time : " + stopWatch.Elapsed.ToString());
-
+           
             return 0;
         }
 

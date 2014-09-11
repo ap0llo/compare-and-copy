@@ -40,7 +40,8 @@ namespace ServerSync.Core.Compare
 
         private SyncState MergeSyncStates(SyncState exisiting, SyncState newSyncState)
         {
-            var filesExisitng = GetFilteredInput().ToDictionary(fileItem => fileItem.RelativePath.Trim().ToLower());           
+
+            var filesExisitng = exisiting.Files.ToDictionary(fileItem => fileItem.RelativePath.Trim().ToLower());           
 
             foreach (var fileItem in newSyncState.Files)
             {
