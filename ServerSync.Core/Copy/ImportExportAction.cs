@@ -11,10 +11,11 @@ namespace ServerSync.Core.Copy
     abstract class ImportExportAction : IOAction
     {
 
-        #region Properties
-        
+        #region Properties        
 
         public string TransferLocation { get; set; }
+
+        public ByteSize.ByteSize? MaxTransferSize { get; set; }
 
         #endregion
 

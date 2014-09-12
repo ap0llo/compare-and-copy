@@ -47,10 +47,13 @@
   </xs:complexType>
 
   <xs:complexType name="typeImportExportAction" >
+    <xs:sequence>
+      <xs:element name="maxTransferSize" type="typeByteSize" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
     <xs:attribute name="enable" type="xs:boolean" />
     <xs:attribute name="inputFilter" type="xs:string" />
     <xs:attribute name="syncFolder" type="typeSyncFolder" />
-    <xs:attribute name="transferLocation" type="xs:string" />     
+    <xs:attribute name="transferLocation" type="xs:string" />       
   </xs:complexType>  
 
   <xs:complexType name="typeReadWriteSyncStateAction">
@@ -124,6 +127,21 @@
     </xs:choice>
   </xs:complexType>
 
+  
+  
+  <!--ByteSize type-->
+  <!--
+    Type to specify data size. Size is specified in either TB, GB, MB, KB or B
+    If more than one attribute is used, the specified size is the sum of the individual attributes
+  -->
+  <xs:complexType name="typeByteSize">
+    <xs:attribute name="tb" type="xs:int" use="optional" />
+    <xs:attribute name="gb" type="xs:int" use="optional" />
+    <xs:attribute name="mb" type="xs:int" use="optional" />
+    <xs:attribute name="kb" type="xs:int" use="optional" />
+    <xs:attribute name="b" type="xs:int" use="optional" />
+  </xs:complexType>
+  
 
   <!--Root Element-->
   <xs:element name="syncConfiguration" type="typeSyncConfiguration" />

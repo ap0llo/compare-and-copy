@@ -30,6 +30,21 @@ namespace ServerSync.Core
             return attribute.Value;
         }
 
+        public static long ReadLongAttributeValueOrDefault(this XElement element, XName attributeName)
+        {
+            var attribute = element.Attribute(attributeName);
+
+            if(attribute == null)
+            {
+                return 0;
+            }
+            else
+            {
+                return long.Parse(attribute.Value);
+            }
+
+        }
+
 
 
         public static IEnumerable<FileItem> ApplyFilter(this IEnumerable<FileItem> items, Filter filter)

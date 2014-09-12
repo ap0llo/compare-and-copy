@@ -20,7 +20,6 @@ namespace ServerSync.Core
             }
         }
 
-
         public static string GetRelativePath(string absolutePath, string relativeTo, bool relativeToIsDirectory)
         {
             if (relativeToIsDirectory)
@@ -34,5 +33,28 @@ namespace ServerSync.Core
             var resultUri = relativeToUri.MakeRelativeUri(fileUri);
             return Uri.UnescapeDataString(resultUri.ToString());
         }
+
+        /// <summary>
+        /// Gets the combined size of all files in the specified directory and any of its subdirectories
+        /// </summary>
+        public static ByteSize.ByteSize GetDirectorySize(string path)
+        {
+            var result = ByteSize.ByteSize.FromBytes(0);
+
+            foreach(var file in Directory.GetFiles(path))
+            {
+                var fileSize = new FileInfo(file).Length;
+                result.AddBytes(fileSize);
+            }
+
+            foreach (var directory in Directory.GetDirectories(path))
+            {
+                var dirSize = GetDirectorySize(directory);
+                result += dirSize;
+            }
+
+            return result;
+        }
+
     }
 }

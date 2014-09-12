@@ -17,7 +17,6 @@ namespace ServerSync.Core.Copy
     {
 
         #region Properties
-
         
         public override string Name
         {
@@ -44,9 +43,16 @@ namespace ServerSync.Core.Copy
             var copyItems = GetFilteredInput();
 
 
+            if(MaxTransferSize.HasValue)
+            {
+                Console.WriteLine("Copying at most {0} GB", MaxTransferSize.Value.ToString("GB"));
+            }
+
+
+           
             foreach (var item in copyItems)
             {
-
+              
                 if(item.TransferState == newTransferState)
                 {
                     continue;
@@ -55,6 +61,21 @@ namespace ServerSync.Core.Copy
                 //determine absolute paths for the copy operation
                 var absSource = Path.Combine(rootDir, item.RelativePath);
                 var absTarget = Path.Combine(TransferLocation, item.RelativePath);
+                var size = new FileInfo(absSource).Length;
+                
+                //check if copying the file would exceed the maximum tranfer size
+                //continue because there might be a file thaht can be copied without exceeding the max size
+                //this way the copy as much as possible                 
+                if(MaxTransferSize.HasValue)
+                {
+                    var transferSize = IOHelper.GetDirectorySize(TransferLocation);
+
+                    if(transferSize.AddBytes(size) > MaxTransferSize)
+                    {
+                        Console.WriteLine("Skipping '{0}' because copying it would exceed the maximum transfer size", item.RelativePath);
+                        continue;
+                    }
+                }
 
                 Console.WriteLine("Copying {0}", item.RelativePath);
 
@@ -63,11 +84,15 @@ namespace ServerSync.Core.Copy
                 File.Copy(absSource, absTarget, true);
 
                 //set the item's new state
-                item.TransferState = newTransferState;
+                item.TransferState = newTransferState;                
+
             }                       
         }
 
         #endregion
+
+
+
 
 
     }

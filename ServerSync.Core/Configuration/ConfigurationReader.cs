@@ -203,10 +203,15 @@ namespace ServerSync.Core.Configuration
 
         private void ApplyCommonImportExportActionProperties(XElement actionElement, ImportExportAction actionInstance)
         {
-
             ApplyCommonIOActionProperties(actionElement, actionInstance);
             
             actionInstance.TransferLocation = actionElement.RequireAttributeValue(XmlConstants.TransferLocation);
+
+
+            if(actionElement.Element(XmlConstants.MaxTransferSize) != null)
+            {
+                actionInstance.MaxTransferSize = ReadByteSize(actionElement.Element(XmlConstants.MaxTransferSize));
+            }
         }     
 
 
@@ -246,6 +251,24 @@ namespace ServerSync.Core.Configuration
             }
         }
 
+
+        private ByteSize.ByteSize ReadByteSize(XElement byteSizeElement)
+        {
+
+            var teraByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.TeraByte);
+            var gigaByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.GigaByte);
+            var megaByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.MegaByte);
+            var kiloByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.KiloByte);
+            var bytes = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.Byte);
+
+
+            return ByteSize.ByteSize.FromBytes(bytes)
+                                    .AddKiloBytes(kiloByte)
+                                    .AddMegaBytes(megaByte)
+                                    .AddGigaBytes(gigaByte)
+                                    .AddTeraBytes(teraByte);
+
+        }
 
         #endregion Actions
 
@@ -322,6 +345,16 @@ namespace ServerSync.Core.Configuration
             public const string InputFilter = "inputFilter";
 
             public const string Value = "value";
+
+            public const string MaxTransferSize = "maxTransferSize";
+
+            //byte sizes
+            public const string TeraByte = "tb";
+            public const string GigaByte = "gb";
+            public const string MegaByte = "mb";
+            public const string KiloByte = "kb";
+            public const string Byte = "b";
+
 
             //Action Names
 
