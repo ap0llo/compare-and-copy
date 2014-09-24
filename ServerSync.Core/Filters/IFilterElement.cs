@@ -9,6 +9,9 @@ namespace ServerSync.Core.Filters
 {
     public interface IFilterElement
     {
+        /// <summary>
+        /// Determines if the specified <see cref="FileItem"/> has properties to fulfill the conditions defined by the filter element
+        /// </summary>
         bool IsMatch(FileItem item);
     }
 }

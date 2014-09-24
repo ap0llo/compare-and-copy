@@ -10,6 +10,7 @@ namespace ServerSync.Core.Configuration
 {
     public class SyncConfiguration
     {
+
         #region Fields
 
         private Dictionary<string, Filter> filters = new Dictionary<string,Filter>();
@@ -28,26 +29,15 @@ namespace ServerSync.Core.Configuration
         
         public IEnumerable<Filter> Filters
         {
-            get
-            {
-                return this.filters.Values;
-            }
+            get { return this.filters.Values; }
         }        
 
-        public IEnumerable<IAction> Actions { get { return this.actions; } }
-
-        #endregion Properties
-
-
-        #region Constructor
-
-        public SyncConfiguration()
+        public IEnumerable<IAction> Actions 
         {
-            
+            get { return this.actions; } 
         }
 
-
-        #endregion
+        #endregion Properties
 
 
         #region Public Methods
@@ -86,5 +76,6 @@ namespace ServerSync.Core.Configuration
         }
 
         #endregion Private Implementation
+
     }
 }

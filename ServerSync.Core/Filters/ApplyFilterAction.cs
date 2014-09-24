@@ -10,6 +10,7 @@ namespace ServerSync.Core.Filters
 {
     class ApplyFilterAction : AbstractAction
     {
+
         #region Properties
 
         public override string Name

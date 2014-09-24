@@ -4,18 +4,18 @@ using ServerSync.Core.Filters;
 using ServerSync.Core.State;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace ServerSync.Core.Configuration
 {
     public class ConfigurationReader
     {
+
         #region Public  Methods
 
+        /// <summary>
+        /// Reads sync configuration from the specified file
+        /// </summary>
         public SyncConfiguration ReadConfiguration(string fileName)
         {
             XDocument configFile = XDocument.Load(fileName);
@@ -212,9 +212,25 @@ namespace ServerSync.Core.Configuration
             {
                 actionInstance.MaxTransferSize = ReadByteSize(actionElement.Element(XmlConstants.MaxTransferSize));
             }
-        }     
+        }
+
+        private ByteSize.ByteSize ReadByteSize(XElement byteSizeElement)
+        {
+
+            var teraByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.TeraByte);
+            var gigaByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.GigaByte);
+            var megaByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.MegaByte);
+            var kiloByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.KiloByte);
+            var bytes = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.Byte);
 
 
+            return ByteSize.ByteSize.FromBytes(bytes)
+                                    .AddKiloBytes(kiloByte)
+                                    .AddMegaBytes(megaByte)
+                                    .AddGigaBytes(gigaByte)
+                                    .AddTeraBytes(teraByte);
+
+        }
 
         private IAction ReadReadSyncStateAction(XElement actionElement)
         {
@@ -249,25 +265,6 @@ namespace ServerSync.Core.Configuration
             {
                 actionInstance.InputFilterName = inputFilterAttribute.Value;
             }
-        }
-
-
-        private ByteSize.ByteSize ReadByteSize(XElement byteSizeElement)
-        {
-
-            var teraByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.TeraByte);
-            var gigaByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.GigaByte);
-            var megaByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.MegaByte);
-            var kiloByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.KiloByte);
-            var bytes = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.Byte);
-
-
-            return ByteSize.ByteSize.FromBytes(bytes)
-                                    .AddKiloBytes(kiloByte)
-                                    .AddMegaBytes(megaByte)
-                                    .AddGigaBytes(gigaByte)
-                                    .AddTeraBytes(teraByte);
-
         }
 
         #endregion Actions
@@ -350,9 +347,13 @@ namespace ServerSync.Core.Configuration
 
             //byte sizes
             public const string TeraByte = "tb";
+
             public const string GigaByte = "gb";
+            
             public const string MegaByte = "mb";
+            
             public const string KiloByte = "kb";
+            
             public const string Byte = "b";
 
 
@@ -377,5 +378,6 @@ namespace ServerSync.Core.Configuration
         #endregion Xml Constants
 
         #endregion Private Implementation
+
     }
 }

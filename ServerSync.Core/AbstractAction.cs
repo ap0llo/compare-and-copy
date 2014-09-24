@@ -9,11 +9,17 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core
 {
+    /// <summary>
+    /// Base implementation of <see cref="IAction"/>
+    /// </summary>
     public abstract class AbstractAction : IAction
     {
         
         #region IAction Properties
 
+        /// <summary>
+        /// The action's name
+        /// </summary>
         public abstract string Name { get; }
 
         /// <summary>
@@ -31,8 +37,10 @@ namespace ServerSync.Core
         /// </summary>
         public SyncState State { get; set; }
 
+        /// <summary>
+        /// The name of the filter to apply to the input before processing it
+        /// </summary>
         public string InputFilterName { get; set; }
-
 
         #endregion IAction Properties
 
@@ -42,6 +50,7 @@ namespace ServerSync.Core
         public abstract void Run();
 
         #endregion
+
 
         #region Protected Members
 
@@ -57,7 +66,6 @@ namespace ServerSync.Core
                 return this.State.Files.ApplyFilter(filter).ToList();
             }
         }
-
 
         #endregion
 

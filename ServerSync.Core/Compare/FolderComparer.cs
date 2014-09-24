@@ -9,6 +9,9 @@ using ServerSync.Core.State;
 
 namespace ServerSync.Core.Compare
 {
+    /// <summary>
+    /// Implementation of comparison between two folders
+    /// </summary>
     public class FolderComparer
     {
 
@@ -26,6 +29,10 @@ namespace ServerSync.Core.Compare
 
         #region Constructor
 
+        /// <summary>
+        /// Initializes a new instance of FolderComparer
+        /// </summary>
+        /// <param name="config">The configuration to use for comparison</param>
         public FolderComparer(SyncConfiguration config)
         {
             this.config = config;
@@ -38,17 +45,32 @@ namespace ServerSync.Core.Compare
 
         public SyncState Run()
         {
+            //clear lists
             filesMissingLeft = new List<string>();
             filesMissingRight = new List<string>();
             conflicts = new List<string>();
             sameFiles = new List<string>();
 
+            //run comparison
             CompareFolders("");
 
-
-            var files = filesMissingLeft.Select(path => new FileItem() { RelativePath = path, CompareState = CompareState.MissingLeft });
-            files = files.Union(filesMissingRight.Select(path => new FileItem() { RelativePath = path, CompareState = CompareState.MissingRight }));
-            files = files.Union(conflicts.Select(path => new FileItem() { RelativePath = path, CompareState = CompareState.Conflict }));
+            //build SyncState object from file lists
+            var files = filesMissingLeft.Select(path => new FileItem() 
+                { 
+                    RelativePath = path, 
+                    CompareState = CompareState.MissingLeft 
+                });
+            files = files.Union(filesMissingRight.Select(path => new FileItem() 
+                { 
+                    RelativePath = path, 
+                    CompareState = CompareState.MissingRight 
+                }));
+            files = files.Union(conflicts.Select(path => 
+                new FileItem() 
+                { 
+                    RelativePath = path, 
+                    CompareState = CompareState.Conflict 
+                }));
 
             return new SyncState(files.ToList());
         }

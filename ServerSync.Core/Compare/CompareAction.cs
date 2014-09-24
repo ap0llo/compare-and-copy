@@ -1,13 +1,11 @@
-﻿using ServerSync.Core.Configuration;
-using ServerSync.Core.State;
-using System;
-using System.Collections.Generic;
+﻿using ServerSync.Core.State;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerSync.Core.Compare
 {
+    /// <summary>
+    /// Implementation of the "Compare" Action
+    /// </summary>
     class CompareAction : AbstractAction
     {
 
@@ -25,10 +23,11 @@ namespace ServerSync.Core.Compare
 
         public override void Run()
         {
+            //compare directoris using FolderComparer
             FolderComparer comparer = new FolderComparer(this.Configuration);
             var comparisonResult = comparer.Run();
 
-
+            //combine new and old sync states
             var combinedState = MergeSyncStates(this.State, comparisonResult);
             this.State = combinedState;
         }
@@ -38,20 +37,27 @@ namespace ServerSync.Core.Compare
 
         #region Private Implementation
 
-        private SyncState MergeSyncStates(SyncState exisiting, SyncState newSyncState)
+        /// <summary>
+        /// Merges the exisitng SyncState into the new state.
+        /// Merge is done by adding setting the TransferState for files that exist in both SyncStates to the value from "exisitingSyncState"
+        /// </summary>
+        /// <returns>Returns 'newSyncState'</returns>
+        private SyncState MergeSyncStates(SyncState exisitingSyncState, SyncState newSyncState)
         {
+            //build dictionary with all files from exisitng sync state
+            var filesExisting = exisitingSyncState.Files.ToDictionary(fileItem => fileItem.RelativePath.Trim().ToLower());           
 
-            var filesExisitng = exisiting.Files.ToDictionary(fileItem => fileItem.RelativePath.Trim().ToLower());           
-
+            //iterate over all files from new sync state
             foreach (var fileItem in newSyncState.Files)
             {
                 var key = fileItem.RelativePath.ToLower().Trim();
-                if (filesExisitng.ContainsKey(key))
+
+                //if file exists in both states, set TransferState to value from exisitng sync state
+                if (filesExisting.ContainsKey(key))
                 {
-                    fileItem.TransferState = filesExisitng[key].TransferState;
+                    fileItem.TransferState = filesExisting[key].TransferState;
                 }
-            }
-         
+            }         
 
             return newSyncState;
         }

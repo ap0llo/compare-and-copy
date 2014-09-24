@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core.Copy
 {
+    /// <summary>
+    /// Base class for both Import and Export action
+    /// </summary>
     abstract class ImportExportAction : IOAction
     {
 

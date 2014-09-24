@@ -11,6 +11,5 @@ namespace ServerSync.Core.Configuration
         public String Name { get; set; }
 
         public String RootPath { get; set; }
-
     }
 }
