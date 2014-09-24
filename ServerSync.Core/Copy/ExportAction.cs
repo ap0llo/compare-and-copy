@@ -81,7 +81,11 @@ namespace ServerSync.Core.Copy
 
                 //copy the file to the target
                 IOHelper.EnsureDirectoryExists(Path.GetDirectoryName(absTarget));
-                File.Copy(absSource, absTarget, true);
+
+                var absTarget_tmp = absTarget + ".tmp";
+                File.Copy(absSource, absTarget_tmp, true);
+
+                File.Move(absTarget_tmp, absTarget);
 
                 //set the item's new state
                 item.TransferState = newTransferState;                
