@@ -48,7 +48,10 @@
 
   <xs:complexType name="typeImportExportAction" >
     <xs:sequence>
-      <xs:element name="maxTransferSize" type="typeByteSize" minOccurs="0" maxOccurs="1" />
+      <xs:choice minOccurs="0" maxOccurs="1">
+        <xs:element name="maxTransferSize" type="typeByteSize" />
+        <xs:element name="maxTransferSizeParent" type="typeByteSize"  />        
+      </xs:choice>      
     </xs:sequence>
     <xs:attribute name="enable" type="xs:boolean" />
     <xs:attribute name="inputFilter" type="xs:string" />

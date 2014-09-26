@@ -20,6 +20,8 @@ namespace ServerSync.Core.Copy
 
         public ByteSize.ByteSize? MaxTransferSize { get; set; }
 
+        public ByteSize.ByteSize? MaxTransferSizeParent { get; set; }
+
         #endregion
 
 

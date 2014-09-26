@@ -207,10 +207,13 @@ namespace ServerSync.Core.Configuration
             
             actionInstance.TransferLocation = actionElement.RequireAttributeValue(XmlConstants.TransferLocation);
 
-
             if(actionElement.Element(XmlConstants.MaxTransferSize) != null)
             {
                 actionInstance.MaxTransferSize = ReadByteSize(actionElement.Element(XmlConstants.MaxTransferSize));
+            }
+            else if(actionElement.Element(XmlConstants.MaxTransferSizeParent) != null)
+            {
+                actionInstance.MaxTransferSizeParent = ReadByteSize(actionElement.Element(XmlConstants.MaxTransferSizeParent));
             }
         }
 
@@ -344,6 +347,8 @@ namespace ServerSync.Core.Configuration
             public const string Value = "value";
 
             public const string MaxTransferSize = "maxTransferSize";
+
+            public const string MaxTransferSizeParent = "maxTransferSizeParent";
 
             //byte sizes
             public const string TeraByte = "tb";
