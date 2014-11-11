@@ -78,7 +78,6 @@ namespace ServerSync.Core
             }
             catch (IOException ex)
             {
-
                 Console.WriteLine("Error copying file '{0}' to '{1}': {2}", sourcePath, destinationPath, ex);
                 return false;
             }
