@@ -74,16 +74,13 @@ namespace ServerSync.Core.Copy
 
                 Console.WriteLine("Copying {0}", item.RelativePath);
 
-                //copy the file to the target
-                IOHelper.EnsureDirectoryExists(Path.GetDirectoryName(absTarget));
+                var success = IOHelper.CopyFile(absSource, absTarget);
 
-                var absTarget_tmp = absTarget + ".tmp";
-                File.Copy(absSource, absTarget_tmp, true);
-
-                File.Move(absTarget_tmp, absTarget);
-
-                //set the item's new state
-                item.TransferState = newTransferState;                
+                if(success)
+                {
+                    //set the item's new state
+                    item.TransferState = newTransferState;                
+                }
 
             }                       
         }

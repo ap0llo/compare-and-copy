@@ -56,5 +56,46 @@ namespace ServerSync.Core
             return result;
         }
 
+
+        public static bool CopyFile(string sourcePath, string destinationPath)
+        {
+
+            var tmpPath = destinationPath + ".tmp";
+            
+            if(File.Exists(tmpPath))
+            {
+                Console.WriteLine("Error copying file '{0}' to '{1}': TmpFile already exists", sourcePath, destinationPath);
+                return false;
+            }
+
+            try
+            {
+                EnsureDirectoryExists(Path.GetDirectoryName(destinationPath));
+
+                File.Copy(sourcePath, tmpPath);
+                File.Move(tmpPath, destinationPath);
+
+            }
+            catch (IOException ex)
+            {
+
+                Console.WriteLine("Error copying file '{0}' to '{1}': {2}", sourcePath, destinationPath, ex);
+                return false;
+            }
+            finally
+            {
+                if(File.Exists(tmpPath))
+                {
+                    File.Delete(tmpPath);
+                }
+            }
+
+
+            return true;
+        }
+
+
+        
+
     }
 }

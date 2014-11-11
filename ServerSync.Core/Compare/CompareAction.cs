@@ -1,4 +1,5 @@
 ﻿using ServerSync.Core.State;
+using System;
 using System.Linq;
 
 namespace ServerSync.Core.Compare
@@ -26,6 +27,13 @@ namespace ServerSync.Core.Compare
             //compare directoris using FolderComparer
             FolderComparer comparer = new FolderComparer(this.Configuration);
             var comparisonResult = comparer.Run();
+
+            if(comparisonResult == null)
+            {
+                Console.WriteLine("Error comparing folders");
+                return; 
+            }
+
 
             //combine new and old sync states
             var combinedState = MergeSyncStates(this.State, comparisonResult);

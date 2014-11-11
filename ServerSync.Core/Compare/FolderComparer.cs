@@ -51,6 +51,19 @@ namespace ServerSync.Core.Compare
             conflicts = new List<string>();
             sameFiles = new List<string>();
 
+            if(!Directory.Exists(this.config.Left.RootPath))
+            {
+                Console.WriteLine("Error: left root directory does not exist");
+                return null;
+            }
+
+            if (!Directory.Exists(this.config.Right.RootPath))
+            {
+                Console.WriteLine("Error: right root directory does not exist");
+                return null;
+            }
+
+
             //run comparison
             CompareFolders("");
 
