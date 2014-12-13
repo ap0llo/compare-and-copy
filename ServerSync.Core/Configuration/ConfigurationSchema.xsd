@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema id="ConfigurationSchema"
     elementFormDefault="qualified"
-    xmlns:mstns="http://tempuri.org/XMLSchema1.xsd"
+    targetNamespace="http://grynwald.net/schemas/2014/ServerSync/v1/Configuration/"
+    xmlns="http://grynwald.net/schemas/2014/ServerSync/v1/Configuration/"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
 
@@ -96,7 +97,9 @@
   <xs:simpleType name="typeSyncFolder">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Left" />
+      <xs:enumeration value="left" />
       <xs:enumeration value="Right" />
+      <xs:enumeration value="right" />
     </xs:restriction>
   </xs:simpleType>
 
@@ -109,8 +112,8 @@
   <!--Filter Type-->
   <xs:complexType name="typeFilter">
     <xs:sequence>
-      <xs:element name="include" type="typeFilterElementList" />
-      <xs:element name="exclude" type="typeFilterElementList" />
+      <xs:element name="include" type="typeFilterElementList"  minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="exclude" type="typeFilterElementList"  minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required"/>
   </xs:complexType>

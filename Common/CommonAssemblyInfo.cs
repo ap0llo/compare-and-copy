@@ -10,6 +10,21 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
 
-
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+/*
+ * Versioning Guidance: 
+ * 
+ *   - Format: MAJOR.MINOR.PATCH.BUILD
+ *   
+ *   - Use semantic versioning for MAJOR.MINOR.PATCH
+ *   - Increment Major version for breaking changes,
+ *   - Increment Minor version for backwards-compatible addition of features.
+ *   - For bug-fixes increment Patch-Number
+ *  
+ *   - Build-Number other than zero indicates a development build based of the version MAJOR.MINOR.PATCH.
+ *   - Increment Build-Number with at least with every checkin. 
+ *   - Reset Build-Number to 0 when releasing a new version (which means incrementing either Major, Minor or Patch numbers) 
+ * 
+ */
+//TODO: Increment to 1.2 before release
+[assembly: AssemblyVersion("1.1.0.1")]
+[assembly: AssemblyFileVersion("1.1.0.1")]

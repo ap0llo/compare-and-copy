@@ -35,8 +35,17 @@ namespace ServerSync
                     Console.WriteLine("Could not find config file at '{0}'", configFilePath);
                     return 2;
                 }
-                var config = new ConfigurationReader().ReadConfiguration(configFilePath);
-                
+                SyncConfiguration config = null;
+                try
+                {
+                    config = new ConfigurationReader().ReadConfiguration(configFilePath);
+                }
+                catch(ConfigurationException ex)
+                {
+                    Console.WriteLine("Error reading configuration: " + ex.Message);
+                    return 1;
+                }
+
                 //execute the jib
                 ExecuteJob(config);
 

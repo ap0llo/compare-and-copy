@@ -4,12 +4,22 @@ using ServerSync.Core.Filters;
 using ServerSync.Core.State;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Schema;
 
 namespace ServerSync.Core.Configuration
 {
     public class ConfigurationReader
     {
+
+        #region Constants
+
+        const string s_ConfigurationSchema = "ServerSync.Core.Configuration.ConfigurationSchema.xsd";
+
+        #endregion
+
 
         #region Public  Methods
 
@@ -22,9 +32,16 @@ namespace ServerSync.Core.Configuration
 
             SyncConfiguration configuration = new SyncConfiguration();
 
-            ReadSyncConfiguration(configFile, configuration);
+            try
+            {
+                ReadSyncConfiguration(configFile, configuration);
+            }
+            catch(ArgumentException ex)
+            {
+                throw new ConfigurationException("Error reading configuration", ex);
+            }
 
-            return configuration;            
+            return configuration;
         }
 
         #endregion Public Methods
@@ -32,70 +49,78 @@ namespace ServerSync.Core.Configuration
 
         #region Private Implementation
 
-        private void ReadSyncConfiguration(XDocument configFile, SyncConfiguration configuration)
+        void ReadSyncConfiguration(XDocument configFile, SyncConfiguration configuration)
         {
+
+            //support for legacy configuration files which did not include any xml namespace
+            if(String.IsNullOrEmpty(configFile.Root.Name.NamespaceName))
+            {
+                configFile.Root.ReplaceNamespace("", XmlNames.GetNamespace());
+            }
+
+            configFile.Validate(GetConfigutationSchema(), (o, e) => { throw new ConfigurationException(e.Message); });
+
             foreach (var element in configFile.Root.Elements())
             {
-                switch (element.Name.LocalName)
+                if (element.Name == XmlNames.Left)
                 {
-                    case XmlConstants.Left:
-                        configuration.Left = ReadSyncFolderDefinition(element);
-                        break;
-
-                    case XmlConstants.Right:
-                        configuration.Right = ReadSyncFolderDefinition(element);
-                        break;
-
-                    case XmlConstants.TimeStampMargin:
-                        configuration.TimeStampMargin = ReadTimeStampMargin(element);
-                        break;
-
-                    case XmlConstants.Filter:
-                        var filter = ReadFilter(element);
-                        configuration.AddFilter(filter);
-                        break;
-
-                    case XmlConstants.Compare:
-                        configuration.AddAction(ReadCompareAction(element));
-                        break;
-
-                    case XmlConstants.Export:
-                        configuration.AddAction(ReadExportAction(element));
-                        break;
-                    case XmlConstants.Import:
-                        configuration.AddAction(ReadImportAction(element));
-                        break;
-
-                    case XmlConstants.ReadSyncState:
-                        configuration.AddAction(ReadReadSyncStateAction(element));
-                        break;
-
-                    case XmlConstants.WriteSyncState:
-                        configuration.AddAction(ReadWriteSyncStateAction(element));
-                        break;     
-            
-                    case XmlConstants.ApplyFilter:
-                        configuration.AddAction(ReadApplyFilerAction(element));
-                        break;
-
-                    case XmlConstants.Copy:
-                        configuration.AddAction(ReadCopyAction(element));
-                        break;
-
-                    default:
-                        throw new NotImplementedException("Unknwon element " + element.Name.LocalName + " in Configuration");                        
+                    configuration.Left = ReadSyncFolderDefinition(element);
+                }
+                else if (element.Name == XmlNames.Right)
+                {
+                    configuration.Right = ReadSyncFolderDefinition(element);
+                }
+                else if (element.Name == XmlNames.TimeStampMargin)
+                {
+                    configuration.TimeStampMargin = ReadTimeStampMargin(element);
+                }
+                else if (element.Name == XmlNames.Filter)
+                {
+                    var filter = ReadFilter(element);
+                    configuration.AddFilter(filter);
+                }
+                else if (element.Name == XmlNames.Compare)
+                {
+                    configuration.AddAction(ReadCompareAction(element));
+                }
+                else if (element.Name == XmlNames.Export)
+                {
+                    configuration.AddAction(ReadExportAction(element));
+                }
+                else if (element.Name == XmlNames.Import)
+                {
+                    configuration.AddAction(ReadImportAction(element));
+                }
+                else if (element.Name == XmlNames.ReadSyncState)
+                {
+                    configuration.AddAction(ReadReadSyncStateAction(element));
+                }
+                else if (element.Name == XmlNames.WriteSyncState)
+                {
+                    configuration.AddAction(ReadWriteSyncStateAction(element));
+                }
+                else if (element.Name == XmlNames.ApplyFilter)
+                {
+                    configuration.AddAction(ReadApplyFilerAction(element));
+                }
+                else if (element.Name == XmlNames.Copy)
+                {
+                    configuration.AddAction(ReadCopyAction(element));
+                }
+                else
+                {
+                    throw new ConfigurationException("Unknown element " + element.Name.LocalName + " in Configuration");
                 }
             }
-            
         }
 
         #region SyncFolderDefinition
 
-        private SyncFolderDefinition ReadSyncFolderDefinition(XElement xmlNode)
+        SyncFolderDefinition ReadSyncFolderDefinition(XElement xmlNode)
         {
             var result = new SyncFolderDefinition();
-            result.Name = xmlNode.Attribute(XmlConstants.Name).Value;
-            result.RootPath = xmlNode.Attribute(XmlConstants.RootPath).Value;
+            result.Name = xmlNode.Attribute(XmlAttributeNames.Name).Value;
+            result.RootPath = xmlNode.Attribute(XmlAttributeNames.RootPath).Value;
             return result;
         }
 
@@ -103,61 +128,58 @@ namespace ServerSync.Core.Configuration
 
         #region Global Properties
 
-        private long ReadTimeStampMargin(XElement element)
+        long ReadTimeStampMargin(XElement element)
         {
             return long.Parse(element.Attribute("ms").Value);
-            
         }
 
         #endregion Global Properties
 
         #region Filter
 
-        private IEnumerable<IFilterElement> ReadFilterElementList(XElement listNode)
+        IEnumerable<IFilterElement> ReadFilterElementList(XElement listNode)
         {
             List<IFilterElement> filterElements = new List<IFilterElement>();
 
             foreach (var elementNode in listNode.Elements())
             {
-                switch (elementNode.Name.LocalName)
+                if(elementNode.Name == XmlNames.Regex)
                 {
-                    case XmlConstants.Regex:
-                        var pattern = elementNode.Attribute(XmlConstants.Pattern).Value;
-                        filterElements.Add(new RegexFilterElement(pattern));
-                        break;
-
-                    case XmlConstants.CompareState:
-                        var compareState = ParseCompareState(elementNode.RequireAttributeValue(XmlConstants.Value));
-                        filterElements.Add(new CompareStateFilterElement(compareState));
-                        break;
-
-                    case XmlConstants.TransferState :
-                        var transferState = ParseTransferState(elementNode.RequireAttributeValue(XmlConstants.Value));
-                        filterElements.Add(new TransferStateFilterElement(transferState));
-                        break;
-
-                    default:
-                        throw new NotImplementedException("Unimplemented filter element: " + elementNode.Name.LocalName);
-
+                    var pattern = elementNode.Attribute(XmlAttributeNames.Pattern).Value;
+                    filterElements.Add(new RegexFilterElement(pattern));
+                }
+                else if(elementNode.Name == XmlNames.CompareState)
+                {
+                    var compareState = ParseCompareState(elementNode.RequireAttributeValue(XmlAttributeNames.Value));
+                    filterElements.Add(new CompareStateFilterElement(compareState));
+                }
+                else if(elementNode.Name == XmlNames.TransferState)
+                {
+                    var transferState = ParseTransferState(elementNode.RequireAttributeValue(XmlAttributeNames.Value));
+                    filterElements.Add(new TransferStateFilterElement(transferState));
+                }
+                else
+                {
+                    throw new ConfigurationException("Unimplemented filter element: " + elementNode.Name.LocalName);
                 }
             }
 
             return filterElements;
         }
 
-        private Filter ReadFilter(XElement filterNode)
+        Filter ReadFilter(XElement filterNode)
         {
             var newFilter = new Filter();
 
-            if (filterNode.Element(XmlConstants.Include) != null)
+            if (filterNode.Element(XmlNames.Include) != null)
             {
-                newFilter.IncludeRules = ReadFilterElementList(filterNode.Element(XmlConstants.Include));
+                newFilter.IncludeRules = ReadFilterElementList(filterNode.Element(XmlNames.Include));
             }
-            if (filterNode.Element(XmlConstants.Exclude) != null)
+            if (filterNode.Element(XmlNames.Exclude) != null)
             {
-                newFilter.ExcludeRules = ReadFilterElementList(filterNode.Element(XmlConstants.Exclude));
+                newFilter.ExcludeRules = ReadFilterElementList(filterNode.Element(XmlNames.Exclude));
             }
-            newFilter.Name = filterNode.Attribute(XmlConstants.Name).Value;
+            newFilter.Name = filterNode.Attribute(XmlAttributeNames.Name).Value;
 
             return newFilter;
         }
@@ -166,65 +188,63 @@ namespace ServerSync.Core.Configuration
 
         #region Actions
 
-        private IAction ReadCompareAction(XElement actionElement)
-        {            
+        IAction ReadCompareAction(XElement actionElement)
+        {
             var action = new CompareAction();
             ApplyCommonActionProperties(actionElement, action);
             return action;
         }
 
-        private IAction ReadExportAction(XElement actionElement)
+        IAction ReadExportAction(XElement actionElement)
         {
             var action = new ExportAction();
             ApplyCommonImportExportActionProperties(actionElement, action);
             return action;
-
         }
 
-        private IAction ReadImportAction(XElement actionElement)
+        IAction ReadImportAction(XElement actionElement)
         {
             var action = new ImportAction();
             ApplyCommonImportExportActionProperties(actionElement, action);
             return action;
         }
 
-        private IAction ReadCopyAction(XElement actionElement)
+        IAction ReadCopyAction(XElement actionElement)
         {
             var actionInstance = new CopyAction();
             ApplyCommonIOActionProperties(actionElement, actionInstance);
             return actionInstance;
         }
 
-        private void ApplyCommonIOActionProperties(XElement actionElement, IOAction actionInstance)
+        void ApplyCommonIOActionProperties(XElement actionElement, IOAction actionInstance)
         {
             ApplyCommonActionProperties(actionElement, actionInstance);
-            actionInstance.SyncFolder = ParseSource(actionElement.RequireAttributeValue(XmlConstants.SyncFolder));
+            actionInstance.SyncFolder = ParseSource(actionElement.RequireAttributeValue(XmlAttributeNames.SyncFolder));
         }
 
-        private void ApplyCommonImportExportActionProperties(XElement actionElement, ImportExportAction actionInstance)
+        void ApplyCommonImportExportActionProperties(XElement actionElement, ImportExportAction actionInstance)
         {
             ApplyCommonIOActionProperties(actionElement, actionInstance);
-            
-            actionInstance.TransferLocation = actionElement.RequireAttributeValue(XmlConstants.TransferLocation);
 
-            if(actionElement.Element(XmlConstants.MaxTransferSize) != null)
+            actionInstance.TransferLocation = actionElement.RequireAttributeValue(XmlAttributeNames.TransferLocation);
+
+            if (actionElement.Element(XmlNames.MaxTransferSize) != null)
             {
-                actionInstance.MaxTransferSize = ReadByteSize(actionElement.Element(XmlConstants.MaxTransferSize));
+                actionInstance.MaxTransferSize = ReadByteSize(actionElement.Element(XmlNames.MaxTransferSize));
             }
-            else if(actionElement.Element(XmlConstants.MaxTransferSizeParent) != null)
+            else if (actionElement.Element(XmlNames.MaxTransferSizeParent) != null)
             {
-                actionInstance.MaxTransferSizeParent = ReadByteSize(actionElement.Element(XmlConstants.MaxTransferSizeParent));
+                actionInstance.MaxTransferSizeParent = ReadByteSize(actionElement.Element(XmlNames.MaxTransferSizeParent));
             }
         }
 
-        private ByteSize.ByteSize ReadByteSize(XElement byteSizeElement)
+        ByteSize.ByteSize ReadByteSize(XElement byteSizeElement)
         {
-
-            var teraByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.TeraByte);
-            var gigaByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.GigaByte);
-            var megaByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.MegaByte);
-            var kiloByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.KiloByte);
-            var bytes = byteSizeElement.ReadLongAttributeValueOrDefault(XmlConstants.Byte);
+            var teraByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.TeraByte);
+            var gigaByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.GigaByte);
+            var megaByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.MegaByte);
+            var kiloByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.KiloByte);
+            var bytes = byteSizeElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.Byte);
 
 
             return ByteSize.ByteSize.FromBytes(bytes)
@@ -232,38 +252,37 @@ namespace ServerSync.Core.Configuration
                                     .AddMegaBytes(megaByte)
                                     .AddGigaBytes(gigaByte)
                                     .AddTeraBytes(teraByte);
-
         }
 
-        private IAction ReadReadSyncStateAction(XElement actionElement)
+        IAction ReadReadSyncStateAction(XElement actionElement)
         {
             var action = new ReadSyncStateAction();
             ApplyCommonActionProperties(actionElement, action);
-            action.FileName = actionElement.RequireAttributeValue(XmlConstants.FileName);
+            action.FileName = actionElement.RequireAttributeValue(XmlAttributeNames.FileName);
             return action;
         }
 
-        private IAction ReadWriteSyncStateAction(XElement actionElement)
+        IAction ReadWriteSyncStateAction(XElement actionElement)
         {
             var action = new WriteSyncStateAction();
             ApplyCommonActionProperties(actionElement, action);
-            action.FileName = actionElement.RequireAttributeValue(XmlConstants.FileName);
-            return action;       
-        }       
+            action.FileName = actionElement.RequireAttributeValue(XmlAttributeNames.FileName);
+            return action;
+        }
 
-        private IAction ReadApplyFilerAction(XElement actionElement)
+        IAction ReadApplyFilerAction(XElement actionElement)
         {
             var action = new ApplyFilterAction();
             ApplyCommonActionProperties(actionElement, action);
             return action;
         }
 
-        private void ApplyCommonActionProperties(XElement actionElement, IAction actionInstance)
+        void ApplyCommonActionProperties(XElement actionElement, IAction actionInstance)
         {
-            bool enable = bool.Parse(actionElement.RequireAttributeValue(XmlConstants.Enable));
+            bool enable = bool.Parse(actionElement.RequireAttributeValue(XmlAttributeNames.Enable));
             actionInstance.IsEnabled = enable;
 
-            var inputFilterAttribute = actionElement.Attribute(XmlConstants.InputFilter);
+            var inputFilterAttribute = actionElement.Attribute(XmlAttributeNames.InputFilter);
             if (inputFilterAttribute != null)
             {
                 actionInstance.InputFilterName = inputFilterAttribute.Value;
@@ -274,7 +293,7 @@ namespace ServerSync.Core.Configuration
 
         #region Enum Parsing
 
-        private CompareState ParseCompareState(string value)
+        CompareState ParseCompareState(string value)
         {
             CompareState state;
             if (!Enum.TryParse<CompareState>(value, true, out state))
@@ -284,7 +303,7 @@ namespace ServerSync.Core.Configuration
             return state;
         }
 
-        private TransferState ParseTransferState(string value)
+        TransferState ParseTransferState(string value)
         {
             TransferState state;
             if (!Enum.TryParse<TransferState>(value, true, out state))
@@ -294,7 +313,7 @@ namespace ServerSync.Core.Configuration
             return state;
         }
 
-        private SyncFolder ParseSource(string value)
+        SyncFolder ParseSource(string value)
         {
             SyncFolder source;
             if (!Enum.TryParse<SyncFolder>(value, true, out source))
@@ -306,81 +325,17 @@ namespace ServerSync.Core.Configuration
 
         #endregion Enum Parsing
 
-        #region Xml Constants
-
-        private class XmlConstants
+        XmlSchemaSet GetConfigutationSchema()
         {
-            public const string Left = "left";
-            
-            public const string Right = "right";
-            
-            public const string Name = "name";
-          
-            public const string RootPath = "rootPath";
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(s_ConfigurationSchema))
+            {
+                var schemaSet = new XmlSchemaSet();
 
-            public const string TimeStampMargin = "timeStampMargin";
+                schemaSet.Add(null, XmlReader.Create(stream));
 
-            public const string Regex = "regex";           
-            
-            public const string Filter = "filter";
-            
-            public const string Include = "include";
-
-            public const string Exclude = "exclude";
-            
-            public const string Enable = "enable";
-           
-            public const string CompareState = "compareState";
-            
-            public const string TransferState = "transferState";
-            
-            public const string Pattern = "pattern";
-
-            public const string TransferLocation = "transferLocation";
-            
-            public const string SyncFolder = "syncFolder";
-
-            public const string FileName = "fileName";            
-
-            public const string InputFilter = "inputFilter";
-
-            public const string Value = "value";
-
-            public const string MaxTransferSize = "maxTransferSize";
-
-            public const string MaxTransferSizeParent = "maxTransferSizeParent";
-
-            //byte sizes
-            public const string TeraByte = "tb";
-
-            public const string GigaByte = "gb";
-            
-            public const string MegaByte = "mb";
-            
-            public const string KiloByte = "kb";
-            
-            public const string Byte = "b";
-
-
-            //Action Names
-
-            public const string Compare = "compare";
-            
-            public const string Export = "export";
-            
-            public const string Import = "import";
-            
-            public const string ReadSyncState = "readSyncState";
-            
-            public const string WriteSyncState = "writeSyncState";
-            
-            public const string ApplyFilter = "applyFilter";
-
-            public const string Copy = "copy";
-
+                return schemaSet;
+            }
         }
-
-        #endregion Xml Constants
 
         #endregion Private Implementation
 
