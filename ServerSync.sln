@@ -1,20 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.22310.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerSync", "ServerSync\ServerSync.csproj", "{5BFF8047-2DCF-4CAC-A628-02A0FEDAE137}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerSync.Core", "ServerSync.Core\ServerSync.Core.csproj", "{660FFCF6-E738-4BF3-9959-81EFD54F1EE4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{4E6EA1B4-7E97-497B-A459-C0D22BE40197}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{A3153372-B768-4E26-A265-0DD77C842E8D}"
 	ProjectSection(SolutionItems) = preProject
-		.build\CommonTargets.targets = .build\CommonTargets.targets
-		.build\MSBuild.Community.Tasks.dll = .build\MSBuild.Community.Tasks.dll
-		.build\MSBuild.Community.Tasks.targets = .build\MSBuild.Community.Tasks.targets
+		Common\Common.properties = Common\Common.properties
+		Common\Common.targets = Common\Common.targets
+		Common\CommonAssemblyInfo.cs = Common\CommonAssemblyInfo.cs
+		Common\MSBuild.Community.Tasks.dll = Common\MSBuild.Community.Tasks.dll
+		Common\MSBuild.Community.Tasks.Targets = Common\MSBuild.Community.Tasks.Targets
+		Common\MSBuild.Community.Tasks.xsd = Common\MSBuild.Community.Tasks.xsd
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransferToAgent", "TransferToAgent\TransferToAgent.csproj", "{FE711EB7-A450-42CF-8456-ECCEEC2BCE9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,10 +31,6 @@ Global
 		{660FFCF6-E738-4BF3-9959-81EFD54F1EE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{660FFCF6-E738-4BF3-9959-81EFD54F1EE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{660FFCF6-E738-4BF3-9959-81EFD54F1EE4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FE711EB7-A450-42CF-8456-ECCEEC2BCE9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FE711EB7-A450-42CF-8456-ECCEEC2BCE9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FE711EB7-A450-42CF-8456-ECCEEC2BCE9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FE711EB7-A450-42CF-8456-ECCEEC2BCE9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

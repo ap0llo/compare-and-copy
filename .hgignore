@@ -1,12 +1,8 @@
 syntax: glob
-ServerSync/obj/
-bin/
-ServerSync.Core/obj/
-.build\version.txt
-Build.proj
-GeneratedAssemblyInfo.cs
-packages/
-.build\MSBuild.Community.Tasks.targets
+*/obj/*
+*/bin/*
+packages/*
 *.suo
 *.user
-TransferToAgent/obj/
+ServerSync.sln.ide/*
+*/AssemblyInfo.Generated.cs
