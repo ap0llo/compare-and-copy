@@ -67,6 +67,16 @@ namespace ServerSync.Core.Copy
 
 				//determine absolute paths for the copy operation
 				var absSource = Path.Combine(rootDir, item.RelativePath);
+
+
+				//source file not found => skip file, write error to log
+				if(!File.Exists(absSource))
+				{
+					m_Logger.Error("File '{0}' could not be found", absSource);
+					continue;
+				}
+
+
 				var absTarget = Path.Combine(TransferLocation, item.RelativePath);
 				var size = new FileInfo(absSource).GetByteSize();                
 			   
