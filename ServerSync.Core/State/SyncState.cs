@@ -9,7 +9,14 @@ namespace ServerSync.Core.State
     public class SyncState
     {
 
-        private HashSet<FileItem> files;
+        #region Fields
+
+        HashSet<FileItem> files;
+
+        #endregion
+
+
+        #region Properties
 
         public IEnumerable<FileItem> Files
         {
@@ -20,23 +27,32 @@ namespace ServerSync.Core.State
             
         }
 
+        #endregion
 
+
+        #region Constructor
 
         public SyncState(IEnumerable<FileItem> files)
         {
             this.files = new HashSet<FileItem>(files);
         }
 
-
         public SyncState() : this(Enumerable.Empty<FileItem>())
         {
 
         }
 
+        #endregion
+
+
+        #region Public Methods
 
         public void RemoveFile(FileItem item)
         {
             this.files.Remove(item);
         }
+        
+        #endregion
+
     }
 }

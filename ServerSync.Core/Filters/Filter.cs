@@ -9,7 +9,7 @@ namespace ServerSync.Core.Filters
 {
     /// <summary>
     /// Filter that can be applied to a <see cref="SyncState"/>
-    /// A filter consits of two collections of <see cref="IFilterElement"/> which define what FileItems are included/excluded by the filter
+    /// A filter consists of two collections of <see cref="IFilterElement"/> which define what FileItems are included/excluded by the filter
     /// </summary>
     public class Filter
     {

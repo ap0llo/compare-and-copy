@@ -1,4 +1,5 @@
-﻿using ServerSync.Core.State;
+﻿using NLog;
+using ServerSync.Core.State;
 using System;
 using System.Linq;
 
@@ -9,6 +10,13 @@ namespace ServerSync.Core.Compare
     /// </summary>
     class CompareAction : AbstractAction
     {
+
+        #region Fields
+
+        Logger m_Logger = LogManager.GetCurrentClassLogger();
+
+        #endregion
+
 
         #region Properties
 
@@ -24,13 +32,13 @@ namespace ServerSync.Core.Compare
 
         public override void Run()
         {
-            //compare directoris using FolderComparer
+            //compare directories using FolderComparer
             FolderComparer comparer = new FolderComparer(this.Configuration);
             var comparisonResult = comparer.Run();
 
             if(comparisonResult == null)
             {
-                Console.WriteLine("Error comparing folders");
+                m_Logger.Error("Error comparing folders");
                 return; 
             }
 
@@ -52,7 +60,7 @@ namespace ServerSync.Core.Compare
         /// <returns>Returns 'newSyncState'</returns>
         private SyncState MergeSyncStates(SyncState exisitingSyncState, SyncState newSyncState)
         {
-            //build dictionary with all files from exisitng sync state
+            //build dictionary with all files from existing sync state
             var filesExisting = exisitingSyncState.Files.ToDictionary(fileItem => fileItem.RelativePath.Trim().ToLower());           
 
             //iterate over all files from new sync state
@@ -60,7 +68,7 @@ namespace ServerSync.Core.Compare
             {
                 var key = fileItem.RelativePath.ToLower().Trim();
 
-                //if file exists in both states, set TransferState to value from exisitng sync state
+                //if file exists in both states, set TransferState to value from existing sync state
                 if (filesExisting.ContainsKey(key))
                 {
                     fileItem.TransferState = filesExisting[key].TransferState;

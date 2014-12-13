@@ -1,3 +1,4 @@
+using NLog;
 using ServerSync.Core.Compare;
 using ServerSync.Core.Configuration;
 using ServerSync.Core.State;
@@ -16,8 +17,15 @@ namespace ServerSync.Core.Copy
 	class ExportAction : ImportExportAction
 	{
 
+		#region Fields
+
+		Logger m_Logger = LogManager.GetCurrentClassLogger(); 
+
+		#endregion
+
+
 		#region Properties
-		
+
 		public override string Name
 		{
 			get { return "Export"; }
@@ -45,7 +53,7 @@ namespace ServerSync.Core.Copy
 
 			if(MaxTransferSize.HasValue)
 			{
-				Console.WriteLine("Copying at most {0} GB", MaxTransferSize.Value.ToString("GB"));
+				m_Logger.Info("Copying at most {0}", MaxTransferSize.Value.ToString("GB"));
 			}
 
 		   
@@ -63,21 +71,21 @@ namespace ServerSync.Core.Copy
 				var size = new FileInfo(absSource).GetByteSize();                
 			   
 
-				//check if copying the file would exceed the maximum tranfer size
-				//continue because there might be a file thaht can be copied without exceeding the max size
+				//check if copying the file would exceed the maximum transfer size
+				//continue because there might be a file that can be copied without exceeding the max size
 				//this way the copy as much as possible                 
 				if(CheckNextFileExceedsMaxTransferSize(size))
 				{       
-					Console.WriteLine("Skipping '{0}' because copying it would exceed the maximum transfer size", item.RelativePath);
+					m_Logger.Info("Skipping '{0}' because copying it would exceed the maximum transfer size", item.RelativePath);
 					continue;                    
 				}
 
-				Console.WriteLine("Copying {0}", item.RelativePath);
+				m_Logger.Info("Copying {0}", item.RelativePath);
 
 
 				bool success;
 
-				//check if file has already been copied (transferstate might be wrong)
+				//check if file has already been copied (TransferState might be wrong)
 				var sourceFileInfo = new FileInfo(absSource);
 				var targetFileInfo = new FileInfo(absTarget);
 				if (targetFileInfo.Exists && sourceFileInfo.Length == targetFileInfo.Length && targetFileInfo.LastWriteTime == sourceFileInfo.LastWriteTime)

@@ -8,6 +8,7 @@ namespace ServerSync.Core.State
 {
     class SyncStateException : Exception
     {
+        
         public SyncStateException(string message) : base (message)
         {
 

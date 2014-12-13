@@ -10,6 +10,8 @@ namespace ServerSync.Core.State
 {
     public class SyncStateReader
     {
+        
+        #region Public Methods
 
         public SyncState ReadSyncState(string fileName)
         {
@@ -24,6 +26,10 @@ namespace ServerSync.Core.State
             return new SyncState(files.ToList());
         }
 
+        #endregion
+
+
+        #region Private Implementation
 
         private FileItem ReadFileItem( XElement item)
         {
@@ -48,8 +54,10 @@ namespace ServerSync.Core.State
                 throw new SyncStateException("Unknwon type: " + transferStateStr);
             }
 
-            return new FileItem() { RelativePath = path, CompareState = compareState, TransferState = transferState };      
+            return new FileItem() { RelativePath = path, CompareState = compareState, TransferState = transferState };
         }
+
+        #endregion
 
     }
 }

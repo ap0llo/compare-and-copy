@@ -8,6 +8,7 @@ namespace ServerSync.Core.Configuration
 {
     public class ConfigurationException : Exception
     {
+
         public ConfigurationException(string message) : base(message)
         {
 
@@ -17,7 +18,6 @@ namespace ServerSync.Core.Configuration
         {
 
         }
-
 
     }
 }

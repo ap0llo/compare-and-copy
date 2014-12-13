@@ -1,4 +1,5 @@
-﻿using ServerSync.Core.Configuration;
+﻿using NLog;
+using ServerSync.Core.Configuration;
 using ServerSync.Core.State;
 using System;
 using System.Diagnostics;
@@ -9,6 +10,10 @@ namespace ServerSync
 {
     class Program
     {
+
+        static Logger s_Logger = LogManager.GetCurrentClassLogger();
+
+
         public static int Main(string[] args)
         {
             //Display Version Information
@@ -18,7 +23,7 @@ namespace ServerSync
             //Check arguments
             if(args.Length < 1)
             {
-                Console.WriteLine("You need to specify a Sync Configuration file");
+                s_Logger.Error("You need to specify a Sync Configuration file");
                 return 1;
             }
 
@@ -32,7 +37,7 @@ namespace ServerSync
                 var configFilePath = Path.GetFullPath(args[i]);
                 if (!File.Exists(configFilePath))
                 {
-                    Console.WriteLine("Could not find config file at '{0}'", configFilePath);
+                    s_Logger.Error("Could not find configuration file at '{0}'", configFilePath);
                     return 2;
                 }
                 SyncConfiguration config = null;
@@ -42,7 +47,7 @@ namespace ServerSync
                 }
                 catch(ConfigurationException ex)
                 {
-                    Console.WriteLine("Error reading configuration: " + ex.Message);
+                    s_Logger.Error("Error reading configuration: " + ex.Message);
                     return 1;
                 }
 
@@ -51,7 +56,7 @@ namespace ServerSync
 
                 stopWatch.Stop();
 
-                Console.WriteLine("Elapsed Time : " + stopWatch.Elapsed.ToString());
+                s_Logger.Info("Elapsed Time : " + stopWatch.Elapsed.ToString());
             }
            
             return 0;
@@ -62,9 +67,8 @@ namespace ServerSync
         /// </summary>
         private static void WriteVersionInfo()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            Console.WriteLine("{0}, Version {1}", assembly.GetName().Name, assembly.GetName().Version);
-            Console.WriteLine();
+            var assembly = Assembly.GetExecutingAssembly();            
+            s_Logger.Info("{0}, Version {1}", assembly.GetName().Name, assembly.GetName().Version);            
         }
 
         /// <summary>
@@ -83,7 +87,7 @@ namespace ServerSync
                     action.Configuration = configuration;
                     action.State = currentState;
 
-                    Console.WriteLine("Starting Action '{0}'", action.Name);
+                    s_Logger.Info("Starting Action '{0}'", action.Name);
 
                     //run the action
                     action.Run();

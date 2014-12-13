@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ServerSync.Core.Configuration;
 using ServerSync.Core.State;
+using NLog;
 
 namespace ServerSync.Core.Compare
 {
@@ -16,6 +17,8 @@ namespace ServerSync.Core.Compare
     {
 
         #region Fields
+
+        Logger m_Logger = LogManager.GetCurrentClassLogger();
 
         private SyncConfiguration config;
 
@@ -53,13 +56,13 @@ namespace ServerSync.Core.Compare
 
             if(!Directory.Exists(this.config.Left.RootPath))
             {
-                Console.WriteLine("Error: left root directory does not exist");
+                m_Logger.Error("Left root directory does not exist");
                 return null;
             }
 
             if (!Directory.Exists(this.config.Right.RootPath))
             {
-                Console.WriteLine("Error: right root directory does not exist");
+                m_Logger.Error("Right root directory does not exist");
                 return null;
             }
 
@@ -186,7 +189,7 @@ namespace ServerSync.Core.Compare
 
         private IEnumerable<string> GetFiles(string dirAbsoultePath, bool recurse)
         {
-            Console.WriteLine("Scanning {0}", dirAbsoultePath);
+            m_Logger.Info("Scanning {0}", dirAbsoultePath);
 
 
             var childFiles = recurse ?
@@ -199,9 +202,7 @@ namespace ServerSync.Core.Compare
             //apply filter
             return allFiles; 
         }
-
         
-
         private bool FilesAreEqual(string relativePath)
         {
             var info1 = new FileInfo(Path.Combine(config.Left.RootPath, relativePath));
@@ -211,11 +212,7 @@ namespace ServerSync.Core.Compare
             var modifiedDifference = (info1.LastWriteTime - info2.LastWriteTime).TotalMilliseconds;
 
             return sizeDifference == 0 && Math.Abs(modifiedDifference) <= config.TimeStampMargin;
-        }
-
-
-        
-
+        }        
 
         #endregion Private Implementation
     

@@ -21,6 +21,7 @@ namespace ServerSync.Core.Filters
 
 
         #region Constructor
+
         public TransferStateFilterElement(TransferState state)
         {
             this.state = state;

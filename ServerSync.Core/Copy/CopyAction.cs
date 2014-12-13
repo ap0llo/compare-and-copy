@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,7 +10,9 @@ namespace ServerSync.Core.Copy
 {
     class CopyAction : IOAction
     {
-        
+
+        Logger m_Logger = LogManager.GetCurrentClassLogger();
+
 
         public override string Name
         {
@@ -30,14 +33,13 @@ namespace ServerSync.Core.Copy
                 var absSource = Path.Combine(sourceRoot, file.RelativePath);
                 var absTarget = Path.Combine(targetRoot, file.RelativePath);
 
-                Console.WriteLine("Copying {0} to {1}", file.RelativePath, targetRoot);
+                m_Logger.Info("Copying {0} to {1}", file.RelativePath, targetRoot);
 
                 IOHelper.EnsureDirectoryExists(Path.GetDirectoryName(absTarget));
                 File.Copy(absSource, absTarget, true);
 
                 this.State.RemoveFile(file);
             }
-
 
         }
     }

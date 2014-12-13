@@ -1,4 +1,5 @@
-﻿using ServerSync.Core.State;
+﻿using NLog;
+using ServerSync.Core.State;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +11,9 @@ namespace ServerSync.Core.Copy
 {
     class ImportAction : ImportExportAction
     {
+
+        Logger m_logger = LogManager.GetCurrentClassLogger();
+
 
         public override string Name
         {
@@ -40,8 +44,8 @@ namespace ServerSync.Core.Copy
                     var dir = Path.GetDirectoryName(absTarget);
                     var size = new FileInfo(absSource).Length;
 
-                    //check if copying the file would exceed the maximum tranfer size
-                    //continue because there might be a file thaht can be copied without exceeding the max size
+                    //check if copying the file would exceed the maximum transfer size
+                    //continue because there might be a file that can be copied without exceeding the max size
                     //this way the copy as much as possible 
                     if (MaxTransferSize.HasValue)
                     {
@@ -49,19 +53,18 @@ namespace ServerSync.Core.Copy
 
                         if (transferSize.AddBytes(size) > MaxTransferSize)
                         {
-                            Console.WriteLine("Skipping '{0}' because copying it would exceed the maximum transfer size", file.RelativePath);
+                            m_logger.Info("Skipping '{0}' because copying it would exceed the maximum transfer size", file.RelativePath);
                             continue;
                         }
                     }
 
                     IOHelper.EnsureDirectoryExists(dir);
                     File.Copy(absSource, absTarget);
-                    State.RemoveFile(file);                   
-
+                    State.RemoveFile(file);
                 }
                 else
                 {
-                    Console.WriteLine("ERROR: File not found: '{0}'", absSource);
+                    m_logger.Info("File not found: '{0}'", absSource);
                 }
             }
          }
