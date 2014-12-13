@@ -25,6 +25,6 @@ using System.Runtime.InteropServices;
  *   - Reset Build-Number to 0 when releasing a new version (which means incrementing either Major, Minor or Patch numbers) 
  * 
  */
-//TODO: Increment to 1.2 before release
-[assembly: AssemblyVersion("1.1.0.1")]
-[assembly: AssemblyFileVersion("1.1.0.1")]
+
+[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]
