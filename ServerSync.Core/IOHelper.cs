@@ -44,7 +44,7 @@ namespace ServerSync.Core
             foreach(var file in Directory.GetFiles(path))
             {
                 var fileSize = new FileInfo(file).Length;
-                result.AddBytes(fileSize);
+                result = result.AddBytes(fileSize);
             }
 
             foreach (var directory in Directory.GetDirectories(path))
