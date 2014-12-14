@@ -12,7 +12,7 @@ namespace ServerSync.Core.State
     {
 
         /*
-         *  SyncState files written by SyncStateWriter currently do not follow the SyncState xml schema to be compatible with lder versions         
+         *  SyncState files written by SyncStateWriter currently do not follow the SyncState xml schema to be compatible with older versions
          */
 
         #region Public Methods

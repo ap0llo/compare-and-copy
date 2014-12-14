@@ -11,6 +11,9 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ByteSize">
+      <HintPath>..\packages\ByteSize.0.3.0\lib\portable-net4+sl5+netcore45+wp8+MonoAndroid1+MonoTouch1\ByteSize.dll</HintPath>
+    </Reference>
     <Reference Include="NLog">
       <HintPath>..\packages\NLog.3.1.0.0\lib\net45\NLog.dll</HintPath>
     </Reference>
@@ -27,7 +30,6 @@
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AbstractAction.cs" />
-    <Compile Include="ByteSize.cs" />
     <Compile Include="Compare\CompareAction.cs" />
     <Compile Include="Configuration\ConfigurationException.cs" />
     <Compile Include="XElementExtensions.cs" />
