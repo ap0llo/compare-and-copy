@@ -16,7 +16,7 @@
   <xs:complexType name="FileT">
     <xs:attribute name="path" type="xs:string" use="required" />
     <xs:attribute name="compareState" type="CompareStateT" use="required" />
-    <xs:attribute default="transferState" type="TransferStateT" use="required" />
+    <xs:attribute name="transferState" type="TransferStateT" use="required" />
   </xs:complexType>
 
   <xs:simpleType name="CompareStateT">
@@ -33,10 +33,10 @@
       <xs:enumeration value="InTransferToLeft" />
       <xs:enumeration value="InTransferToRight" />
     </xs:restriction>
-  </xs:simpleType>  
-  
-  
+  </xs:simpleType>
 
+
+  <xs:element name="fileList" type="FileListT" />
 
 </xs:schema>
 
