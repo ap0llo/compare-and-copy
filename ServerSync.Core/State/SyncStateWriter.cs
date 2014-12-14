@@ -11,13 +11,17 @@ namespace ServerSync.Core.State
     public class SyncStateWriter
     {
 
+        /*
+         *  SyncState files written by SyncStateWriter currently do not follow the SyncState xml schema to be compatible with lder versions         
+         */
+
         #region Public Methods
 
         public void WriteSyncState(string fileName, SyncState state)
         {        
-            XElement fileList = new XElement(XmlConstants.FileList, state.Files.Select(GetFileItemElement));
+            XElement fileList = new XElement(XmlNames.FileList.LocalName, state.Files.Select(GetFileItemElement));
 
-            var document = new XDocument(new XElement(fileList));
+            var document = new XDocument(fileList);
 
             var dir = Path.GetDirectoryName(fileName);
             IOHelper.EnsureDirectoryExists(dir);
@@ -32,10 +36,10 @@ namespace ServerSync.Core.State
 
         private XElement GetFileItemElement(FileItem file)
         {
-            return new XElement( XmlConstants.File, 
-                                 new XAttribute(XmlConstants.Path, file.RelativePath), 
-                                 new XAttribute(XmlConstants.CompareState, file.CompareState),
-                                 new XAttribute(XmlConstants.TransferState, file.TransferState));
+            return new XElement( XmlNames.File.LocalName,
+                                 new XAttribute(XmlAttributeNames.Path, file.RelativePath),
+                                 new XAttribute(XmlAttributeNames.CompareState, file.CompareState),
+                                 new XAttribute(XmlAttributeNames.TransferState, file.TransferState));
         }
 
         #endregion Private Implementation

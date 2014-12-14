@@ -2,15 +2,24 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Schema;
 
 namespace ServerSync.Core.State
 {
     public class SyncStateReader
     {
-        
+        #region Constants
+
+        const string s_SyncStateSchema = "ServerSync.Core.State.SyncStateSchema.xsd";
+
+        #endregion
+
+
         #region Public Methods
 
         public SyncState ReadSyncState(string fileName)
@@ -21,7 +30,18 @@ namespace ServerSync.Core.State
             }
 
             var document = XDocument.Load(fileName);
-            var files = document.Descendants(XmlConstants.File).Select(ReadFileItem);
+
+
+            if(String.IsNullOrEmpty(document.Root.Name.NamespaceName))
+            {
+                document.Root.ReplaceNamespace("", XmlNames.GetNamespace());
+            }
+
+            document.Validate(GetSyncStateSchema(), (o, e) => { throw new SyncStateException(e.Message); });
+
+
+
+            var files = document.Descendants(XmlNames.File).Select(ReadFileItem);
 
             return new SyncState(files.ToList());
         }
@@ -31,31 +51,44 @@ namespace ServerSync.Core.State
 
         #region Private Implementation
 
-        private FileItem ReadFileItem( XElement item)
+        FileItem ReadFileItem( XElement item)
         {
-            string path = item.Attribute(XmlConstants.Path).Value;
+            string path = item.Attribute(XmlAttributeNames.Path).Value;
 
             if(String.IsNullOrEmpty(path))
             {
                 throw new SyncStateException("Empty path found in item list");
             }
 
-            string compareStateStr = item.RequireAttributeValue(XmlConstants.CompareState);
+            string compareStateStr = item.RequireAttributeValue(XmlAttributeNames.CompareState);
             CompareState compareState;
             if(!Enum.TryParse<CompareState>(compareStateStr, true, out compareState))
             {
-                throw new SyncStateException("Unknwon type: " + compareStateStr);
+                throw new SyncStateException("Unknown type: " + compareStateStr);
             }
 
-            var transferStateStr = item.RequireAttributeValue(XmlConstants.TransferState);
+            var transferStateStr = item.RequireAttributeValue(XmlAttributeNames.TransferState);
             TransferState transferState;
             if(!Enum.TryParse<TransferState>(transferStateStr, out transferState))
             {
-                throw new SyncStateException("Unknwon type: " + transferStateStr);
+                throw new SyncStateException("Unknown type: " + transferStateStr);
             }
 
             return new FileItem() { RelativePath = path, CompareState = compareState, TransferState = transferState };
         }
+
+        XmlSchemaSet GetSyncStateSchema()
+        {
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(s_SyncStateSchema))
+            {
+                var schemaSet = new XmlSchemaSet();
+
+                schemaSet.Add(null, XmlReader.Create(stream));
+
+                return schemaSet;
+            }
+        }
+
 
         #endregion
 

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Xml.Linq;
 
-namespace ServerSync.Core.Configuration
+namespace ServerSync.Core
 {
     /// <summary>
     /// Extension methods for XElement

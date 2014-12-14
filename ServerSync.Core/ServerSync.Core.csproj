@@ -30,7 +30,7 @@
     <Compile Include="ByteSize.cs" />
     <Compile Include="Compare\CompareAction.cs" />
     <Compile Include="Configuration\ConfigurationException.cs" />
-    <Compile Include="Configuration\XElementExtensions.cs" />
+    <Compile Include="XElementExtensions.cs" />
     <Compile Include="Configuration\XmlAttributeNames.cs" />
     <Compile Include="Configuration\XmlNames.cs" />
     <Compile Include="Copy\CopyAction.cs" />
@@ -52,7 +52,8 @@
     <Compile Include="State\CompareState.cs" />
     <Compile Include="State\SyncStateWriter.cs" />
     <Compile Include="State\SyncState.cs" />
-    <Compile Include="State\XmlConstants.cs" />
+    <Compile Include="State\XmlAttributeNames.cs" />
+    <Compile Include="State\XmlNames.cs" />
     <Compile Include="Configuration\ConfigurationReader.cs" />
     <Compile Include="Compare\FolderComparer.cs" />
     <Compile Include="Filters\Filter.cs" />
@@ -71,6 +72,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <EmbeddedResource Include="State\SyncStateSchema.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
