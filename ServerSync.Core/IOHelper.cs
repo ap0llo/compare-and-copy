@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,8 +42,10 @@ namespace ServerSync.Core
 
         #region Fields
 
-        //cache used by GetDirectorySize() to speed up determining the size of a directoy
+        //cache used by GetDirectorySize() to speed up determining the size of a directory
         static Dictionary<String, ByteSizeCacheEntry> s_GetDirectorySizeCache = new Dictionary<string, ByteSizeCacheEntry>();
+
+        static readonly Logger s_Logger = LogManager.GetCurrentClassLogger();
 
         #endregion
 
@@ -147,23 +150,17 @@ namespace ServerSync.Core
 
             var tmpPath = destinationPath + ".tmp";
             
-            if(File.Exists(tmpPath))
-            {
-                Console.WriteLine("Error copying file '{0}' to '{1}': TmpFile already exists", sourcePath, destinationPath);
-                return false;
-            }
-
             try
             {
                 EnsureDirectoryExists(Path.GetDirectoryName(destinationPath));
 
-                File.Copy(sourcePath, tmpPath);
+                File.Copy(sourcePath, tmpPath, true);
                 File.Move(tmpPath, destinationPath);
 
             }
             catch (IOException ex)
             {
-                Console.WriteLine("Error copying file '{0}' to '{1}': {2}", sourcePath, destinationPath, ex);
+                s_Logger.Error("Could not copy file '{0}' to '{1}': {2}", sourcePath, destinationPath, ex);
                 return false;
             }
             finally

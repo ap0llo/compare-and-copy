@@ -18,6 +18,8 @@ namespace ServerSync.Core.Configuration
         public const string Pattern = "pattern";
 
         public const string TransferLocation = "transferLocation";
+        public const string TransferLocationName = "transferLocationName";
+        public const string TransferLocationSubPath = "transferLocationSubPath";
 
         public const string SyncFolder = "syncFolder";
 
@@ -26,6 +28,8 @@ namespace ServerSync.Core.Configuration
         public const string InputFilter = "inputFilter";
 
         public const string Value = "value";
+
+        public const string Path = "path";
 
         //byte sizes
         public const string TeraByte = "tb";

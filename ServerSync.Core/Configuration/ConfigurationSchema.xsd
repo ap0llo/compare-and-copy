@@ -17,6 +17,9 @@
         </xs:complexType>
       </xs:element>
       <xs:element name="filter" type="typeFilter" />
+      <xs:element name="include" type="typeInclude" />
+      <xs:element name="transferLocation" type="typeTransferLocation" />
+      <!--Actions-->
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="compare" type="typeCompareAction" />
         <xs:element name="export"  type="typeImportExportAction" />
@@ -29,6 +32,19 @@
     </xs:choice>
   </xs:complexType>
 
+
+  <xs:complexType name="typeTransferLocation">
+    <xs:sequence>
+      <xs:element name="maximumSize" type="typeByteSize" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="path" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="typeInclude">
+    <xs:attribute name="path" type="xs:string" use="required" />
+  </xs:complexType>
+  
   <!-- Actions -->
   
   <xs:complexType name="typeCompareAction">
@@ -57,7 +73,9 @@
     <xs:attribute name="enable" type="xs:boolean" />
     <xs:attribute name="inputFilter" type="xs:string" />
     <xs:attribute name="syncFolder" type="typeSyncFolder" />
-    <xs:attribute name="transferLocation" type="xs:string" />       
+    <xs:attribute name="transferLocation" type="xs:string" />
+    <xs:attribute name="transferLocationName" type="xs:string" />
+    <xs:attribute name="transferLocationSubPath" type="xs:string" />
   </xs:complexType>  
 
   <xs:complexType name="typeReadWriteSyncStateAction">

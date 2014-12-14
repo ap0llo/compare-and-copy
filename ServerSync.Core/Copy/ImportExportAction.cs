@@ -16,13 +16,12 @@ namespace ServerSync.Core.Copy
 
         #region Properties        
 
-        public string TransferLocation { get; set; }
+        public string TransferLocationName { get; set; }
 
-        public ByteSize.ByteSize? MaxTransferSize { get; set; }
-
-        public ByteSize.ByteSize? MaxTransferSizeParent { get; set; }
-
+        public string TransferLocationSubPath { get; set; }
+       
         #endregion
+        
 
 
     }

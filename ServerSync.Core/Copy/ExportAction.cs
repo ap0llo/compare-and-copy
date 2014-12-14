@@ -51,9 +51,12 @@ namespace ServerSync.Core.Copy
 			var copyItems = GetFilteredInput();
 
 
-			if(MaxTransferSize.HasValue)
+            var transferLocation = this.Configuration.GetTransferLocation(this.TransferLocationName);
+
+
+			if(transferLocation.MaximumSize.HasValue)
 			{
-				m_Logger.Info("Copying at most {0}", MaxTransferSize.Value.ToString("GB"));
+				m_Logger.Info("Copying at most {0}", transferLocation.MaximumSize.Value.ToString("GB"));
 			}
 
 		   
@@ -77,7 +80,7 @@ namespace ServerSync.Core.Copy
 				}
 
 
-				var absTarget = Path.Combine(TransferLocation, item.RelativePath);
+				var absTarget = Path.Combine(transferLocation.Path, this.TransferLocationSubPath, item.RelativePath);
 				var size = new FileInfo(absSource).GetByteSize();                
 			   
 
@@ -127,37 +130,23 @@ namespace ServerSync.Core.Copy
 		/// </summary>
 		private bool CheckNextFileExceedsMaxTransferSize(ByteSize.ByteSize nextFileSize)
 		{
+            var transferLocation = Configuration.GetTransferLocation(this.TransferLocationName);
+
 			// directory doesn't exist => limit not exceeded (no file copied yet)
-			if (!Directory.Exists(TransferLocation))
+			if (!Directory.Exists(transferLocation.Path))
 			{
 				return false;
 			}
 
 			//  maximum size for the transfer location itself has been specified
-			if(MaxTransferSize.HasValue)
+			if(transferLocation.MaximumSize.HasValue)
 			{
 				//get current size
-				var currentSize = IOHelper.GetDirectorySize(TransferLocation);
+				var currentSize = IOHelper.GetDirectorySize(transferLocation.Path);
 
 				//compare current size + file size + to maximum size
-				return (currentSize + nextFileSize) > MaxTransferSize;
-			}
-			// maximum size for the transfer location's parent directory has been specified
-			else if(MaxTransferSizeParent.HasValue)
-			{
-				var parent = Path.GetDirectoryName(TransferLocation);
-				
-				//parent directory does not exist => no limit exceeded because no file has been copied yet
-				if(!Directory.Exists(parent))
-				{
-					return false;
-				}
-
-				//compare current size + file size + to maximum size
-				var currentSize = IOHelper.GetDirectorySize(parent);
-
-				return (currentSize + nextFileSize) > MaxTransferSizeParent;
-			}
+                return (currentSize + nextFileSize) > transferLocation.MaximumSize;
+			}			
 			//  no maximum specified => no limit exceeded
 			else
 			{

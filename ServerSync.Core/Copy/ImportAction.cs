@@ -35,7 +35,9 @@ namespace ServerSync.Core.Copy
             var itemsToCopy = GetItemsToCopy(sourceTransferState);
             foreach (var file in itemsToCopy)
             {
-                var absSource = Path.Combine(this.TransferLocation, file.RelativePath);
+                var transferLocation = Configuration.GetTransferLocation(this.TransferLocationName);
+
+                var absSource = Path.Combine(transferLocation.Path, this.TransferLocationSubPath, file.RelativePath);
                 var absTarget = Path.Combine(targetRoot, file.RelativePath);
 
 
@@ -46,12 +48,12 @@ namespace ServerSync.Core.Copy
 
                     //check if copying the file would exceed the maximum transfer size
                     //continue because there might be a file that can be copied without exceeding the max size
-                    //this way the copy as much as possible 
-                    if (MaxTransferSize.HasValue)
+                    //this way the copy as much as possible                     
+                    if (transferLocation.MaximumSize.HasValue)
                     {
-                        var transferSize = IOHelper.GetDirectorySize(TransferLocation);
+                        var transferSize = IOHelper.GetDirectorySize(transferLocation.Path);
 
-                        if (transferSize.AddBytes(size) > MaxTransferSize)
+                        if (transferSize.AddBytes(size) > transferLocation.MaximumSize)
                         {
                             m_logger.Info("Skipping '{0}' because copying it would exceed the maximum transfer size", file.RelativePath);
                             continue;

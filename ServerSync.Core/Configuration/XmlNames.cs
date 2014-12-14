@@ -27,10 +27,11 @@ namespace ServerSync.Core.Configuration
         public static readonly XName Import = s_Namespace.GetName("import");
         public static readonly XName ReadSyncState = s_Namespace.GetName("readSyncState");
         public static readonly XName WriteSyncState = s_Namespace.GetName("writeSyncState");
-        public static readonly XName  ApplyFilter = s_Namespace.GetName("applyFilter");
+        public static readonly XName ApplyFilter = s_Namespace.GetName("applyFilter");
         public static readonly XName Copy = s_Namespace.GetName("copy");
-
-
+        public static readonly XName MaximumSize = s_Namespace.GetName("maximumSize");
+        public static readonly XName TransferLocation = s_Namespace.GetName("transferLocation");
+        
         public static XNamespace GetNamespace()
         {
             return s_Namespace;

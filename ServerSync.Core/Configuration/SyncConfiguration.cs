@@ -1,4 +1,5 @@
-﻿using ServerSync.Core.Filters;
+﻿using ServerSync.Core.Copy;
+using ServerSync.Core.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace ServerSync.Core.Configuration
         #region Fields
 
         private Dictionary<string, Filter> filters = new Dictionary<string,Filter>();
+        private Dictionary<string, TransferLocation> transferLocations = new Dictionary<string,TransferLocation>();
         private List<IAction> actions = new List<IAction>();
 
         #endregion Fields
@@ -35,6 +37,11 @@ namespace ServerSync.Core.Configuration
         public IEnumerable<IAction> Actions 
         {
             get { return this.actions; } 
+        }
+
+        public IEnumerable<TransferLocation> TransferLocations
+        {
+            get { return transferLocations.Values; }
         }
 
         #endregion Properties
@@ -65,12 +72,27 @@ namespace ServerSync.Core.Configuration
             this.actions.Add(action);
         }
 
+        public void AddTransferLocation(TransferLocation transferLocation)
+        {
+            this.transferLocations.Add(GetTransferLocationKey(transferLocation.Name), transferLocation);
+        }
+
+        public TransferLocation GetTransferLocation(string name)
+        {
+            return this.transferLocations[GetTransferLocationKey(name)];
+        }
+
         #endregion Public Methods
 
 
         #region Private Implementation
 
-        private string GetFilterKey(string name)
+        string GetFilterKey(string name)
+        {
+            return name.ToLower().Trim();
+        }
+
+        string GetTransferLocationKey(string name)
         {
             return name.ToLower().Trim();
         }

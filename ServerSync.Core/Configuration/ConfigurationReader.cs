@@ -4,6 +4,7 @@ using ServerSync.Core.Filters;
 using ServerSync.Core.State;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
@@ -34,7 +35,7 @@ namespace ServerSync.Core.Configuration
 
             try
             {
-                ReadSyncConfiguration(configFile, configuration);
+                ReadSyncConfiguration(fileName, configFile, configuration);
             }
             catch(ArgumentException ex)
             {
@@ -49,7 +50,7 @@ namespace ServerSync.Core.Configuration
 
         #region Private Implementation
 
-        void ReadSyncConfiguration(XDocument configFile, SyncConfiguration configuration)
+        void ReadSyncConfiguration(string fileName, XDocument configFile, SyncConfiguration configuration)
         {
 
             //support for legacy configuration files which did not include any xml namespace
@@ -79,17 +80,25 @@ namespace ServerSync.Core.Configuration
                     var filter = ReadFilter(element);
                     configuration.AddFilter(filter);
                 }
+                else if(element.Name == XmlNames.Include)
+                {
+                    ReadInclude(element, fileName, configuration);
+                }
                 else if (element.Name == XmlNames.Compare)
                 {
                     configuration.AddAction(ReadCompareAction(element));
                 }
                 else if (element.Name == XmlNames.Export)
                 {
-                    configuration.AddAction(ReadExportAction(element));
+                    configuration.AddAction(ReadExportAction(element, configuration));
                 }
                 else if (element.Name == XmlNames.Import)
                 {
-                    configuration.AddAction(ReadImportAction(element));
+                    configuration.AddAction(ReadImportAction(element, configuration));
+                }
+                else if(element.Name == XmlNames.TransferLocation)
+                {
+                    configuration.AddTransferLocation(ReadTransferLocation(element));
                 }
                 else if (element.Name == XmlNames.ReadSyncState)
                 {
@@ -134,6 +143,33 @@ namespace ServerSync.Core.Configuration
         }
 
         #endregion Global Properties
+
+        #region Include
+
+        void ReadInclude(XElement includeElement, string fileName, SyncConfiguration configuration)
+        {
+            var includePath = includeElement.RequireAttributeValue(XmlAttributeNames.Path);
+
+            if(!Path.IsPathRooted(includePath))
+            {
+                includePath = Path.Combine(Path.GetDirectoryName(fileName), includePath);
+            }
+
+            includePath = Path.GetFullPath(includePath);
+
+
+            if(!File.Exists(includePath))
+            {
+                throw new ConfigurationException(String.Format("Included configuration file '{0}' not found", includePath));
+            }
+
+            var configurationDocument = XDocument.Load(includePath);
+
+            ReadSyncConfiguration(includePath, configurationDocument, configuration);
+
+        }
+
+        #endregion
 
         #region Filter
 
@@ -195,17 +231,17 @@ namespace ServerSync.Core.Configuration
             return action;
         }
 
-        IAction ReadExportAction(XElement actionElement)
+        IAction ReadExportAction(XElement actionElement, SyncConfiguration configuration)
         {
             var action = new ExportAction();
-            ApplyCommonImportExportActionProperties(actionElement, action);
+            ApplyCommonImportExportActionProperties(actionElement, action, configuration);
             return action;
         }
 
-        IAction ReadImportAction(XElement actionElement)
+        IAction ReadImportAction(XElement actionElement, SyncConfiguration configuration)
         {
             var action = new ImportAction();
-            ApplyCommonImportExportActionProperties(actionElement, action);
+            ApplyCommonImportExportActionProperties(actionElement, action, configuration);
             return action;
         }
 
@@ -222,20 +258,60 @@ namespace ServerSync.Core.Configuration
             actionInstance.SyncFolder = ParseSource(actionElement.RequireAttributeValue(XmlAttributeNames.SyncFolder));
         }
 
-        void ApplyCommonImportExportActionProperties(XElement actionElement, ImportExportAction actionInstance)
+        void ApplyCommonImportExportActionProperties(XElement actionElement, ImportExportAction actionInstance, SyncConfiguration configuration)
         {
             ApplyCommonIOActionProperties(actionElement, actionInstance);
 
-            actionInstance.TransferLocation = actionElement.RequireAttributeValue(XmlAttributeNames.TransferLocation);
+            if(actionElement.Attribute(XmlAttributeNames.TransferLocation) != null)
+            {
+                if(actionElement.Attribute(XmlAttributeNames.TransferLocationName) != null ||
+                    actionElement.Attribute(XmlAttributeNames.TransferLocationSubPath) != null)
+                {
+                    throw new ConfigurationException("If 'transferLocation' is specified, the attributes transferLocationName and transferLocationSubPath are not allowed");
+                }
 
-            if (actionElement.Element(XmlNames.MaxTransferSize) != null)
-            {
-                actionInstance.MaxTransferSize = ReadByteSize(actionElement.Element(XmlNames.MaxTransferSize));
+
+                //create a new TransferLocation instance
+                TransferLocation transferLocation = null;
+                var transferLocationName = String.Format("TransferLocation_{0}", Guid.NewGuid());
+                var transferLocationPath = actionElement.RequireAttributeValue(XmlAttributeNames.TransferLocation);
+            
+                actionInstance.TransferLocationSubPath = "";
+                actionInstance.TransferLocationName = transferLocationName;
+
+                if (actionElement.Element(XmlNames.MaxTransferSize) != null)
+                {
+                    transferLocation = new TransferLocation(transferLocationName, transferLocationPath, ReadByteSize(actionElement.Element(XmlNames.MaxTransferSize)));                    
+                }
+                else if (actionElement.Element(XmlNames.MaxTransferSizeParent) != null)
+                {
+                    actionInstance.TransferLocationSubPath = Path.GetFileName(transferLocationPath);                                        
+                    transferLocation = new TransferLocation(transferLocationName, Path.GetDirectoryName(transferLocationPath), ReadByteSize(actionElement.Element(XmlNames.MaxTransferSizeParent)));
+                }
+                else
+                {
+                    transferLocation = new TransferLocation(transferLocationName, transferLocationPath, null);
+                }
+
+                configuration.AddTransferLocation(transferLocation);
             }
-            else if (actionElement.Element(XmlNames.MaxTransferSizeParent) != null)
+            else
             {
-                actionInstance.MaxTransferSizeParent = ReadByteSize(actionElement.Element(XmlNames.MaxTransferSizeParent));
+
+                if (actionElement.Element(XmlNames.MaxTransferSize) != null)
+                {
+                    throw new ConfigurationException("You cannot specify MaxTransferSize when referencing transfer locations by name");
+                }
+                else if (actionElement.Element(XmlNames.MaxTransferSizeParent) != null)
+                {
+                    throw new ConfigurationException("You cannot specify MaxTransferSizeParent when referencing transfer locations by name");
+                }
+
+                actionInstance.TransferLocationName = actionElement.RequireAttributeValue(XmlAttributeNames.TransferLocationName);
+                actionInstance.TransferLocationSubPath = actionElement.RequireAttributeValue(XmlAttributeNames.TransferLocationSubPath);
             }
+
+            
         }
 
         ByteSize.ByteSize ReadByteSize(XElement byteSizeElement)
@@ -290,6 +366,24 @@ namespace ServerSync.Core.Configuration
         }
 
         #endregion Actions
+
+        #region TransferLocation
+
+        TransferLocation ReadTransferLocation(XElement transferLocationElement)
+        {
+            ByteSize.ByteSize? maximumSize = null;
+
+            if(transferLocationElement.Element(XmlNames.MaximumSize) != null)
+            {
+                maximumSize = ReadByteSize(transferLocationElement.Element(XmlNames.MaximumSize));
+            }
+
+            return new TransferLocation(transferLocationElement.RequireAttributeValue(XmlAttributeNames.Name),
+                transferLocationElement.RequireAttributeValue(XmlAttributeNames.Path),
+                maximumSize);
+        }
+        
+        #endregion
 
         #region Enum Parsing
 

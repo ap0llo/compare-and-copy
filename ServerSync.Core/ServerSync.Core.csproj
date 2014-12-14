@@ -32,6 +32,7 @@
     <Compile Include="AbstractAction.cs" />
     <Compile Include="Compare\CompareAction.cs" />
     <Compile Include="Configuration\ConfigurationException.cs" />
+    <Compile Include="Copy\TransferLocation.cs" />
     <Compile Include="XElementExtensions.cs" />
     <Compile Include="Configuration\XmlAttributeNames.cs" />
     <Compile Include="Configuration\XmlNames.cs" />
