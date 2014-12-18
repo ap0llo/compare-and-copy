@@ -31,7 +31,9 @@ namespace ServerSync.Core.Configuration
         public static readonly XName Copy = s_Namespace.GetName("copy");
         public static readonly XName MaximumSize = s_Namespace.GetName("maximumSize");
         public static readonly XName TransferLocation = s_Namespace.GetName("transferLocation");
-        
+        public static readonly XName Actions = s_Namespace.GetName("actions");
+
+
         public static XNamespace GetNamespace()
         {
             return s_Namespace;

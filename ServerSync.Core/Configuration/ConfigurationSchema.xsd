@@ -19,7 +19,10 @@
       <xs:element name="filter" type="typeFilter" />
       <xs:element name="include" type="typeInclude" />
       <xs:element name="transferLocation" type="typeTransferLocation" />
-      <!--Actions-->
+      <!--
+      Actions are allowed directory in the root element for backwards compatibility
+      In version 2, this will be removed and it will be required to specify actions inside the "actions" element
+      -->
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="compare" type="typeCompareAction" />
         <xs:element name="export"  type="typeImportExportAction" />
@@ -29,9 +32,22 @@
         <xs:element name="applyFilter" type="typeApplyFilterAction" />
         <xs:element name="copy" type="typeIOAction" />
       </xs:choice>
-    </xs:choice>
+      <xs:element name="actions" type="typeActionList" />
+    </xs:choice> 
   </xs:complexType>
 
+  <xs:complexType name="typeActionList">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="compare" type="typeCompareAction" />
+      <xs:element name="export"  type="typeImportExportAction" />
+      <xs:element name="import"  type="typeImportExportAction" />
+      <xs:element name="readSyncState"  type="typeReadWriteSyncStateAction" />
+      <xs:element name="writeSyncState" type="typeReadWriteSyncStateAction" />
+      <xs:element name="applyFilter" type="typeApplyFilterAction" />
+      <xs:element name="copy" type="typeIOAction" />
+    </xs:choice>
+  </xs:complexType>
+  
 
   <xs:complexType name="typeTransferLocation">
     <xs:sequence>

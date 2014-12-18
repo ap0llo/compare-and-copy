@@ -86,35 +86,39 @@ namespace ServerSync.Core.Configuration
                 }
                 else if (element.Name == XmlNames.Compare)
                 {
-                    configuration.AddAction(ReadCompareAction(element));
+                    ReadAction(element, configuration);
                 }
                 else if (element.Name == XmlNames.Export)
                 {
-                    configuration.AddAction(ReadExportAction(element, configuration));
+                    ReadAction(element, configuration);
                 }
                 else if (element.Name == XmlNames.Import)
                 {
-                    configuration.AddAction(ReadImportAction(element, configuration));
+                    ReadAction(element, configuration);
                 }
                 else if(element.Name == XmlNames.TransferLocation)
                 {
-                    configuration.AddTransferLocation(ReadTransferLocation(element));
+                    ReadAction(element, configuration);
                 }
                 else if (element.Name == XmlNames.ReadSyncState)
                 {
-                    configuration.AddAction(ReadReadSyncStateAction(element));
+                    ReadAction(element, configuration);
                 }
                 else if (element.Name == XmlNames.WriteSyncState)
                 {
-                    configuration.AddAction(ReadWriteSyncStateAction(element));
+                    ReadAction(element, configuration);
                 }
                 else if (element.Name == XmlNames.ApplyFilter)
                 {
-                    configuration.AddAction(ReadApplyFilerAction(element));
+                    ReadAction(element, configuration);
                 }
                 else if (element.Name == XmlNames.Copy)
                 {
-                    configuration.AddAction(ReadCopyAction(element));
+                    ReadAction(element, configuration);
+                }
+                else if(element.Name == XmlNames.Actions)
+                {
+                    ReadActionList(element, configuration);
                 }
                 else
                 {
@@ -223,6 +227,54 @@ namespace ServerSync.Core.Configuration
         #endregion Filter
 
         #region Actions
+
+        void ReadActionList(XElement actionListElement, SyncConfiguration configuration)
+        {
+            foreach (var actionElement in actionListElement.Elements())
+            {
+                ReadAction(actionListElement, configuration);
+            }
+        }
+
+        void ReadAction(XElement element, SyncConfiguration configuration)
+        {
+            if (element.Name == XmlNames.Compare)
+            {
+               configuration.AddAction(ReadCompareAction(element));
+            }
+            else if (element.Name == XmlNames.Export)
+            {
+                configuration.AddAction(ReadExportAction(element, configuration));
+            }
+            else if (element.Name == XmlNames.Import)
+            {
+                configuration.AddAction(ReadImportAction(element, configuration));
+            }
+            else if (element.Name == XmlNames.TransferLocation)
+            {
+                configuration.AddTransferLocation(ReadTransferLocation(element));
+            }
+            else if (element.Name == XmlNames.ReadSyncState)
+            {
+                configuration.AddAction(ReadReadSyncStateAction(element));
+            }
+            else if (element.Name == XmlNames.WriteSyncState)
+            {
+                configuration.AddAction(ReadWriteSyncStateAction(element));
+            }
+            else if (element.Name == XmlNames.ApplyFilter)
+            {
+                configuration.AddAction(ReadApplyFilerAction(element));
+            }
+            else if (element.Name == XmlNames.Copy)
+            {
+                configuration.AddAction(ReadCopyAction(element));
+            }
+            else
+            {
+                throw new ConfigurationException("Unknown element " + element.Name.LocalName + " in Configuration");
+            }
+        }
 
         IAction ReadCompareAction(XElement actionElement)
         {
