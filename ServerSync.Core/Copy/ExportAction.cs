@@ -51,12 +51,12 @@ namespace ServerSync.Core.Copy
 			var copyItems = GetFilteredInput();
 
 
-            var transferLocation = this.Configuration.GetTransferLocation(this.TransferLocationName);
+			var transferLocation = this.Configuration.GetTransferLocation(this.TransferLocationName);
 
 
 			if(transferLocation.MaximumSize.HasValue)
 			{
-				m_Logger.Info("Copying at most {0}", transferLocation.MaximumSize.Value.ToString("GB"));
+				m_Logger.Info("Maximum size for transfer location: {0}", transferLocation.MaximumSize.Value.ToString("GB"));
 			}
 
 		   
@@ -130,7 +130,7 @@ namespace ServerSync.Core.Copy
 		/// </summary>
 		private bool CheckNextFileExceedsMaxTransferSize(ByteSize.ByteSize nextFileSize)
 		{
-            var transferLocation = Configuration.GetTransferLocation(this.TransferLocationName);
+			var transferLocation = Configuration.GetTransferLocation(this.TransferLocationName);
 
 			// directory doesn't exist => limit not exceeded (no file copied yet)
 			if (!Directory.Exists(transferLocation.Path))
@@ -145,7 +145,7 @@ namespace ServerSync.Core.Copy
 				var currentSize = IOHelper.GetDirectorySize(transferLocation.Path);
 
 				//compare current size + file size + to maximum size
-                return (currentSize + nextFileSize) > transferLocation.MaximumSize;
+				return (currentSize + nextFileSize) > transferLocation.MaximumSize;
 			}			
 			//  no maximum specified => no limit exceeded
 			else

@@ -240,7 +240,7 @@ namespace ServerSync.Core.Configuration
         {
             foreach (var actionElement in actionListElement.Elements())
             {
-                ReadAction(actionListElement, configuration, pathResolver);
+                ReadAction(actionElement, configuration, pathResolver);
             }
         }
 

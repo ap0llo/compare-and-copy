@@ -111,7 +111,7 @@ namespace ServerSync.Core.Locking
 
             var cancellationTokenSource = new CancellationTokenSource();
 
-            m_Logger.Info("Trying to acquire lock with lock-file {0} with timeout {1}", this.LockFilePath, timeout);
+            m_Logger.Info("Trying to acquire lock with lock-file {0} and timeout {1}", this.LockFilePath, timeout);
             var task = Task.Factory.StartNew(() => LockInternal(cancellationTokenSource), cancellationTokenSource.Token);
             task.Wait((int) timeout.TotalMilliseconds);
 
