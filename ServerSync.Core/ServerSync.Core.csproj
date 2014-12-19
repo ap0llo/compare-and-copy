@@ -33,6 +33,14 @@
     <Compile Include="Compare\CompareAction.cs" />
     <Compile Include="Configuration\ConfigurationException.cs" />
     <Compile Include="Copy\TransferLocation.cs" />
+    <Compile Include="JobExecutionException.cs" />
+    <Compile Include="JobRunner.cs" />
+    <Compile Include="Locking\AcquireLockAction.cs" />
+    <Compile Include="Locking\FileLock.cs" />
+    <Compile Include="Locking\FileLockFactory.cs" />
+    <Compile Include="Locking\LockAction.cs" />
+    <Compile Include="Locking\ReleaseLockAction.cs" />
+    <Compile Include="SleepAction.cs" />
     <Compile Include="XElementExtensions.cs" />
     <Compile Include="Configuration\XmlAttributeNames.cs" />
     <Compile Include="Configuration\XmlNames.cs" />

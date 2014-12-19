@@ -32,7 +32,10 @@ namespace ServerSync.Core.Configuration
         public static readonly XName MaximumSize = s_Namespace.GetName("maximumSize");
         public static readonly XName TransferLocation = s_Namespace.GetName("transferLocation");
         public static readonly XName Actions = s_Namespace.GetName("actions");
-
+        public static readonly XName AcquireLock = s_Namespace.GetName("acquireLock");
+        public static readonly XName ReleaseLock = s_Namespace.GetName("releaseLock");
+        public static readonly XName Sleep = s_Namespace.GetName("sleep");
+        public static readonly XName Timeout = s_Namespace.GetName("timeout");
 
         public static XNamespace GetNamespace()
         {

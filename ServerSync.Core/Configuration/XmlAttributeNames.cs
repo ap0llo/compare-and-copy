@@ -18,7 +18,9 @@ namespace ServerSync.Core.Configuration
         public const string Pattern = "pattern";
 
         public const string TransferLocation = "transferLocation";
+
         public const string TransferLocationName = "transferLocationName";
+
         public const string TransferLocationSubPath = "transferLocationSubPath";
 
         public const string SyncFolder = "syncFolder";
@@ -31,6 +33,8 @@ namespace ServerSync.Core.Configuration
 
         public const string Path = "path";
 
+        public const string LockFile = "lockFile";
+
         //byte sizes
         public const string TeraByte = "tb";
 
@@ -41,6 +45,16 @@ namespace ServerSync.Core.Configuration
         public const string KiloByte = "kb";
 
         public const string Byte = "b";
+
+        //time units
+
+        public const string Hours = "h";
+        
+        public const string Minutes = "m";
+        
+        public const string Seconds = "s";
+
+        public const string MilliSeconds = "ms";
 
     }
 }

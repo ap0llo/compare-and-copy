@@ -1,6 +1,7 @@
 ﻿using ServerSync.Core.Compare;
 using ServerSync.Core.Copy;
 using ServerSync.Core.Filters;
+using ServerSync.Core.Locking;
 using ServerSync.Core.State;
 using System;
 using System.Collections.Generic;
@@ -73,7 +74,7 @@ namespace ServerSync.Core.Configuration
                 }
                 else if (element.Name == XmlNames.TimeStampMargin)
                 {
-                    configuration.TimeStampMargin = ReadTimeStampMargin(element);
+                    configuration.TimeStampMargin = ReadTimeSpan(element);
                 }
                 else if (element.Name == XmlNames.Filter)
                 {
@@ -119,6 +120,18 @@ namespace ServerSync.Core.Configuration
                 else if(element.Name == XmlNames.Actions)
                 {
                     ReadActionList(element, configuration);
+                }
+                else if (element.Name == XmlNames.AcquireLock)
+                {
+                    configuration.AddAction(ReadAquireLockAction(element));
+                }
+                else if (element.Name == XmlNames.ReleaseLock)
+                {
+                    configuration.AddAction(ReadReleaseLockAction(element));
+                }
+                else if (element.Name == XmlNames.Sleep)
+                {
+                    configuration.AddAction(ReadSleepAction(element));
                 }
                 else
                 {
@@ -270,6 +283,18 @@ namespace ServerSync.Core.Configuration
             {
                 configuration.AddAction(ReadCopyAction(element));
             }
+            else if(element.Name == XmlNames.AcquireLock)
+            {
+                configuration.AddAction(ReadAquireLockAction(element));
+            }
+            else if(element.Name == XmlNames.ReleaseLock)
+            {
+                configuration.AddAction(ReadReleaseLockAction(element));
+            }
+            else if(element.Name == XmlNames.Sleep)
+            {
+                configuration.AddAction(ReadSleepAction(element));
+            }
             else
             {
                 throw new ConfigurationException("Unknown element " + element.Name.LocalName + " in Configuration");
@@ -417,6 +442,32 @@ namespace ServerSync.Core.Configuration
             }
         }
 
+        IAction ReadAquireLockAction(XElement actionElement)
+        {
+            TimeSpan? timeout = null;
+            if(actionElement.Element(XmlNames.Timeout) != null)
+            {
+                timeout = ReadTimeSpan(actionElement.Element(XmlNames.Timeout));
+            }
+            var action = new AcquireLockAction(actionElement.RequireAttributeValue(XmlAttributeNames.LockFile), timeout);
+            ApplyCommonActionProperties(actionElement, action);
+            return action;
+        }
+
+        IAction ReadReleaseLockAction(XElement actionElement)
+        {
+            var action = new ReleaseLockAction(actionElement.RequireAttributeValue(XmlAttributeNames.LockFile));
+            ApplyCommonActionProperties(actionElement, action);
+            return action;
+        }
+
+        IAction ReadSleepAction(XElement actionElement)
+        {
+            var action = new SleepAction(ReadTimeSpan(actionElement.Element(XmlNames.Timeout)));
+            ApplyCommonActionProperties(actionElement, action);
+            return action;
+        }
+
         #endregion Actions
 
         #region TransferLocation
@@ -470,6 +521,20 @@ namespace ServerSync.Core.Configuration
         }
 
         #endregion Enum Parsing
+
+        #region Timespan
+
+        TimeSpan ReadTimeSpan(XElement timespanElement)
+        {
+            var hours = (int) timespanElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.Hours);
+            var minutes = (int)timespanElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.Minutes);
+            var seconds = (int)timespanElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.Seconds);
+            var milliSeconds = (int)timespanElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.MilliSeconds);
+
+            return new TimeSpan(0, hours, minutes, seconds, milliSeconds);            
+        }
+
+        #endregion
 
         XmlSchemaSet GetConfigutationSchema()
         {

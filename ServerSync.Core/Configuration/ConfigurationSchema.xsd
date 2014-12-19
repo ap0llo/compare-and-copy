@@ -11,11 +11,7 @@
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="left" type="typeSyncFolderDefinition" />
       <xs:element name="right" type="typeSyncFolderDefinition" />
-      <xs:element name="timeStampMargin">
-        <xs:complexType>
-          <xs:attribute name="ms" type="xs:integer" use="required" />
-        </xs:complexType>
-      </xs:element>
+      <xs:element name="timeStampMargin" type="typeTimespan" />
       <xs:element name="filter" type="typeFilter" />
       <xs:element name="include" type="typeInclude" />
       <xs:element name="transferLocation" type="typeTransferLocation" />
@@ -31,6 +27,9 @@
         <xs:element name="writeSyncState" type="typeReadWriteSyncStateAction" />
         <xs:element name="applyFilter" type="typeApplyFilterAction" />
         <xs:element name="copy" type="typeIOAction" />
+        <xs:element name="acquireLock" type="typeAcquireLockAction" />
+        <xs:element name="releaseLock" type="typeReleaseLockAction" />
+        <xs:element name="sleep" type="typeSleepAction" />
       </xs:choice>
       <xs:element name="actions" type="typeActionList" />
     </xs:choice> 
@@ -45,6 +44,9 @@
       <xs:element name="writeSyncState" type="typeReadWriteSyncStateAction" />
       <xs:element name="applyFilter" type="typeApplyFilterAction" />
       <xs:element name="copy" type="typeIOAction" />
+      <xs:element name="acquireLock" type="typeAcquireLockAction" />
+      <xs:element name="releaseLock" type="typeReleaseLockAction" />
+      <xs:element name="sleep" type="typeSleepAction" />
     </xs:choice>
   </xs:complexType>
   
@@ -59,6 +61,13 @@
 
   <xs:complexType name="typeInclude">
     <xs:attribute name="path" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="typeTimespan">
+    <xs:attribute name="h" type="xs:unsignedInt" />
+    <xs:attribute name="m" type="xs:unsignedInt" />
+    <xs:attribute name="s" type="xs:unsignedInt" />
+    <xs:attribute name="ms" type="xs:unsignedInt" />
   </xs:complexType>
   
   <!-- Actions -->
@@ -100,8 +109,30 @@
     <xs:attribute name="fileName" type="xs:string" use="required" />
   </xs:complexType>
 
+
+
+  <xs:complexType name="typeSleepAction">
+    <xs:sequence>
+      <xs:element name="timeout" type="typeTimespan" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="enable" type="xs:boolean" use="required" />
+  </xs:complexType>
   
-  
+  <xs:complexType name="typeAcquireLockAction">
+    <xs:sequence>
+      <xs:element name="timeout" type="typeTimespan" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="enable" type="xs:boolean" use="required" />
+    <xs:attribute name="lockFile" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="typeReleaseLockAction">
+
+    <xs:attribute name="enable" type="xs:boolean" use="required" />
+    <xs:attribute name="lockFile" type="xs:string" use="required" />
+  </xs:complexType>
+
+
   <xs:simpleType name="typeCompareState">
     <xs:restriction base="xs:string">
       <xs:enumeration value="MissingLeft" />

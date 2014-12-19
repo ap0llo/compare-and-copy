@@ -1,4 +1,5 @@
 ﻿using NLog;
+using ServerSync.Core;
 using ServerSync.Core.Configuration;
 using ServerSync.Core.State;
 using System;
@@ -11,21 +12,29 @@ namespace ServerSync
     class Program
     {
 
+        #region Fields
+
+
         static Logger s_Logger = LogManager.GetCurrentClassLogger();
 
+        #endregion
+
+
+        #region Main
 
         public static int Main(string[] args)
         {
             //Display Version Information
             WriteVersionInfo();            
 
-
             //Check arguments
             if(args.Length < 1)
             {
-                s_Logger.Error("You need to specify a Sync Configuration file");
+                s_Logger.Error("You need to specify at least one Sync Configuration file");
                 return 1;
             }
+
+            bool success = true;
 
             //Execute all configuration files specified via commandline
             for(int i = 0; i < args.Length; i++)
@@ -51,52 +60,33 @@ namespace ServerSync
                     return 1;
                 }
 
-                //execute the jib
-                ExecuteJob(config);
 
+                var jobRunner = new JobRunner(config);
+                success &= jobRunner.Run();
+                
                 stopWatch.Stop();
 
                 s_Logger.Info("Elapsed Time : " + stopWatch.Elapsed.ToString());
             }
            
-            return 0;
+            return success ? 0 : 1;
         }
+
+        #endregion
+
+
+        #region Private Methods
 
         /// <summary>
         /// Writes Application Name and Version to the Console
         /// </summary>
-        private static void WriteVersionInfo()
+        static void WriteVersionInfo()
         {
             var assembly = Assembly.GetExecutingAssembly();            
-            s_Logger.Info("{0}, Version {1}", assembly.GetName().Name, assembly.GetName().Version);            
+            s_Logger.Info("{0}, Version {1}", assembly.GetName().Name, assembly.GetName().Version);
         }
 
-        /// <summary>
-        /// Executes the specified SyncConfiguration
-        /// </summary>
-        private static void ExecuteJob(SyncConfiguration configuration)
-        {
-            var currentState = new SyncState();
-
-            //execute all actions specified in the sync configuration
-            foreach (var action in configuration.Actions)
-            {
-                if (action.IsEnabled)
-                {
-                    //set configuration and state
-                    action.Configuration = configuration;
-                    action.State = currentState;
-
-                    s_Logger.Info("Starting Action '{0}'", action.Name);
-
-                    //run the action
-                    action.Run();
-
-                    //update the state
-                    currentState = action.State;
-                }
-            }            
-        }
+        #endregion
 
     }
 

@@ -27,7 +27,7 @@ namespace ServerSync.Core.Configuration
 
         public SyncFolderDefinition Right { get; set; }
 
-        public long TimeStampMargin { get; set; }
+        public TimeSpan TimeStampMargin { get; set; }
         
         public IEnumerable<Filter> Filters
         {

@@ -211,7 +211,7 @@ namespace ServerSync.Core.Compare
             var sizeDifference = info1.Length - info2.Length;           
             var modifiedDifference = (info1.LastWriteTime - info2.LastWriteTime).TotalMilliseconds;
 
-            return sizeDifference == 0 && Math.Abs(modifiedDifference) <= config.TimeStampMargin;
+            return sizeDifference == 0 && Math.Abs(modifiedDifference) <= config.TimeStampMargin.TotalMilliseconds;
         }        
 
         #endregion Private Implementation
