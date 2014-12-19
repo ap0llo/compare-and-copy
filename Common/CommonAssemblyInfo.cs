@@ -26,7 +26,6 @@ using System.Runtime.InteropServices;
  * 
  */
 
-//TODO: Next release, increment minor version 
-//  Added: NLog logging
-[assembly: AssemblyVersion("1.2.1.1")]
-[assembly: AssemblyFileVersion("1.2.1.1")]
+
+[assembly: AssemblyVersion("1.3.0.0")]
+[assembly: AssemblyFileVersion("1.3.0.0")]
