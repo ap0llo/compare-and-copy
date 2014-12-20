@@ -165,6 +165,8 @@ namespace ServerSync.Core.Locking
                     return;
                 }
 
+                IOHelper.EnsureDirectoryExists(Path.GetDirectoryName(this.LockFilePath));
+
                 while (true)
                 {
                     //try to lock the file
