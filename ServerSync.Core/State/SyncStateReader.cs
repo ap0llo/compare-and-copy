@@ -29,7 +29,15 @@ namespace ServerSync.Core.State
                 return new SyncState();
             }
 
-            var document = XDocument.Load(fileName);
+            XDocument document;
+            try
+            {
+                document = XDocument.Load(fileName);
+            }
+            catch (XmlException)
+            {
+                throw new JobExecutionException("Error reading the sync state file. File is not valid xml");
+            }
 
 
             if(String.IsNullOrEmpty(document.Root.Name.NamespaceName))
