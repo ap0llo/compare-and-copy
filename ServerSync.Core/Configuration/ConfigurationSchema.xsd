@@ -35,6 +35,37 @@
     </xs:choice> 
   </xs:complexType>
 
+  <!--Global Elements-->
+   
+  <!--Transfer Location-->
+  <xs:complexType name="typeTransferLocation">
+    <xs:sequence>
+      <xs:element name="maximumSize" type="typeByteSize" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="path" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <!--Include-->  
+  <xs:complexType name="typeInclude">
+    <xs:attribute name="path" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <!--Timespan -->
+  <xs:complexType name="typeTimespan">
+    <xs:attribute name="h" type="xs:unsignedInt" />
+    <xs:attribute name="m" type="xs:unsignedInt" />
+    <xs:attribute name="s" type="xs:unsignedInt" />
+    <xs:attribute name="ms" type="xs:unsignedInt" />
+  </xs:complexType>
+
+  <!--SyncFolder definition -->
+  <xs:complexType name="typeSyncFolderDefinition">
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="rootPath" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <!--Action List-->
   <xs:complexType name="typeActionList">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="compare" type="typeCompareAction" />
@@ -50,28 +81,7 @@
     </xs:choice>
   </xs:complexType>
   
-
-  <xs:complexType name="typeTransferLocation">
-    <xs:sequence>
-      <xs:element name="maximumSize" type="typeByteSize" minOccurs="0" maxOccurs="unbounded" />
-    </xs:sequence>
-    <xs:attribute name="name" type="xs:string" use="required" />
-    <xs:attribute name="path" type="xs:string" use="required" />
-  </xs:complexType>
-
-  <xs:complexType name="typeInclude">
-    <xs:attribute name="path" type="xs:string" use="required" />
-  </xs:complexType>
-
-  <xs:complexType name="typeTimespan">
-    <xs:attribute name="h" type="xs:unsignedInt" />
-    <xs:attribute name="m" type="xs:unsignedInt" />
-    <xs:attribute name="s" type="xs:unsignedInt" />
-    <xs:attribute name="ms" type="xs:unsignedInt" />
-  </xs:complexType>
-  
-  <!-- Actions -->
-  
+  <!-- Actions -->  
   <xs:complexType name="typeCompareAction">
     <xs:attribute name="enable" type="xs:boolean" />
     <xs:attribute name="inputFilter" type="xs:string" />
@@ -109,8 +119,6 @@
     <xs:attribute name="fileName" type="xs:string" use="required" />
   </xs:complexType>
 
-
-
   <xs:complexType name="typeSleepAction">
     <xs:sequence>
       <xs:element name="timeout" type="typeTimespan" minOccurs="1" maxOccurs="1" />
@@ -133,6 +141,7 @@
   </xs:complexType>
 
 
+  <!--CompareState-->
   <xs:simpleType name="typeCompareState">
     <xs:restriction base="xs:string">
       <xs:enumeration value="MissingLeft" />
@@ -140,12 +149,8 @@
       <xs:enumeration value="Conflict" />      
     </xs:restriction>
   </xs:simpleType>
-
-  <xs:complexType name="typeCompareStateElement">
-    <xs:attribute name="value" type="typeCompareState" use="required" />
-  </xs:complexType>
   
-  
+  <!--TransferState-->
   <xs:simpleType name="typeTransferState">
     <xs:restriction base="xs:string">
       <xs:enumeration value="None" />
@@ -154,11 +159,7 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="typeTransferStateElement">
-    <xs:attribute name="value" type="typeTransferState" use="required" />
-  </xs:complexType>
-  
-  
+  <!--SyncFolder (Enum type)-->
   <xs:simpleType name="typeSyncFolder">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Left" />
@@ -167,14 +168,10 @@
       <xs:enumeration value="right" />
     </xs:restriction>
   </xs:simpleType>
-
-  <!--SyncFolder type-->
-  <xs:complexType name="typeSyncFolderDefinition">
-    <xs:attribute name="name" type="xs:string" use="required" />
-    <xs:attribute name="rootPath" type="xs:string" use="required" />
-  </xs:complexType>
-
-  <!--Filter Type-->
+  
+  <!--Filters-->
+  
+  <!--Filter definition Type-->
   <xs:complexType name="typeFilter">
     <xs:sequence>
       <xs:element name="include" type="typeFilterElementList"  minOccurs="0" maxOccurs="unbounded" />
@@ -183,18 +180,7 @@
     <xs:attribute name="name" type="xs:string" use="required"/>
   </xs:complexType>
 
-
-  <!--RegexRule Type-->
-  <xs:complexType name="typeRegexRule">
-    <xs:attribute name="pattern" type="xs:string" use="required" />
-  </xs:complexType>
-
-  
-  <xs:complexType name="typeMicroscopeQuery">
-    <xs:attribute name="query" type="xs:string" use="required" />
-  </xs:complexType>
-    
-  <!--RegexRuleList Type-->
+  <!--Filter element list-->
   <xs:complexType name="typeFilterElementList">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="regex" type="typeRegexRule"  />
@@ -204,6 +190,24 @@
     </xs:choice>
   </xs:complexType>
 
+  <!--Filter elements-->
+
+  <xs:complexType name="typeCompareStateElement">
+    <xs:attribute name="value" type="typeCompareState" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="typeTransferStateElement">
+    <xs:attribute name="value" type="typeTransferState" use="required" />
+  </xs:complexType>
+  
+  <xs:complexType name="typeRegexRule">
+    <xs:attribute name="pattern" type="xs:string" use="required" />
+  </xs:complexType>
+  
+  <xs:complexType name="typeMicroscopeQuery">
+    <xs:attribute name="query" type="xs:string" use="required" />
+  </xs:complexType>
+    
   
   
   <!--ByteSize type-->
