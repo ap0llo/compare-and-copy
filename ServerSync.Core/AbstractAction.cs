@@ -62,8 +62,8 @@ namespace ServerSync.Core
             }
             else
             {
-                Filter filter = Configuration.GetFilter(this.InputFilterName);
-                return this.State.Files.ApplyFilter(filter).ToList();
+                var filter = Configuration.GetFilter(this.InputFilterName);
+                return filter.ApplyFilter(this.State.Files).ToList();
             }
         }
 

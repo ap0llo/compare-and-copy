@@ -49,10 +49,9 @@ namespace ServerSync.Core
 
 
 
-        public static IEnumerable<FileItem> ApplyFilter(this IEnumerable<FileItem> items, Filter filter)
+        public static IEnumerable<FileItem> ApplyFilter(this IEnumerable<FileItem> items, IFilter filter)
         {
-            return items.Where(item => filter.IncludeRules.Any(rule => rule.IsMatch(item)))
-                        .Where(item => ! filter.ExcludeRules.Any(rule => rule.IsMatch(item)));
+            return filter.ApplyFilter(items);
         }
 
 

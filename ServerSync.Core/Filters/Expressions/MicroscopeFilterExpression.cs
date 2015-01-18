@@ -12,7 +12,7 @@ namespace ServerSync.Core.Filters
     /// Filter element that uses the Microscope framework (https://github.com/clotheshorse/microscope) to find matches.
     /// The Microscope query is applied to RelativePath property of <see cref="FileItem"/>
     /// </summary>
-    class MicroscopeFilterElement : IFilterElement
+    public class MicroscopeFilterExpression : IFilterExpression
     {
 
         #region Fields
@@ -35,7 +35,7 @@ namespace ServerSync.Core.Filters
 
         #region Constructor
 
-        public MicroscopeFilterElement(string query)
+        public MicroscopeFilterExpression(string query)
         {
             this.m_Query = query;
             this.m_Evaluator = new QueryEvaluator(query);
@@ -44,11 +44,16 @@ namespace ServerSync.Core.Filters
         #endregion
 
 
-        #region IFilterElement Implementation
+        #region IFilterExpression Implementation
 
         public bool IsMatch(FileItem item)
         {
             return m_Evaluator.Evaluate(item.RelativePath);
+        }
+
+        public T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter)
+        {
+            return visitor.Visit(this, parameter);
         }
 
         #endregion

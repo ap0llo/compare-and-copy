@@ -10,7 +10,7 @@ namespace ServerSync.Core.Filters
     /// <summary>
     /// A filter element that filters based on an items TransferState property
     /// </summary>
-    class TransferStateFilterElement : IFilterElement
+    public class TransferStateFilterExpression : IFilterExpression
     {
         
         #region Fields
@@ -20,9 +20,15 @@ namespace ServerSync.Core.Filters
         #endregion
 
 
+        #region Properties
+
+        public TransferState TransferState { get { return this.state; } }
+
+        #endregion
+
         #region Constructor
 
-        public TransferStateFilterElement(TransferState state)
+        public TransferStateFilterExpression(TransferState state)
         {
             this.state = state;
         }
@@ -30,11 +36,16 @@ namespace ServerSync.Core.Filters
         #endregion
 
 
-        #region IFilterElement Implementation
+        #region IFilterExpression Implementation
         
         public bool IsMatch(FileItem item)
         {
             return item.TransferState == this.state;
+        }
+
+        public T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter)
+        {
+            return visitor.Visit(this, parameter);
         }
 
         #endregion

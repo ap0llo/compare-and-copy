@@ -11,7 +11,7 @@
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="left" type="typeSyncFolderDefinition" />
       <xs:element name="right" type="typeSyncFolderDefinition" />
-      <xs:element name="timeStampMargin" type="typeTimespan" />
+      <xs:element name="timeStampMargin" type="typeTimespan" />            
       <xs:element name="filter" type="typeFilter" />
       <xs:element name="include" type="typeInclude" />
       <xs:element name="transferLocation" type="typeTransferLocation" />
@@ -172,26 +172,72 @@
   <!--Filters-->
   
   <!--Filter definition Type-->
+    
   <xs:complexType name="typeFilter">
-    <xs:sequence>
-      <xs:element name="include" type="typeFilterElementList"  minOccurs="0" maxOccurs="unbounded" />
-      <xs:element name="exclude" type="typeFilterElementList"  minOccurs="0" maxOccurs="unbounded" />
-    </xs:sequence>
-    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:choice>
+      <!--Backwards compatibility: support filters containing of "include" and "exclude" elements-->
+      <xs:sequence>        
+        <xs:element name="include" type="typeLegacyFilterExpressionList"  minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="exclude" type="typeLegacyFilterExpressionList"  minOccurs="0" maxOccurs="unbounded" />          
+      </xs:sequence>
+      <!--new filter type (filter just defines a single root expression that will be evaluated)
+      TODO: When backwards compatibility is removed, filter type can be defined by extending "typeFilterExpression"
+            instead of redefining it here
+      -->
+      <xs:choice minOccurs="1" maxOccurs="1">
+        <xs:element name="regex" type="typeRegexRule"  />
+        <xs:element name="compareState" type="typeCompareStateElement" />
+        <xs:element name="transferState" type="typeTransferStateElement" />
+        <xs:element name="microscopeQuery" type="typeMicroscopeQuery" />
+        <xs:element name="and" type="typeFilterExpressionList" />
+        <xs:element name="or" type="typeFilterExpressionList" />
+        <xs:element name="not" type="typeFilterExpression" />
+      </xs:choice>
+    </xs:choice>    
+    <xs:attribute name="name" type="xs:string" use="required" />
   </xs:complexType>
 
   <!--Filter element list-->
-  <xs:complexType name="typeFilterElementList">
+
+  <!--Legacy filter expression list (supports only filter expressions that were already supported at the time the new filter's were introduced
+  Do not extend this list, add new filter expression type to 'typeFilterExpression' and 'typeFilterExpressionList'
+  -->
+  <xs:complexType name="typeLegacyFilterExpressionList">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="regex" type="typeRegexRule"  />
+      <xs:element name="compareState" type="typeCompareStateElement" />
+      <xs:element name="transferState" type="typeTransferStateElement" />
+      <xs:element name="microscopeQuery" type="typeMicroscopeQuery" />      
+    </xs:choice>
+  </xs:complexType>
+
+
+  <xs:complexType name="typeFilterExpressionList">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="regex" type="typeRegexRule"  />
       <xs:element name="compareState" type="typeCompareStateElement" />
       <xs:element name="transferState" type="typeTransferStateElement" />
       <xs:element name="microscopeQuery" type="typeMicroscopeQuery" />
+      <xs:element name="and" type="typeFilterExpressionList" />
+      <xs:element name="or" type="typeFilterExpressionList" />
+      <xs:element name="not" type="typeFilterExpression" />
     </xs:choice>
   </xs:complexType>
+  
+  <!--Filter expression types-->
 
-  <!--Filter elements-->
-
+  <xs:complexType name="typeFilterExpression">
+    <xs:choice minOccurs="1" maxOccurs="1">
+      <xs:element name="regex" type="typeRegexRule"  />
+      <xs:element name="compareState" type="typeCompareStateElement" />
+      <xs:element name="transferState" type="typeTransferStateElement" />
+      <xs:element name="microscopeQuery" type="typeMicroscopeQuery" />
+      <xs:element name="and" type="typeFilterExpressionList" />
+      <xs:element name="or" type="typeFilterExpressionList" />
+      <xs:element name="not" type="typeFilterExpression" />
+    </xs:choice>
+  </xs:complexType>
+  
   <xs:complexType name="typeCompareStateElement">
     <xs:attribute name="value" type="typeCompareState" use="required" />
   </xs:complexType>
@@ -207,7 +253,9 @@
   <xs:complexType name="typeMicroscopeQuery">
     <xs:attribute name="query" type="xs:string" use="required" />
   </xs:complexType>
-    
+
+
+  
   
   
   <!--ByteSize type-->

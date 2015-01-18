@@ -9,21 +9,26 @@ using System.Threading.Tasks;
 namespace ServerSync.Core.Filters
 {
     /// <summary>
-    /// Filter element taht filters based on the relative path of a <see cref="FileItem"/>
+    /// Filter element that filters based on the relative path of a <see cref="FileItem"/>
     /// </summary>
-    class RegexFilterElement : IFilterElement
+    public class RegexFilterExpression : IFilterExpression
     {
         
         #region Fields
 
-        private Regex regex;
+        readonly  Regex regex;
 
         #endregion
 
+        #region Properties
+
+        public Regex Regex { get { return this.regex; } }
+
+        #endregion
 
         #region Constructor
 
-        public RegexFilterElement(string pattern)
+        public RegexFilterExpression(string pattern)
         {
             this.regex = new Regex(pattern);
         }
@@ -31,11 +36,16 @@ namespace ServerSync.Core.Filters
         #endregion
 
 
-        #region IFilterElement Implementation
+        #region IFilterEexpression Implementation
 
         public bool IsMatch(FileItem item)
         {
             return regex.IsMatch(item.RelativePath);
+        }
+
+        public T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter)
+        {
+            return visitor.Visit(this, parameter);
         }
 
         #endregion

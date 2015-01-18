@@ -5,6 +5,7 @@ using ServerSync.Core.Locking;
 using ServerSync.Core.PathResolving;
 using ServerSync.Core.State;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -185,31 +186,31 @@ namespace ServerSync.Core.Configuration
 
         #region Filter
 
-        IEnumerable<IFilterElement> ReadFilterElementList(XElement listNode)
+        IEnumerable<IFilterExpression> ReadLegacyFilterExpressionList(XElement listNode)
         {
-            List<IFilterElement> filterElements = new List<IFilterElement>();
+            List<IFilterExpression> filterElements = new List<IFilterExpression>();
 
             foreach (var elementNode in listNode.Elements())
             {
                 if(elementNode.Name == XmlNames.Regex)
                 {
                     var pattern = elementNode.Attribute(XmlAttributeNames.Pattern).Value;
-                    filterElements.Add(new RegexFilterElement(pattern));
+                    filterElements.Add(new RegexFilterExpression(pattern));
                 }
                 else if(elementNode.Name == XmlNames.CompareState)
                 {
                     var compareState = ParseCompareState(elementNode.RequireAttributeValue(XmlAttributeNames.Value));
-                    filterElements.Add(new CompareStateFilterElement(compareState));
+                    filterElements.Add(new CompareStateFilterExpression(compareState));
                 }
                 else if(elementNode.Name == XmlNames.TransferState)
                 {
                     var transferState = ParseTransferState(elementNode.RequireAttributeValue(XmlAttributeNames.Value));
-                    filterElements.Add(new TransferStateFilterElement(transferState));
+                    filterElements.Add(new TransferStateFilterExpression(transferState));
                 }
                 else if (elementNode.Name == XmlNames.MicroscopeQuery)
                 {
                     var query = elementNode.RequireAttributeValue(XmlAttributeNames.Query);
-                    filterElements.Add(new MicroscopeFilterElement(query));
+                    filterElements.Add(new MicroscopeFilterExpression(query));
                 }
                 else
                 {
@@ -220,17 +221,99 @@ namespace ServerSync.Core.Configuration
             return filterElements;
         }
 
-        Filter ReadFilter(XElement filterNode)
+
+
+
+
+        IFilter ReadFilter(XElement filterNode)
         {
-            var newFilter = new Filter();
+            if(IsLegacyFilter(filterNode))
+            {
+                return ReadLegacyFilter(filterNode);
+            }
+
+            var name = filterNode.RequireAttributeValue(XmlAttributeNames.Name);
+            if(filterNode.Elements().Count() != 1)
+            {
+                throw new ConfigurationException(String.Format("Invalid configuration. Expected a single root expression in filter '{0}'", name));
+            }
+
+            var rootExpression = ReadFilterExpression(filterNode.Elements().First());
+
+            return new Filter(name, rootExpression);         
+        }
+
+
+        IFilterExpression ReadFilterExpression(XElement filterExpressionNode)
+        {
+            if(filterExpressionNode.Name == XmlNames.Regex)
+            {
+                var pattern = filterExpressionNode.RequireAttributeValue(XmlAttributeNames.Pattern);
+                return new RegexFilterExpression(pattern);
+            }
+            else if(filterExpressionNode.Name == XmlNames.CompareState)
+            {
+                var compareState = ParseCompareState(filterExpressionNode.RequireAttributeValue(XmlAttributeNames.Value));
+                return new CompareStateFilterExpression(compareState);
+            }
+            else if (filterExpressionNode.Name == XmlNames.TransferState)
+            {
+                var transferState = ParseTransferState(filterExpressionNode.RequireAttributeValue(XmlAttributeNames.Value));
+                return new TransferStateFilterExpression(transferState);
+            }
+            else if (filterExpressionNode.Name == XmlNames.MicroscopeQuery)
+            {
+                var query = filterExpressionNode.RequireAttributeValue(XmlAttributeNames.Query);
+                return new MicroscopeFilterExpression(query);
+            }
+            else if (filterExpressionNode.Name == XmlNames.And)
+            {
+                var expressions = filterExpressionNode.Elements().Select(ReadFilterExpression);
+                return new AndFilterExpression(expressions);
+            }
+            else if (filterExpressionNode.Name == XmlNames.Or)
+            {
+                var expressions = filterExpressionNode.Elements().Select(ReadFilterExpression);
+                return new OrFilterExpression(expressions);
+            }
+            else if (filterExpressionNode.Name == XmlNames.Not)
+            {
+                if(filterExpressionNode.Elements().Count() != 1)
+                {
+                    throw new ConfigurationException("Invalid configuration, expected a single expression in 'not' expression");
+                }
+
+                var negatedExpression = ReadFilterExpression(filterExpressionNode.Elements().First());
+                return new NotFilterExpression(negatedExpression);
+            }
+            else
+            {
+                throw new ConfigurationException(String.Format("Unknown filter-expression '{0}'", filterExpressionNode.Name.LocalName));
+            }
+        }
+
+        bool IsLegacyFilter(XElement filterNode)
+        {
+            return filterNode.Elements().Count() <= 2 &&
+                (filterNode.Elements().Count(element => element.Name ==  XmlNames.Include) == 1 ||
+                filterNode.Elements().Count(element => element.Name ==  XmlNames.Include) == 1);
+        }
+
+        IFilter ReadLegacyFilter(XElement filterNode)
+        {
+#pragma warning disable 612,618 //we need to support legacy filter for backwards compatibility
+
+            var newFilter = new LegacyFilter();
+
+#pragma warning restore 612, 618
 
             if (filterNode.Element(XmlNames.Include) != null)
             {
-                newFilter.IncludeRules = ReadFilterElementList(filterNode.Element(XmlNames.Include));
+                newFilter.IncludeRules = ReadLegacyFilterExpressionList(filterNode.Element(XmlNames.Include));
             }
             if (filterNode.Element(XmlNames.Exclude) != null)
             {
-                newFilter.ExcludeRules = ReadFilterElementList(filterNode.Element(XmlNames.Exclude));
+                newFilter.ExcludeRules = ReadLegacyFilterExpressionList(filterNode.Element(XmlNames.Exclude));
             }
             newFilter.Name = filterNode.Attribute(XmlAttributeNames.Name).Value;
 

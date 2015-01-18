@@ -37,6 +37,9 @@ namespace ServerSync.Core.Configuration
         public static readonly XName Sleep = s_Namespace.GetName("sleep");
         public static readonly XName Timeout = s_Namespace.GetName("timeout");
         public static readonly XName MicroscopeQuery = s_Namespace.GetName("microscopeQuery");
+        public static readonly XName And = s_Namespace.GetName("and");
+        public static readonly XName Or = s_Namespace.GetName("or");
+        public static readonly XName Not = s_Namespace.GetName("not");
 
         public static XNamespace GetNamespace()
         {

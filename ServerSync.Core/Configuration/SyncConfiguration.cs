@@ -14,7 +14,7 @@ namespace ServerSync.Core.Configuration
 
         #region Fields
 
-        private Dictionary<string, Filter> filters = new Dictionary<string,Filter>();
+        private Dictionary<string, IFilter> filters = new Dictionary<string, IFilter>();
         private Dictionary<string, TransferLocation> transferLocations = new Dictionary<string,TransferLocation>();
         private List<IAction> actions = new List<IAction>();
 
@@ -29,7 +29,7 @@ namespace ServerSync.Core.Configuration
 
         public TimeSpan TimeStampMargin { get; set; }
         
-        public IEnumerable<Filter> Filters
+        public IEnumerable<IFilter> Filters
         {
             get { return this.filters.Values; }
         }        
@@ -49,7 +49,7 @@ namespace ServerSync.Core.Configuration
 
         #region Public Methods
 
-        public void AddFilter(Filter filter)
+        public void AddFilter(IFilter filter)
         {
             string key = GetFilterKey(filter.Name);
             if(this.filters.ContainsKey(key))
@@ -62,7 +62,7 @@ namespace ServerSync.Core.Configuration
             }
         }
 
-        public Filter GetFilter(string name)
+        public IFilter GetFilter(string name)
         {
             return this.filters[GetFilterKey(name)];
         }
