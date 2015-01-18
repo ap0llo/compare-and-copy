@@ -35,6 +35,9 @@ namespace ServerSync.Core.Configuration
 
         public const string LockFile = "lockFile";
 
+        public const string Query = "query";
+
+
         //byte sizes
         public const string TeraByte = "tb";
 

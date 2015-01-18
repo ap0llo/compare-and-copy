@@ -189,12 +189,18 @@
     <xs:attribute name="pattern" type="xs:string" use="required" />
   </xs:complexType>
 
+  
+  <xs:complexType name="typeMicroscopeQuery">
+    <xs:attribute name="query" type="xs:string" use="required" />
+  </xs:complexType>
+    
   <!--RegexRuleList Type-->
   <xs:complexType name="typeFilterElementList">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="regex" type="typeRegexRule"  />
       <xs:element name="compareState" type="typeCompareStateElement" />
       <xs:element name="transferState" type="typeTransferStateElement" />
+      <xs:element name="microscopeQuery" type="typeMicroscopeQuery" />
     </xs:choice>
   </xs:complexType>
 

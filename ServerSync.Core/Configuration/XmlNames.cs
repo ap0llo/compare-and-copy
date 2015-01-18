@@ -36,6 +36,7 @@ namespace ServerSync.Core.Configuration
         public static readonly XName ReleaseLock = s_Namespace.GetName("releaseLock");
         public static readonly XName Sleep = s_Namespace.GetName("sleep");
         public static readonly XName Timeout = s_Namespace.GetName("timeout");
+        public static readonly XName MicroscopeQuery = s_Namespace.GetName("microscopeQuery");
 
         public static XNamespace GetNamespace()
         {

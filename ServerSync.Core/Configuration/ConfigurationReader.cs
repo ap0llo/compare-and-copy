@@ -206,6 +206,11 @@ namespace ServerSync.Core.Configuration
                     var transferState = ParseTransferState(elementNode.RequireAttributeValue(XmlAttributeNames.Value));
                     filterElements.Add(new TransferStateFilterElement(transferState));
                 }
+                else if (elementNode.Name == XmlNames.MicroscopeQuery)
+                {
+                    var query = elementNode.RequireAttributeValue(XmlAttributeNames.Query);
+                    filterElements.Add(new MicroscopeFilterElement(query));
+                }
                 else
                 {
                     throw new ConfigurationException("Unimplemented filter element: " + elementNode.Name.LocalName);
