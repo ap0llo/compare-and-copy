@@ -301,21 +301,25 @@ namespace ServerSync.Core.Configuration
 
         IFilter ReadLegacyFilter(XElement filterNode)
         {
-#pragma warning disable 612,618 //we need to support legacy filter for backwards compatibility
+            var includeRules = Enumerable.Empty<IFilterExpression>();
+            var excludeRules = Enumerable.Empty<IFilterExpression>();
 
-            var newFilter = new LegacyFilter();
-
-#pragma warning restore 612, 618
 
             if (filterNode.Element(XmlNames.Include) != null)
             {
-                newFilter.IncludeRules = ReadLegacyFilterExpressionList(filterNode.Element(XmlNames.Include));
+                includeRules= ReadLegacyFilterExpressionList(filterNode.Element(XmlNames.Include));
             }
             if (filterNode.Element(XmlNames.Exclude) != null)
             {
-                newFilter.ExcludeRules = ReadLegacyFilterExpressionList(filterNode.Element(XmlNames.Exclude));
+                excludeRules = ReadLegacyFilterExpressionList(filterNode.Element(XmlNames.Exclude));
             }
-            newFilter.Name = filterNode.Attribute(XmlAttributeNames.Name).Value;
+            var name = filterNode.Attribute(XmlAttributeNames.Name).Value;
+
+#pragma warning disable 612,618 //we need to support legacy filter for backwards compatibility
+
+            var newFilter = new LegacyFilter(name, includeRules, excludeRules);
+
+#pragma warning restore 612, 618
 
             return newFilter;
         }

@@ -12,6 +12,10 @@ namespace ServerSync.Core.Filters
 
         #region Constructor
         
+        public AndFilterExpression(params  IFilterExpression[] expressions) : this((IEnumerable<IFilterExpression>)expressions)
+        {
+        }
+
         public AndFilterExpression(IEnumerable<IFilterExpression> expressions) : base(expressions)
         {
         }
@@ -20,11 +24,6 @@ namespace ServerSync.Core.Filters
 
 
         #region Overrides
-
-        public override bool IsMatch(FileItem item)
-        {
-            return this.Expressions.All(expression => expression.IsMatch(item));
-        }
 
         public override T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter)
         {

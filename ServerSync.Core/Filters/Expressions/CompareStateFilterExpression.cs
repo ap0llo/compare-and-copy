@@ -15,33 +15,29 @@ namespace ServerSync.Core.Filters
 
         #region Fields
 
-        private CompareState state;
+        readonly CompareState m_CompareState;
 
         #endregion
 
 
         #region Properties
 
-        public CompareState CompareState { get { return this.state; } }
+        public CompareState CompareState { get { return this.m_CompareState; } }
 
         #endregion
+
 
         #region Constructor
 
         public CompareStateFilterExpression(CompareState state)
         {
-            this.state = state;
+            this.m_CompareState = state;
         }
 
         #endregion
 
 
         #region IFilterExpression Implementation
-
-        public bool IsMatch(FileItem item)
-        {
-            return item.CompareState == this.state;
-        }
 
         public T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter)
         {

@@ -19,6 +19,7 @@ namespace ServerSync.Core.Filters
 		
         readonly string m_Name;
         readonly IFilterExpression m_RootExpression;
+        readonly ExpressionEvaluationVisitor m_Evaluator;
 
 	    #endregion
 
@@ -48,6 +49,7 @@ namespace ServerSync.Core.Filters
 
             this.m_Name = name;
             this.m_RootExpression = rootExpression;
+            this.m_Evaluator = new ExpressionEvaluationVisitor(this.RootExpression);
         }
 
         #endregion
@@ -57,7 +59,7 @@ namespace ServerSync.Core.Filters
         
         public IEnumerable<FileItem> ApplyFilter(IEnumerable<FileItem> filterInput)
         {
-            return filterInput.Where(file => this.RootExpression.IsMatch(file));
+            return filterInput.Where(file => this.m_Evaluator.IsMatch(file));
         }
 
         #endregion

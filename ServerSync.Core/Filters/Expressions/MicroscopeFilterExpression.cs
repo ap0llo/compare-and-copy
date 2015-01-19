@@ -17,18 +17,14 @@ namespace ServerSync.Core.Filters
 
         #region Fields
 
-        readonly string m_Query;
-        readonly QueryEvaluator m_Evaluator;
+        readonly string m_Query;        
 
         #endregion
 
 
         #region Properties
 
-        public string Query
-        {
-            get { return m_Query; }
-        }
+        public string Query { get { return m_Query; } }
 
         #endregion
 
@@ -37,19 +33,13 @@ namespace ServerSync.Core.Filters
 
         public MicroscopeFilterExpression(string query)
         {
-            this.m_Query = query;
-            this.m_Evaluator = new QueryEvaluator(query);
+            this.m_Query = query;            
         }
 
         #endregion
 
 
         #region IFilterExpression Implementation
-
-        public bool IsMatch(FileItem item)
-        {
-            return m_Evaluator.Evaluate(item.RelativePath);
-        }
 
         public T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter)
         {

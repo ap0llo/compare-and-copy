@@ -21,11 +21,6 @@ namespace ServerSync.Core.Filters
 
         #region Overrides
 
-        public override bool IsMatch(FileItem item)
-        {
-            return this.Expressions.Any(expression => expression.IsMatch(item));
-        }
-
         public override T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter)
         {
             return visitor.Visit(this, parameter);

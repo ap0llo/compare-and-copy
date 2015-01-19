@@ -21,6 +21,5 @@ namespace ServerSync.Core.Filters
         T1 Visit(CompareStateFilterExpression expression, T2 paramter);
         
         T1 Visit(TransferStateFilterExpression expression, T2 paramter);
-
     }
 }

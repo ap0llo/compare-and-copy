@@ -1,6 +1,7 @@
 ﻿using ServerSync.Core.State;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -18,32 +19,70 @@ namespace ServerSync.Core.Filters
     class LegacyFilter : IFilter
     {
 
+        #region Fields
+
+        readonly string m_Name;
+        readonly IImmutableList<IFilterExpression> m_IncludeRules;
+        readonly IImmutableList<IFilterExpression> m_ExcludeRules;
+        readonly ExpressionEvaluationVisitor m_Evaluator;
+
+        #endregion
+
         #region Properties
 
         /// <summary>
         /// The filter's name
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get { return m_Name; } }
 
         /// <summary>
         /// All filter elements that include an item in the result
         /// </summary>
-        public IEnumerable<IFilterExpression> IncludeRules { get; set; }
+        public IEnumerable<IFilterExpression> IncludeRules { get { return m_IncludeRules; } }
 
         /// <summary>
         /// The filter elements that exclude an item from the result
         /// </summary>
-        public IEnumerable<IFilterExpression> ExcludeRules { get; set; }
+        public IEnumerable<IFilterExpression> ExcludeRules { get { return m_ExcludeRules; } }
 
         #endregion
 
 
         #region Constructor
 
-        public LegacyFilter()
+        public LegacyFilter(string name, IEnumerable<IFilterExpression> includeRules, IEnumerable<IFilterExpression> excludeRules)
         {
-            IncludeRules = Enumerable.Empty<IFilterExpression>();
-            ExcludeRules = Enumerable.Empty<IFilterExpression>();
+            if(name == null)
+            {
+                throw new ArgumentNullException("name");
+            }
+
+            if(String.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("name must not be an empty string");
+            }
+
+            if(includeRules == null)
+            {
+                throw new ArgumentNullException("includeRules");
+            }
+
+            if(excludeRules == null)
+            {
+                throw new ArgumentNullException("excludeRules");
+            }
+
+            m_Name = name;
+            m_IncludeRules = includeRules.ToImmutableList();
+            m_ExcludeRules = excludeRules.ToImmutableList();
+
+
+            var rootExpression = new AndFilterExpression(
+                new OrFilterExpression(includeRules),
+                new NotFilterExpression(new OrFilterExpression(excludeRules)));
+
+            m_Evaluator = new ExpressionEvaluationVisitor(rootExpression);
+
         }
 
         #endregion
@@ -52,8 +91,7 @@ namespace ServerSync.Core.Filters
         
         public IEnumerable<FileItem> ApplyFilter(IEnumerable<FileItem> filterInput)
         {
-            return filterInput.Where(item => IncludeRules.Any(rule => rule.IsMatch(item)))
-                        .Where(item => !ExcludeRules.Any(rule => rule.IsMatch(item)));
+            return filterInput.Where(fileItem => m_Evaluator.IsMatch(fileItem));
         }
         
         #endregion

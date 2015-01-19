@@ -41,12 +41,9 @@ namespace ServerSync.Core.Filters
 
 
         #region IFilterExpression Implementation
-
-        public abstract bool IsMatch(FileItem item);
-
-        public abstract T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter);
         
-
+        public abstract T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter);
+       
         #endregion
 
     }

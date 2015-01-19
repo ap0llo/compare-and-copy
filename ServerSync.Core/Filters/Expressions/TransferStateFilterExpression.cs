@@ -8,40 +8,36 @@ using System.Threading.Tasks;
 namespace ServerSync.Core.Filters
 {
     /// <summary>
-    /// A filter element that filters based on an items TransferState property
+    /// A filter expression that filters based on an items TransferState property
     /// </summary>
     public class TransferStateFilterExpression : IFilterExpression
     {
         
         #region Fields
 
-        private TransferState state;
+        readonly TransferState m_TransferState;
 
         #endregion
 
 
         #region Properties
 
-        public TransferState TransferState { get { return this.state; } }
+        public TransferState TransferState { get { return this.m_TransferState; } }
 
         #endregion
+
 
         #region Constructor
 
         public TransferStateFilterExpression(TransferState state)
         {
-            this.state = state;
+            this.m_TransferState = state;
         }
 
         #endregion
 
 
         #region IFilterExpression Implementation
-        
-        public bool IsMatch(FileItem item)
-        {
-            return item.TransferState == this.state;
-        }
 
         public T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter)
         {

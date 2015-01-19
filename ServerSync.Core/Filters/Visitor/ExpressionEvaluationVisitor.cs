@@ -6,11 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerSync.Core.Filters.Visitor
+namespace ServerSync.Core.Filters
 {
     class ExpressionEvaluationVisitor : IFilterExpressionVisitor<bool, FileItem>
     {
+
+        #region Fields
+
         readonly IFilterExpression m_RootExpression;
+
+        #endregion
+
+
+        #region Constructor
 
         public ExpressionEvaluationVisitor(IFilterExpression rootExpression)
         {
@@ -22,12 +30,20 @@ namespace ServerSync.Core.Filters.Visitor
             this.m_RootExpression = rootExpression;
         }
 
+        #endregion
+
+
+        #region Public Methods
 
         public bool IsMatch(FileItem fileItem)
         {
             return m_RootExpression.Accept(this, fileItem);
         }
 
+        #endregion
+
+
+        #region IFilterExpressionVisitor Implementation
 
         public bool Visit(AndFilterExpression expression, FileItem parameter)
         {
@@ -64,5 +80,8 @@ namespace ServerSync.Core.Filters.Visitor
         {
             return parameter.TransferState == expression.TransferState;
         }
+
+        #endregion
+
     }
 }
