@@ -1,4 +1,5 @@
 ﻿using NLog;
+using ServerSync.Core.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,12 @@ namespace ServerSync.Core.Copy
         public override string Name
         {
             get { return "Copy"; }
+        }
+
+        public CopyAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, SyncFolder syncFolder)
+            :base(isEnabled, configuration, inputFilterName, syncFolder)
+        {
+
         }
 
 

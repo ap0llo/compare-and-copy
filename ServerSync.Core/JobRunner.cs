@@ -16,14 +16,14 @@ namespace ServerSync.Core
         #region Fields
 
         Logger m_Logger = LogManager.GetCurrentClassLogger();
-        SyncConfiguration m_SyncJob;
+        ISyncConfiguration m_SyncJob;
 
         #endregion
 
 
         #region Constructor
 
-        public JobRunner(SyncConfiguration syncJob)
+        public JobRunner(ISyncConfiguration syncJob)
         {
             if(syncJob == null)
             {
@@ -48,8 +48,7 @@ namespace ServerSync.Core
             {
                 if (action.IsEnabled)
                 {
-                    //set configuration and state
-                    action.Configuration = m_SyncJob;
+                    //set configuration and state                    
                     action.State = currentState;
 
                     m_Logger.Info("Starting Action '{0}'", action.Name);

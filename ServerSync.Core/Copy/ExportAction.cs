@@ -35,6 +35,17 @@ namespace ServerSync.Core.Copy
 		#endregion Properties
 
 
+		#region Constructor
+		
+		public ExportAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, 
+							SyncFolder syncFolder)
+			: base(isEnabled, configuration, inputFilterName, syncFolder)
+		{
+
+		}
+
+		#endregion
+
 		#region Public Method
 
 		public override void Run()

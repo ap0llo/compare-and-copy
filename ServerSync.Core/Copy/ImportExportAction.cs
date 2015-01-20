@@ -8,21 +8,49 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core.Copy
 {
-    /// <summary>
-    /// Base class for both Import and Export action
-    /// </summary>
-    abstract class ImportExportAction : IOAction
-    {
+	/// <summary>
+	/// Base class for both Import and Export action
+	/// </summary>
+	abstract class ImportExportAction : IOAction
+	{
+		#region Fields
 
-        #region Properties        
+        //readonly string m_TransferLocationName;
+        //readonly string m_TransferLocationSubPath;
 
-        public string TransferLocationName { get; set; }
+		#endregion
 
-        public string TransferLocationSubPath { get; set; }
-       
-        #endregion
-        
+		#region Properties
+
+		public string TransferLocationName { get; set; }
+
+		public string TransferLocationSubPath { get; set;}
+	   
+		#endregion
+
+		#region Constructor
+		
+		public ImportExportAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, 
+								 SyncFolder syncFolder)
+			: base(isEnabled, configuration, inputFilterName, syncFolder)
+		{
+			//if(transferLocationName == null)
+			//{
+			//    throw new ArgumentNullException("transferLocationName");
+			//}
+
+			//if(transferLocationName == null)
+			//{
+			//    throw new ArgumentNullException("transferLocationSubPath");
+			//}
+
+			//this.m_TransferLocationName = transferLocationName;
+			//this.m_TransferLocationSubPath = transferLocationSubPath;
+		}
 
 
-    }
+		#endregion
+
+
+	}
 }

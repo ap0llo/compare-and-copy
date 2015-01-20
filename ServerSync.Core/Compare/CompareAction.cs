@@ -1,4 +1,5 @@
 ﻿using NLog;
+using ServerSync.Core.Configuration;
 using ServerSync.Core.State;
 using System;
 using System.Linq;
@@ -23,6 +24,17 @@ namespace ServerSync.Core.Compare
         public override string Name
         {
             get { return "Compare"; }
+        }
+
+        #endregion
+
+        #region Constructor
+
+
+        public CompareAction(bool isEnabled, ISyncConfiguration configuration)
+            : base(isEnabled, configuration, null)
+        {
+
         }
 
         #endregion

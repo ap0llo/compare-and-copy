@@ -12,7 +12,7 @@ namespace ServerSync.Core.PathResolving
 
         #region Fields
 
-        string m_BasePath;
+        readonly string m_BasePath;
 
         #endregion
 

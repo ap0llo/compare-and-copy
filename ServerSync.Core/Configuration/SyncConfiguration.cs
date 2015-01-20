@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core.Configuration
 {
-    public class SyncConfiguration
+    public class SyncConfiguration : ISyncConfiguration
     {
 
         #region Fields
@@ -23,9 +23,9 @@ namespace ServerSync.Core.Configuration
 
         #region Properties
 
-        public SyncFolderDefinition Left { get; set; }
+        public ISyncFolderDefinition Left { get; set; }
 
-        public SyncFolderDefinition Right { get; set; }
+        public ISyncFolderDefinition Right { get; set; }
 
         public TimeSpan TimeStampMargin { get; set; }
         

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServerSync.Core.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +22,8 @@ namespace ServerSync.Core.Locking
 
         #region Constructor
 
-        public ReleaseLockAction(string lockFile) : base(lockFile)
+        public ReleaseLockAction(bool isEnabled, ISyncConfiguration configuration, string lockFile)
+            : base(isEnabled, configuration, lockFile)
         {
 
         }

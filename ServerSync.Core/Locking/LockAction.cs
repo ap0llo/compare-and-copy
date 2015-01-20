@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServerSync.Core.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,23 +9,29 @@ namespace ServerSync.Core.Locking
 {
     abstract class LockAction : AbstractAction
     {
+        #region Fields
+
+        readonly string m_LockFile;
+
+        #endregion
 
         #region Properties
 
-        public string LockFile { get; private set; }
+        public string LockFile { get { return m_LockFile; } }
 
         #endregion
 
 
         #region Constructor
 
-        public LockAction(string lockFile)
+        public LockAction(bool isEnabled, ISyncConfiguration configuration, string lockFile)
+            : base(isEnabled, configuration, null)
         {
             if(String.IsNullOrEmpty(lockFile))
             {
                 throw new ArgumentNullException(lockFile);
             }
-            this.LockFile = lockFile;
+            this.m_LockFile = lockFile;
         }
 
         #endregion

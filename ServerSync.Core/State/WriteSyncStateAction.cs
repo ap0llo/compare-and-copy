@@ -23,10 +23,19 @@ namespace ServerSync.Core.State
         /// <summary>
         /// The file to write the current state to
         /// </summary>
-        public string FileName { get; set; }
+        public string FileName { get; private set; }
 
         #endregion
 
+        #region Constructor
+
+        public WriteSyncStateAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, string fileName)
+            : base(isEnabled, configuration, inputFilterName)
+        {
+            this.FileName = fileName;
+        }
+
+        #endregion
 
         #region Public Methods
 

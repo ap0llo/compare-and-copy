@@ -20,7 +20,7 @@ namespace ServerSync.Core.Compare
 
         Logger m_Logger = LogManager.GetCurrentClassLogger();
 
-        private SyncConfiguration config;
+        private ISyncConfiguration config;
 
         private List<string> filesMissingLeft = new List<string>();
         private List<string> filesMissingRight = new List<string>();
@@ -36,7 +36,7 @@ namespace ServerSync.Core.Compare
         /// Initializes a new instance of FolderComparer
         /// </summary>
         /// <param name="config">The configuration to use for comparison</param>
-        public FolderComparer(SyncConfiguration config)
+        public FolderComparer(ISyncConfiguration config)
         {
             this.config = config;
         }

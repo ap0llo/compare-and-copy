@@ -14,7 +14,15 @@ namespace ServerSync.Core
     /// </summary>
     public abstract class AbstractAction : IAction
     {
-        
+        #region Fields
+
+        readonly bool m_IsEnabled;
+        readonly ISyncConfiguration m_Configuration;
+        readonly string m_InputFilterName;
+
+        #endregion
+
+
         #region IAction Properties
 
         /// <summary>
@@ -25,12 +33,12 @@ namespace ServerSync.Core
         /// <summary>
         /// Gets or sets whether the Action is enabled
         /// </summary>
-        public bool IsEnabled { get; set; }
+        public bool IsEnabled { get { return m_IsEnabled; } }
 
         /// <summary>
         /// The configuration object to be used by the Action
         /// </summary>
-        public SyncConfiguration Configuration { get; set; }
+        public ISyncConfiguration Configuration { get { return m_Configuration; } }
 
         /// <summary>
         /// The current sync state (may be altered during execution of the action)
@@ -40,10 +48,27 @@ namespace ServerSync.Core
         /// <summary>
         /// The name of the filter to apply to the input before processing it
         /// </summary>
-        public string InputFilterName { get; set; }
+        public string InputFilterName { get { return m_InputFilterName; } }
 
         #endregion IAction Properties
 
+
+        #region Constructor
+
+        public AbstractAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName)
+        {
+            if(configuration == null)
+            {
+                throw new ArgumentNullException("configuration");
+            }
+            
+            this.m_IsEnabled = isEnabled;
+            this.m_Configuration = configuration;
+            this.m_InputFilterName = inputFilterName;
+        }
+
+
+        #endregion
 
         #region Public Methods
 

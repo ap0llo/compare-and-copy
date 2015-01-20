@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServerSync.Core.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,7 +27,8 @@ namespace ServerSync.Core
 
         #region Constructor
 
-        public SleepAction(TimeSpan timeout)
+        public SleepAction(bool isEnabled, ISyncConfiguration configuration, TimeSpan timeout)
+            : base (isEnabled, configuration, null)
         {
             this.Timeout = timeout;
         }

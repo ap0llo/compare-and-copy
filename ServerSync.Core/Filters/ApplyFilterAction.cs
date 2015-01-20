@@ -22,6 +22,15 @@ namespace ServerSync.Core.Filters
         #endregion Properties
 
 
+        #region Constructor
+        
+        public ApplyFilterAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName)
+            : base(isEnabled, configuration, inputFilterName)
+        {
+        }
+
+        #endregion
+
         #region Public Methods
 
         public override void Run()

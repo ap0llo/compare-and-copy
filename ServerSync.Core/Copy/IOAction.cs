@@ -8,16 +8,35 @@ namespace ServerSync.Core.Copy
     abstract class IOAction : AbstractAction
     {
 
+        #region Fields
+
+        readonly SyncFolder m_SyncFolder;
+
+        #endregion
+
+
         #region Properties
 
-        public SyncFolder SyncFolder { get; set; }
+        public SyncFolder SyncFolder { get { return m_SyncFolder; } }
+
+        #endregion
+
+
+        #region Constructor
+
+        public IOAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, SyncFolder syncFolder)
+            : base(isEnabled, configuration, inputFilterName)
+        {
+            this.m_SyncFolder = syncFolder;
+        }
+
 
         #endregion
 
 
         #region Protected Methods
 
-        protected SyncFolderDefinition GetSyncFolderDefinition()
+        protected ISyncFolderDefinition GetSyncFolderDefinition()
         {
             return this.SyncFolder == SyncFolder.Left ?
                 this.Configuration.Left :

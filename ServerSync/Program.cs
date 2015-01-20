@@ -49,7 +49,7 @@ namespace ServerSync
                     s_Logger.Error("Could not find configuration file at '{0}'", configFilePath);
                     return 2;
                 }
-                SyncConfiguration config = null;
+                ISyncConfiguration config = null;
                 try
                 {
                     config = new ConfigurationReader().ReadConfiguration(configFilePath);

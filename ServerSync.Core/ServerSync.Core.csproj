@@ -39,6 +39,10 @@
     <Compile Include="AbstractAction.cs" />
     <Compile Include="Compare\CompareAction.cs" />
     <Compile Include="Configuration\ConfigurationException.cs" />
+    <Compile Include="Configuration\IConfigurationReader.cs" />
+    <Compile Include="Configuration\ISyncConfiguration.cs" />
+    <Compile Include="Configuration\ISyncFolderDefinition.cs" />
+    <Compile Include="Copy\ITransferLocation.cs" />
     <Compile Include="Copy\TransferLocation.cs" />
     <Compile Include="Filters\Expressions\NotFilterExpression.cs" />
     <Compile Include="Filters\Expressions\OrFilterExpression.cs" />

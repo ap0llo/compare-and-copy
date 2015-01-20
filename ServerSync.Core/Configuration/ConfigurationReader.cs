@@ -15,7 +15,7 @@ using System.Xml.Schema;
 
 namespace ServerSync.Core.Configuration
 {
-    public class ConfigurationReader
+    public class ConfigurationReader : IConfigurationReader
     {
 
         #region Constants
@@ -30,11 +30,11 @@ namespace ServerSync.Core.Configuration
         /// <summary>
         /// Reads sync configuration from the specified file
         /// </summary>
-        public SyncConfiguration ReadConfiguration(string fileName)
+        public ISyncConfiguration ReadConfiguration(string fileName)
         {
             XDocument configFile = XDocument.Load(fileName);
 
-            SyncConfiguration configuration = new SyncConfiguration();
+            ISyncConfiguration configuration = new SyncConfiguration();
 
             var pathResolver = new PathResolver(Path.GetDirectoryName(fileName));
             try
@@ -54,7 +54,7 @@ namespace ServerSync.Core.Configuration
 
         #region Private Implementation
 
-        void ReadSyncConfiguration(XDocument configFile, SyncConfiguration configuration, IPathResolver pathResolver)
+        void ReadSyncConfiguration(XDocument configFile, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
 
             //support for legacy configuration files which did not include any xml namespace
@@ -145,12 +145,11 @@ namespace ServerSync.Core.Configuration
 
         #region SyncFolderDefinition
 
-        SyncFolderDefinition ReadSyncFolderDefinition(XElement xmlNode, IPathResolver pathResolver)
+        ISyncFolderDefinition ReadSyncFolderDefinition(XElement xmlNode, IPathResolver pathResolver)
         {
-            var result = new SyncFolderDefinition();
-            result.Name = xmlNode.Attribute(XmlAttributeNames.Name).Value;
-            result.RootPath = pathResolver.GetAbsolutePath(xmlNode.Attribute(XmlAttributeNames.RootPath).Value);
-            return result;
+            var name = xmlNode.RequireAttributeValue(XmlAttributeNames.Name);
+            var rootPath = pathResolver.GetAbsolutePath(xmlNode.RequireAttributeValue(XmlAttributeNames.RootPath));
+            return new SyncFolderDefinition(name, rootPath);
         }
 
         #endregion SyncFolderDefinition
@@ -166,7 +165,7 @@ namespace ServerSync.Core.Configuration
 
         #region Include
 
-        void ReadInclude(XElement includeElement, SyncConfiguration configuration, IPathResolver pathResolver)
+        void ReadInclude(XElement includeElement, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
             var includePath = pathResolver.GetAbsolutePath(includeElement.RequireAttributeValue(XmlAttributeNames.Path)); 
 
@@ -328,7 +327,7 @@ namespace ServerSync.Core.Configuration
 
         #region Actions
 
-        void ReadActionList(XElement actionListElement, SyncConfiguration configuration, IPathResolver pathResolver)
+        void ReadActionList(XElement actionListElement, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
             foreach (var actionElement in actionListElement.Elements())
             {
@@ -336,11 +335,11 @@ namespace ServerSync.Core.Configuration
             }
         }
 
-        void ReadAction(XElement element, SyncConfiguration configuration, IPathResolver pathResolver)
+        void ReadAction(XElement element, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
             if (element.Name == XmlNames.Compare)
             {
-               configuration.AddAction(ReadCompareAction(element));
+               configuration.AddAction(ReadCompareAction(element, configuration));
             }
             else if (element.Name == XmlNames.Export)
             {
@@ -356,31 +355,31 @@ namespace ServerSync.Core.Configuration
             }
             else if (element.Name == XmlNames.ReadSyncState)
             {
-                configuration.AddAction(ReadReadSyncStateAction(element, pathResolver));
+                configuration.AddAction(ReadReadSyncStateAction(element, configuration,pathResolver));
             }
             else if (element.Name == XmlNames.WriteSyncState)
             {
-                configuration.AddAction(ReadWriteSyncStateAction(element,pathResolver));
+                configuration.AddAction(ReadWriteSyncStateAction(element, configuration, pathResolver));
             }
             else if (element.Name == XmlNames.ApplyFilter)
             {
-                configuration.AddAction(ReadApplyFilerAction(element));
+                configuration.AddAction(ReadApplyFilerAction(element,configuration));
             }
             else if (element.Name == XmlNames.Copy)
             {
-                configuration.AddAction(ReadCopyAction(element));
+                configuration.AddAction(ReadCopyAction(element, configuration));
             }
             else if(element.Name == XmlNames.AcquireLock)
             {
-                configuration.AddAction(ReadAquireLockAction(element, pathResolver));
+                configuration.AddAction(ReadAquireLockAction(element, configuration, pathResolver));
             }
             else if(element.Name == XmlNames.ReleaseLock)
             {
-                configuration.AddAction(ReadReleaseLockAction(element, pathResolver));
+                configuration.AddAction(ReadReleaseLockAction(element, configuration, pathResolver));
             }
             else if(element.Name == XmlNames.Sleep)
             {
-                configuration.AddAction(ReadSleepAction(element));
+                configuration.AddAction(ReadSleepAction(element,configuration));
             }
             else
             {
@@ -388,44 +387,51 @@ namespace ServerSync.Core.Configuration
             }
         }
 
-        IAction ReadCompareAction(XElement actionElement)
+        IAction ReadCompareAction(XElement actionElement, ISyncConfiguration configuration)
         {
-            var action = new CompareAction();
-            ApplyCommonActionProperties(actionElement, action);
-            return action;
+            var enabled = ReadActionEnabled(actionElement);            
+            return new CompareAction(enabled, configuration);
         }
 
-        IAction ReadExportAction(XElement actionElement, SyncConfiguration configuration, IPathResolver pathResolver)
+        IAction ReadExportAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
-            var action = new ExportAction();
+            var enabled = ReadActionEnabled(actionElement);
+            var inputFilterName = ReadActionInputFilterName(actionElement);
+            var syncFolder = ReadActionSyncFolder(actionElement);
+
+            var action = new ExportAction(enabled, configuration, inputFilterName, syncFolder);
             ApplyCommonImportExportActionProperties(actionElement, action, configuration, pathResolver);
             return action;
         }
 
-        IAction ReadImportAction(XElement actionElement, SyncConfiguration configuration, IPathResolver pathResolver)
+        IAction ReadImportAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
-            var action = new ImportAction();
+            var enabled = ReadActionEnabled(actionElement);
+            var inputFilterName = ReadActionInputFilterName(actionElement);
+            var syncFolder = ReadActionSyncFolder(actionElement);
+
+            var action = new ImportAction(enabled, configuration, inputFilterName, syncFolder);
             ApplyCommonImportExportActionProperties(actionElement, action, configuration, pathResolver);
             return action;
         }
 
-        IAction ReadCopyAction(XElement actionElement)
+        IAction ReadCopyAction(XElement actionElement, ISyncConfiguration configuration)
         {
-            var actionInstance = new CopyAction();
-            ApplyCommonIOActionProperties(actionElement, actionInstance);
+            var enabled = ReadActionEnabled(actionElement);
+            var inputFilterName = ReadActionInputFilterName(actionElement);
+            var syncFolder = ReadActionSyncFolder(actionElement);
+
+            var actionInstance = new CopyAction(enabled, configuration, inputFilterName, syncFolder);            
             return actionInstance;
+        }        
+
+        SyncFolder ReadActionSyncFolder(XElement actionElement)
+        {
+            return ParseSource(actionElement.RequireAttributeValue(XmlAttributeNames.SyncFolder));
         }
 
-        void ApplyCommonIOActionProperties(XElement actionElement, IOAction actionInstance)
+        void ApplyCommonImportExportActionProperties(XElement actionElement, ImportExportAction actionInstance, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
-            ApplyCommonActionProperties(actionElement, actionInstance);
-            actionInstance.SyncFolder = ParseSource(actionElement.RequireAttributeValue(XmlAttributeNames.SyncFolder));
-        }
-
-        void ApplyCommonImportExportActionProperties(XElement actionElement, ImportExportAction actionInstance, SyncConfiguration configuration, IPathResolver pathResolver)
-        {
-            ApplyCommonIOActionProperties(actionElement, actionInstance);
-
             if(actionElement.Attribute(XmlAttributeNames.TransferLocation) != null)
             {
                 if(actionElement.Attribute(XmlAttributeNames.TransferLocationName) != null ||
@@ -492,65 +498,80 @@ namespace ServerSync.Core.Configuration
                                     .AddTeraBytes(teraByte);
         }
 
-        IAction ReadReadSyncStateAction(XElement actionElement, IPathResolver pathResolver)
+        IAction ReadReadSyncStateAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
-            var action = new ReadSyncStateAction();
-            ApplyCommonActionProperties(actionElement, action);
-            action.FileName = pathResolver.GetAbsolutePath(actionElement.RequireAttributeValue(XmlAttributeNames.FileName));
-            return action;
+
+            var enabled = ReadActionEnabled(actionElement);
+            var fileName = pathResolver.GetAbsolutePath(actionElement.RequireAttributeValue(XmlAttributeNames.FileName));
+
+            return new ReadSyncStateAction(enabled, configuration, fileName);                        
         }
 
-        IAction ReadWriteSyncStateAction(XElement actionElement, IPathResolver pathResolver)
+        IAction ReadWriteSyncStateAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
-            var action = new WriteSyncStateAction();
-            ApplyCommonActionProperties(actionElement, action);
-            action.FileName = pathResolver.GetAbsolutePath(actionElement.RequireAttributeValue(XmlAttributeNames.FileName));
-            return action;
+            var enabled = ReadActionEnabled(actionElement);
+            var inputFilterName = ReadActionInputFilterName(actionElement);
+            var fileName = pathResolver.GetAbsolutePath(actionElement.RequireAttributeValue(XmlAttributeNames.FileName));
+
+            return new WriteSyncStateAction(enabled, configuration, inputFilterName, fileName);
         }
 
-        IAction ReadApplyFilerAction(XElement actionElement)
+        IAction ReadApplyFilerAction(XElement actionElement, ISyncConfiguration configuration)
         {
-            var action = new ApplyFilterAction();
-            ApplyCommonActionProperties(actionElement, action);
-            return action;
+            var enabled = ReadActionEnabled(actionElement);
+            var inputFilterName = ReadActionInputFilterName(actionElement);
+            
+            return new ApplyFilterAction(enabled, configuration, inputFilterName);            
         }
 
-        void ApplyCommonActionProperties(XElement actionElement, IAction actionInstance)
-        {
-            bool enable = bool.Parse(actionElement.RequireAttributeValue(XmlAttributeNames.Enable));
-            actionInstance.IsEnabled = enable;
 
+        bool ReadActionEnabled(XElement actionElement)
+        {
+            return bool.Parse(actionElement.RequireAttributeValue(XmlAttributeNames.Enable));
+        }
+
+        string ReadActionInputFilterName(XElement actionElement)
+        {
             var inputFilterAttribute = actionElement.Attribute(XmlAttributeNames.InputFilter);
             if (inputFilterAttribute != null)
             {
-                actionInstance.InputFilterName = inputFilterAttribute.Value;
+                return inputFilterAttribute.Value;
+            }
+            else
+            {
+                return null;
             }
         }
 
-        IAction ReadAquireLockAction(XElement actionElement, IPathResolver pathResolver)
+        IAction ReadAquireLockAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
+            var enabled = ReadActionEnabled(actionElement);
+            var lockFile = pathResolver.GetAbsolutePath(actionElement.RequireAttributeValue(XmlAttributeNames.LockFile));
+
             TimeSpan? timeout = null;
             if(actionElement.Element(XmlNames.Timeout) != null)
             {
                 timeout = ReadTimeSpan(actionElement.Element(XmlNames.Timeout));
             }
-            var action = new AcquireLockAction(pathResolver.GetAbsolutePath(actionElement.RequireAttributeValue(XmlAttributeNames.LockFile)), timeout);
-            ApplyCommonActionProperties(actionElement, action);
+
+            var action = new AcquireLockAction(enabled, configuration, lockFile, timeout);           
             return action;
         }
 
-        IAction ReadReleaseLockAction(XElement actionElement, IPathResolver pathResolver)
+        IAction ReadReleaseLockAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
-            var action = new ReleaseLockAction(pathResolver.GetAbsolutePath(actionElement.RequireAttributeValue(XmlAttributeNames.LockFile)));
-            ApplyCommonActionProperties(actionElement, action);
-            return action;
+            var enabled = ReadActionEnabled(actionElement);
+            var lockFile = pathResolver.GetAbsolutePath(actionElement.RequireAttributeValue(XmlAttributeNames.LockFile));
+
+            return new ReleaseLockAction(enabled, configuration, lockFile);
         }
 
-        IAction ReadSleepAction(XElement actionElement)
+        IAction ReadSleepAction(XElement actionElement, ISyncConfiguration configuration)
         {
-            var action = new SleepAction(ReadTimeSpan(actionElement.Element(XmlNames.Timeout)));
-            ApplyCommonActionProperties(actionElement, action);
-            return action;
+            var enabled = ReadActionEnabled(actionElement);
+            var timeout = ReadTimeSpan(actionElement.Element(XmlNames.Timeout));
+
+            return new SleepAction(enabled, configuration, timeout);
         }
 
         #endregion Actions

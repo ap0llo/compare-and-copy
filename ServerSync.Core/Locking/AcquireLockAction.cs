@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServerSync.Core.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace ServerSync.Core.Locking
 
         #region Fields
 
-        TimeSpan? m_Timeout;
+        readonly TimeSpan? m_Timeout;
 
         #endregion
         
@@ -28,11 +29,13 @@ namespace ServerSync.Core.Locking
 
         #region Constructor
 
-        public AcquireLockAction(string lockFile) : this(lockFile, null)
+        public AcquireLockAction(bool isEnabled, ISyncConfiguration configuration, string lockFile)
+            : this(isEnabled, configuration, lockFile, null)
         {
         }
 
-        public AcquireLockAction(string lockFile, TimeSpan? timeout) : base(lockFile)
+        public AcquireLockAction(bool isEnabled, ISyncConfiguration configuration, string lockFile, TimeSpan? timeout)
+            : base(isEnabled, configuration, lockFile)
         {
             this.m_Timeout = timeout;
         }

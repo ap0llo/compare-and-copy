@@ -20,6 +20,16 @@ namespace ServerSync.Core.State
 
         #endregion Properties
 
+        #region Constructor
+
+        public ReadSyncStateAction(bool isEnabled, ISyncConfiguration configuration, string fileName)
+            : base(isEnabled, configuration, null)
+        {
+            this.FileName = fileName;
+        }
+
+        #endregion
+
 
         #region Public Methods
 
