@@ -1,5 +1,4 @@
-﻿using ServerSync.Core.Compare;
-using ServerSync.Core.Configuration;
+﻿using ServerSync.Core.Configuration;
 using ServerSync.Core.State;
 using System;
 using System.Collections.Generic;
@@ -19,7 +18,7 @@ namespace ServerSync.Core
 
         ISyncConfiguration Configuration { get; }
 
-        SyncState State { get; set; }
+        ISyncState State { get; set; }
 
         void Run();
     }

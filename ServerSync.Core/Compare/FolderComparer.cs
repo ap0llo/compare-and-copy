@@ -46,7 +46,7 @@ namespace ServerSync.Core.Compare
 
         #region Public Methods
 
-        public SyncState Run()
+        public ISyncState Run()
         {
             //clear lists
             filesMissingLeft = new List<string>();

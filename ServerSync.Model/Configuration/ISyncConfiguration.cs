@@ -23,7 +23,7 @@ namespace ServerSync.Core.Configuration
         
         IEnumerable<IAction> Actions { get;}
 
-        IEnumerable<TransferLocation> TransferLocations { get; }
+        IEnumerable<ITransferLocation> TransferLocations { get; }
 
         #endregion 
 
@@ -36,9 +36,9 @@ namespace ServerSync.Core.Configuration
         
         void AddAction(IAction action);
 
-        void AddTransferLocation(TransferLocation transferLocation);
+        void AddTransferLocation(ITransferLocation transferLocation);
         
-        TransferLocation GetTransferLocation(string name);       
+        ITransferLocation GetTransferLocation(string name);       
 
         #endregion
 

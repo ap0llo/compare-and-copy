@@ -1,6 +1,7 @@
 ﻿using NLog;
 using ServerSync.Core.Configuration;
 using ServerSync.Core.State;
+using ServerSync.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -84,7 +85,7 @@ namespace ServerSync.Core.Copy
 
 
 
-		private IEnumerable<FileItem> GetItemsToCopy(TransferState state)
+		private IEnumerable<IFileItem> GetItemsToCopy(TransferState state)
 		{
 			return GetFilteredInput()
 					.Where(fileItem => fileItem.TransferState == state)

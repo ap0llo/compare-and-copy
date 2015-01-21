@@ -1,5 +1,6 @@
 ﻿using ServerSync.Core.Filters;
 using ServerSync.Core.State;
+using ServerSync.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -49,7 +50,7 @@ namespace ServerSync.Core
 
 
 
-        public static IEnumerable<FileItem> ApplyFilter(this IEnumerable<FileItem> items, IFilter filter)
+        public static IEnumerable<IFileItem> ApplyFilter(this IEnumerable<IFileItem> items, IFilter filter)
         {
             return filter.ApplyFilter(items);
         }

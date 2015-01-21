@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ServerSync.Model;
 
 namespace ServerSync.Core.Filters
 {
@@ -11,7 +12,7 @@ namespace ServerSync.Core.Filters
     {
         string Name { get; }
 
-        IEnumerable<FileItem> ApplyFilter(IEnumerable<FileItem> filterInput);
+        IEnumerable<IFileItem> ApplyFilter(IEnumerable<IFileItem> filterInput);
 
     }
 }

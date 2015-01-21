@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServerSync.Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace ServerSync.Core.State
 
         #region Private Implementation
 
-        private XElement GetFileItemElement(FileItem file)
+        private XElement GetFileItemElement(IFileItem file)
         {
             return new XElement( XmlNames.File.LocalName,
                                  new XAttribute(XmlAttributeNames.Path, file.RelativePath),

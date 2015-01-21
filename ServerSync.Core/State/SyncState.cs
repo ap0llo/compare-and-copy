@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServerSync.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,19 +7,19 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core.State
 {
-    public class SyncState
+    public class SyncState : ISyncState
     {
 
         #region Fields
 
-        HashSet<FileItem> files;
+        HashSet<IFileItem> files;
 
         #endregion
 
 
         #region Properties
 
-        public IEnumerable<FileItem> Files
+        public IEnumerable<IFileItem> Files
         {
             get
             {
@@ -32,12 +33,12 @@ namespace ServerSync.Core.State
 
         #region Constructor
 
-        public SyncState(IEnumerable<FileItem> files)
+        public SyncState(IEnumerable<IFileItem> files)
         {
-            this.files = new HashSet<FileItem>(files);
+            this.files = new HashSet<IFileItem>(files);
         }
 
-        public SyncState() : this(Enumerable.Empty<FileItem>())
+        public SyncState() : this(Enumerable.Empty<IFileItem>())
         {
 
         }
@@ -47,7 +48,7 @@ namespace ServerSync.Core.State
 
         #region Public Methods
 
-        public void RemoveFile(FileItem item)
+        public void RemoveFile(IFileItem item)
         {
             this.files.Remove(item);
         }

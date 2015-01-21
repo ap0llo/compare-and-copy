@@ -1,4 +1,5 @@
 ﻿using ServerSync.Core.State;
+using ServerSync.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace ServerSync.Core.Filters
 
         #region Public Methods
         
-        public IEnumerable<FileItem> ApplyFilter(IEnumerable<FileItem> filterInput)
+        public IEnumerable<IFileItem> ApplyFilter(IEnumerable<IFileItem> filterInput)
         {
             return filterInput.Where(file => this.m_Evaluator.IsMatch(file));
         }

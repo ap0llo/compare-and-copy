@@ -39,19 +39,9 @@
     <Compile Include="AbstractAction.cs" />
     <Compile Include="Compare\CompareAction.cs" />
     <Compile Include="Configuration\ConfigurationException.cs" />
-    <Compile Include="Configuration\IConfigurationReader.cs" />
-    <Compile Include="Configuration\ISyncConfiguration.cs" />
-    <Compile Include="Configuration\ISyncFolderDefinition.cs" />
-    <Compile Include="Copy\ITransferLocation.cs" />
+    <Compile Include="Copy\ITransferState.cs" />
     <Compile Include="Copy\TransferLocation.cs" />
-    <Compile Include="Filters\Expressions\NotFilterExpression.cs" />
-    <Compile Include="Filters\Expressions\OrFilterExpression.cs" />
-    <Compile Include="Filters\Expressions\AndFilterExpression.cs" />
-    <Compile Include="Filters\Expressions\Base\MultiFilterExpression.cs" />
-    <Compile Include="Filters\Expressions\MicroscopeFilterExpression.cs" />
     <Compile Include="Filters\Model\Filter.cs" />
-    <Compile Include="Filters\Model\IFilter.cs" />
-    <Compile Include="Filters\Model\IFilterExpressionVisitor.cs" />
     <Compile Include="Filters\Visitor\ExpressionEvaluationVisitor.cs" />
     <Compile Include="JobExecutionException.cs" />
     <Compile Include="JobRunner.cs" />
@@ -75,18 +65,12 @@
     <Compile Include="Copy\ImportAction.cs" />
     <Compile Include="Copy\IOAction.cs" />
     <Compile Include="IOHelper.cs" />
-    <Compile Include="Filters\Expressions\TransferStateFilterExpression.cs" />
-    <Compile Include="Filters\Expressions\CompareStateFilterExpression.cs" />
-    <Compile Include="Filters\Model\IFilterExpression.cs" />
-    <Compile Include="Filters\Expressions\RegexFilterExpression.cs" />
     <Compile Include="Filters\ApplyFilterAction.cs" />
     <Compile Include="State\FileItem.cs" />
-    <Compile Include="State\TransferState.cs" />
     <Compile Include="State\WriteSyncStateAction.cs" />
     <Compile Include="State\ReadSyncStateAction.cs" />
     <Compile Include="State\SyncStateException.cs" />
     <Compile Include="State\SyncStateReader.cs" />
-    <Compile Include="State\CompareState.cs" />
     <Compile Include="State\SyncStateWriter.cs" />
     <Compile Include="State\SyncState.cs" />
     <Compile Include="State\XmlAttributeNames.cs" />
@@ -95,8 +79,6 @@
     <Compile Include="Compare\FolderComparer.cs" />
     <Compile Include="Filters\Model\LegacyFilter.cs" />
     <Compile Include="Copy\ExportAction.cs" />
-    <Compile Include="Copy\SyncFolder.cs" />
-    <Compile Include="IAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\SyncConfiguration.cs" />
     <Compile Include="Configuration\SyncFolderDefinition.cs" />
@@ -113,7 +95,12 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ServerSync.Model\ServerSync.Model.csproj">
+      <Project>{374c13c6-aa45-4d65-9f0c-228ad35ebb25}</Project>
+      <Name>ServerSync.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

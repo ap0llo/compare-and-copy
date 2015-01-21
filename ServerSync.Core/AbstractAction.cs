@@ -1,6 +1,7 @@
 ﻿using ServerSync.Core.Configuration;
 using ServerSync.Core.Filters;
 using ServerSync.Core.State;
+using ServerSync.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace ServerSync.Core
         /// <summary>
         /// The current sync state (may be altered during execution of the action)
         /// </summary>
-        public SyncState State { get; set; }
+        public ISyncState State { get; set; }
 
         /// <summary>
         /// The name of the filter to apply to the input before processing it
@@ -79,7 +80,7 @@ namespace ServerSync.Core
 
         #region Protected Members
 
-        protected IEnumerable<FileItem> GetFilteredInput()
+        protected IEnumerable<IFileItem> GetFilteredInput()
         {
             if(String.IsNullOrEmpty(this.InputFilterName))
             {

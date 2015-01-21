@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServerSync.Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace ServerSync.Core.State
 
         #region Private Implementation
 
-        FileItem ReadFileItem( XElement item)
+        IFileItem ReadFileItem( XElement item)
         {
             string path = item.Attribute(XmlAttributeNames.Path).Value;
 

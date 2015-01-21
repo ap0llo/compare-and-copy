@@ -1,5 +1,4 @@
-﻿using Microscope;
-using ServerSync.Core.State;
+﻿using ServerSync.Core.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;

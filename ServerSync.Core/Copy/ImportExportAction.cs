@@ -15,8 +15,8 @@ namespace ServerSync.Core.Copy
 	{
 		#region Fields
 
-        //readonly string m_TransferLocationName;
-        //readonly string m_TransferLocationSubPath;
+		//readonly string m_TransferLocationName;
+		//readonly string m_TransferLocationSubPath;
 
 		#endregion
 

@@ -15,7 +15,7 @@ namespace ServerSync.Core.Configuration
         #region Fields
 
         private Dictionary<string, IFilter> filters = new Dictionary<string, IFilter>();
-        private Dictionary<string, TransferLocation> transferLocations = new Dictionary<string,TransferLocation>();
+        private Dictionary<string, ITransferLocation> transferLocations = new Dictionary<string, ITransferLocation>();
         private List<IAction> actions = new List<IAction>();
 
         #endregion Fields
@@ -39,7 +39,7 @@ namespace ServerSync.Core.Configuration
             get { return this.actions; } 
         }
 
-        public IEnumerable<TransferLocation> TransferLocations
+        public IEnumerable<ITransferLocation> TransferLocations
         {
             get { return transferLocations.Values; }
         }
@@ -72,12 +72,12 @@ namespace ServerSync.Core.Configuration
             this.actions.Add(action);
         }
 
-        public void AddTransferLocation(TransferLocation transferLocation)
+        public void AddTransferLocation(ITransferLocation transferLocation)
         {
             this.transferLocations.Add(GetTransferLocationKey(transferLocation.Name), transferLocation);
         }
 
-        public TransferLocation GetTransferLocation(string name)
+        public ITransferLocation GetTransferLocation(string name)
         {
             return this.transferLocations[GetTransferLocationKey(name)];
         }

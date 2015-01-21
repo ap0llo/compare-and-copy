@@ -41,7 +41,7 @@ namespace ServerSync.Core
         
         public bool Run()
         {
-            var currentState = new SyncState();
+            ISyncState currentState = new SyncState();
 
             //execute all actions specified in the sync configuration
             foreach (var action in m_SyncJob.Actions)

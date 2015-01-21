@@ -70,7 +70,7 @@ namespace ServerSync.Core.Compare
         /// Merge is done by adding setting the TransferState for files that exist in both SyncStates to the value from "exisitingSyncState"
         /// </summary>
         /// <returns>Returns 'newSyncState'</returns>
-        private SyncState MergeSyncStates(SyncState exisitingSyncState, SyncState newSyncState)
+        private ISyncState MergeSyncStates(ISyncState exisitingSyncState, ISyncState newSyncState)
         {
             //build dictionary with all files from existing sync state
             var filesExisting = exisitingSyncState.Files.ToDictionary(fileItem => fileItem.RelativePath.Trim().ToLower());           
