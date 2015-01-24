@@ -1,12 +1,12 @@
-﻿using ServerSync.Core.Configuration;
-using ServerSync.Core.State;
+﻿using ServerSync.Model.Configuration;
+using ServerSync.Model.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerSync.Core
+namespace ServerSync.Model.Actions
 {
     public interface IAction
     {

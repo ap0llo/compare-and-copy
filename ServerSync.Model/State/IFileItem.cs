@@ -1,10 +1,10 @@
-﻿using ServerSync.Core.State;
+﻿using ServerSync.Model.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ServerSync.Model
+namespace ServerSync.Model.State
 {
     public interface IFileItem
     {

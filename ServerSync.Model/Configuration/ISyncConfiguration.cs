@@ -1,12 +1,13 @@
-﻿using ServerSync.Core.Copy;
-using ServerSync.Core.Filters;
+﻿
+using ServerSync.Model.Actions;
+using ServerSync.Model.Filtering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerSync.Core.Configuration
+namespace ServerSync.Model.Configuration
 {
     public interface ISyncConfiguration
     {

@@ -12,6 +12,10 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
+using ServerSync.Model.Configuration;
+using ServerSync.Model.Filtering;
+using ServerSync.Model.Actions;
+using ServerSync.Model.State;
 
 namespace ServerSync.Core.Configuration
 {

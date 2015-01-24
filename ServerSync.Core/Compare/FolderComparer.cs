@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using ServerSync.Core.Configuration;
 using ServerSync.Core.State;
 using NLog;
+using ServerSync.Model.Configuration;
+using ServerSync.Model.State;
 
 namespace ServerSync.Core.Compare
 {

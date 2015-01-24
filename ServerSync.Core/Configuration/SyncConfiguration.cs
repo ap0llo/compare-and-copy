@@ -1,5 +1,8 @@
 ﻿using ServerSync.Core.Copy;
 using ServerSync.Core.Filters;
+using ServerSync.Model.Actions;
+using ServerSync.Model.Configuration;
+using ServerSync.Model.Filtering;
 using System;
 using System.Collections.Generic;
 using System.Linq;

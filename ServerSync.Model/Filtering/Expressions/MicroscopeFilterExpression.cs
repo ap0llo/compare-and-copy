@@ -1,11 +1,11 @@
-﻿using ServerSync.Core.State;
+﻿using ServerSync.Model.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerSync.Core.Filters
+namespace ServerSync.Model.Filtering
 {
     /// <summary>
     /// Filter element that uses the Microscope framework (https://github.com/clotheshorse/microscope) to find matches.

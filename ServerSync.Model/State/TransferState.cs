@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerSync.Core.State
+namespace ServerSync.Model.State
 {
     public enum TransferState
     {

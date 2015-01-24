@@ -1,7 +1,6 @@
 ﻿using NLog;
-using ServerSync.Core.Configuration;
-using ServerSync.Core.State;
-using System;
+using ServerSync.Model.Configuration;
+using ServerSync.Model.State;
 using System.Linq;
 
 namespace ServerSync.Core.Compare
@@ -14,7 +13,7 @@ namespace ServerSync.Core.Compare
 
         #region Fields
 
-        Logger m_Logger = LogManager.GetCurrentClassLogger();
+        readonly Logger m_Logger = LogManager.GetCurrentClassLogger();
 
         #endregion
 
@@ -66,7 +65,7 @@ namespace ServerSync.Core.Compare
         #region Private Implementation
 
         /// <summary>
-        /// Merges the exisitng SyncState into the new state.
+        /// Merges the existing SyncState into the new state.
         /// Merge is done by adding setting the TransferState for files that exist in both SyncStates to the value from "exisitingSyncState"
         /// </summary>
         /// <returns>Returns 'newSyncState'</returns>

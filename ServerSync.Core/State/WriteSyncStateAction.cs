@@ -1,5 +1,6 @@
 ﻿using ServerSync.Core.Configuration;
 using ServerSync.Core.Copy;
+using ServerSync.Model.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,4 +1,4 @@
-﻿using ServerSync.Core.State;
+﻿using ServerSync.Model.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ServerSync.Core.Filters
+namespace ServerSync.Model.Filtering
 {
     /// <summary>
     /// Filter expression that filters based on the relative path of a <see cref="FileItem"/> and a regular expression

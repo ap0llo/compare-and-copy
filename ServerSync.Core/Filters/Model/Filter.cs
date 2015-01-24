@@ -1,5 +1,7 @@
 ﻿using ServerSync.Core.State;
 using ServerSync.Model;
+using ServerSync.Model.Filtering;
+using ServerSync.Model.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;

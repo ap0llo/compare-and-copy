@@ -1,5 +1,6 @@
 ﻿using NLog;
 using ServerSync.Core.Configuration;
+using ServerSync.Model.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,7 +32,7 @@ namespace ServerSync.Core.Copy
         {
             var sourceRoot = GetSyncFolderDefinition().RootPath;
 
-            var targetRoot = this.SyncFolder == Copy.SyncFolder.Left ?
+            var targetRoot = this.SyncFolder == SyncFolder.Left ?
                                     Configuration.Right.RootPath :
                                     Configuration.Left.RootPath;
 

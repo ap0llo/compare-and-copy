@@ -2,6 +2,7 @@
 using ServerSync.Core;
 using ServerSync.Core.Configuration;
 using ServerSync.Core.State;
+using ServerSync.Model.Configuration;
 using System;
 using System.Diagnostics;
 using System.IO;

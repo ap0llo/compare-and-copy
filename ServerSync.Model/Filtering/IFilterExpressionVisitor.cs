@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerSync.Core.Filters
+namespace ServerSync.Model.Filtering
 {
     public interface IFilterExpressionVisitor<T1, T2>
     {

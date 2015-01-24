@@ -1,4 +1,5 @@
 ﻿using ServerSync.Core.Configuration;
+using ServerSync.Model.Configuration;
 
 namespace ServerSync.Core.Copy
 {

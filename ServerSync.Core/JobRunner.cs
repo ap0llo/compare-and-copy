@@ -1,6 +1,8 @@
 ﻿using NLog;
 using ServerSync.Core.Configuration;
 using ServerSync.Core.State;
+using ServerSync.Model.Configuration;
+using ServerSync.Model.State;
 using System;
 using System.Collections.Generic;
 using System.IO;
