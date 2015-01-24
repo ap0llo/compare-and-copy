@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core.State
 {
+    [Serializable]
     class SyncStateException : Exception
     {
         

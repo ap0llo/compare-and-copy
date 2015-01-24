@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core.Configuration
 {
+    [Serializable]
     public class ConfigurationException : Exception
     {
 
