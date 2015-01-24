@@ -14,7 +14,7 @@ namespace ServerSync.Model.State
         /// <summary>
         /// The file's path relative to the sync folders root directory
         /// </summary>
-        string RelativePath { get; set; }
+        string RelativePath { get; }
 
         /// <summary>
         /// The current CompareState of the file

@@ -73,20 +73,16 @@ namespace ServerSync.Core.Compare
             CompareFolders("");
 
             //build SyncState object from file lists
-            var files = filesMissingLeft.Select(path => new FileItem() 
+            var files = filesMissingLeft.Select(path => new FileItem(path) 
                 { 
-                    RelativePath = path, 
                     CompareState = CompareState.MissingLeft 
                 });
-            files = files.Union(filesMissingRight.Select(path => new FileItem() 
+            files = files.Union(filesMissingRight.Select(path => new FileItem(path) 
                 { 
-                    RelativePath = path, 
                     CompareState = CompareState.MissingRight 
                 }));
-            files = files.Union(conflicts.Select(path => 
-                new FileItem() 
-                { 
-                    RelativePath = path, 
+            files = files.Union(conflicts.Select(path => new FileItem(path) 
+                {  
                     CompareState = CompareState.Conflict 
                 }));
 

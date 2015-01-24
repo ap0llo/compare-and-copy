@@ -84,7 +84,7 @@ namespace ServerSync.Core.State
                 throw new SyncStateException("Unknown type: " + transferStateStr);
             }
 
-            return new FileItem() { RelativePath = path, CompareState = compareState, TransferState = transferState };
+            return new FileItem(path) { CompareState = compareState, TransferState = transferState };
         }
 
         XmlSchemaSet GetSyncStateSchema()

@@ -10,10 +10,38 @@ namespace ServerSync.Core.State
 {
     public class FileItem : IFileItem
     {
-        public string RelativePath { get; set; }
+
+        #region Fields
+
+        readonly string m_RelativePath;
+
+        #endregion
+
+
+        #region IFileItem Implementation
+
+        public string RelativePath { get { return m_RelativePath; } }
 
         public CompareState CompareState { get; set; }
 
         public TransferState TransferState { get; set; }
+
+        #endregion
+
+
+        #region Constructor
+        
+        public FileItem(string relativePath)
+        {
+            if(relativePath == null)
+            {
+                throw new ArgumentNullException("relativePath");
+            }
+
+            this.m_RelativePath = relativePath;
+        }
+
+        #endregion
+
     }
 }
