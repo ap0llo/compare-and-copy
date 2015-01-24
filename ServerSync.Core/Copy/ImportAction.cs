@@ -51,7 +51,7 @@ namespace ServerSync.Core.Copy
 			{
 				var transferLocation = Configuration.GetTransferLocation(this.TransferLocationName);
 
-				var absSource = Path.Combine(transferLocation.Path, this.TransferLocationSubPath, file.RelativePath);
+				var absSource = Path.Combine(transferLocation.RootPath, this.TransferLocationSubPath, file.RelativePath);
 				var absTarget = Path.Combine(targetRoot, file.RelativePath);
 
 
@@ -65,7 +65,7 @@ namespace ServerSync.Core.Copy
 					//this way the copy as much as possible                     
 					if (transferLocation.MaximumSize.HasValue)
 					{
-						var transferSize = IOHelper.GetDirectorySize(transferLocation.Path);
+						var transferSize = IOHelper.GetDirectorySize(transferLocation.RootPath);
 
 						if (transferSize.AddBytes(size) > transferLocation.MaximumSize)
 						{

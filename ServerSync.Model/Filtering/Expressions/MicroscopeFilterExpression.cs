@@ -1,14 +1,9 @@
-﻿using ServerSync.Model.State;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace ServerSync.Model.Filtering
 {
     /// <summary>
-    /// Filter element that uses the Microscope framework (https://github.com/clotheshorse/microscope) to find matches.
+    /// Defines a filter expression that uses the Microscope framework (https://github.com/clotheshorse/microscope) to find matches.
     /// The Microscope query is applied to RelativePath property of <see cref="FileItem"/>
     /// </summary>
     public class MicroscopeFilterExpression : IFilterExpression
@@ -23,6 +18,9 @@ namespace ServerSync.Model.Filtering
 
         #region Properties
 
+        /// <summary>
+        /// The Microscope query to be evaluated
+        /// </summary>
         public string Query { get { return m_Query; } }
 
         #endregion
@@ -32,6 +30,11 @@ namespace ServerSync.Model.Filtering
 
         public MicroscopeFilterExpression(string query)
         {
+            if(query == null)
+            {
+                throw new ArgumentNullException("query");
+            }
+
             this.m_Query = query;            
         }
 

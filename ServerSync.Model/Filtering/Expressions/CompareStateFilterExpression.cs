@@ -1,14 +1,10 @@
 ﻿using ServerSync.Model.State;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerSync.Model.Filtering
 {
     /// <summary>
-    /// Filter element that filters based on the "CompareState" property of a <see cref="FileItem"/>
+    /// A filter expression that filters based on the "CompareState" property of a <see cref="FileItem"/>
+    /// To be evaluated to true for all FileItems which's CompareState is identical to the expression's compare state
     /// </summary>
     public class CompareStateFilterExpression : IFilterExpression
     {
@@ -22,6 +18,9 @@ namespace ServerSync.Model.Filtering
 
         #region Properties
 
+        /// <summary>
+        /// The CompareState to match
+        /// </summary>
         public CompareState CompareState { get { return this.m_CompareState; } }
 
         #endregion

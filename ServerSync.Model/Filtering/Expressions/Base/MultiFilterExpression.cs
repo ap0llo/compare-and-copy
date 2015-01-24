@@ -1,13 +1,12 @@
-﻿using ServerSync.Model.State;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Collections.Immutable;
 
 namespace ServerSync.Model.Filtering
 {
+    /// <summary>
+    /// Base class for filter expressions encapsulating multiple other filter expressions
+    /// </summary>
     public abstract class MultiFilterExpression : IFilterExpression
     {
 
@@ -20,6 +19,9 @@ namespace ServerSync.Model.Filtering
 
         #region Properties
 
+        /// <summary>
+        /// The expression's child expressions
+        /// </summary>
         public IImmutableList<IFilterExpression> Expressions { get { return m_Expressions; } }
 
         #endregion
@@ -27,6 +29,10 @@ namespace ServerSync.Model.Filtering
 
         #region Constructor
         
+        /// <summary>
+        /// Constructs a new MultiFilterExpression
+        /// </summary>
+        /// <param name="expressions">The expressions encapsulated by the multi-expression</param>
         public MultiFilterExpression(IEnumerable<IFilterExpression> expressions)
         {
             if(expressions == null)

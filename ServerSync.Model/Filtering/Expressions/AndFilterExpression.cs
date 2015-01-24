@@ -7,15 +7,27 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Model.Filtering
 {
+    /// <summary>
+    /// Filter expression describing a logical and over a variable number of child expressions.
+    /// The expression is to be evaluated to true if all child expression evaluates to true
+    /// </summary>
     public class AndFilterExpression : MultiFilterExpression
     {
 
         #region Constructor
         
-        public AndFilterExpression(params  IFilterExpression[] expressions) : this((IEnumerable<IFilterExpression>)expressions)
+        /// <summary>
+        /// Initializes a new instance of <see cref="AndFilterExpression"/>
+        /// </summary>
+        /// <param name="expressions">The expression's child expressions</param>
+        public AndFilterExpression(params  IFilterExpression[] expressions) : base(expressions)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="AndFilterExpression"/>
+        /// </summary>        
+        /// <param name="expressions">The expression's child expressions</param>
         public AndFilterExpression(IEnumerable<IFilterExpression> expressions) : base(expressions)
         {
         }

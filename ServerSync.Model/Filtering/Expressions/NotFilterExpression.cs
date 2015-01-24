@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Model.Filtering
 {
+    /// <summary>
+    /// Filter expression defining a logical not, negating another filter expression
+    /// To be evaluated to true if the expression child expression evaluates to false
+    /// </summary>
     public class NotFilterExpression : IFilterExpression
     {
 
@@ -19,6 +23,9 @@ namespace ServerSync.Model.Filtering
 
         #region Properties
 
+        /// <summary>
+        /// The expression which's result to negate
+        /// </summary>
         public IFilterExpression NegatedExpression { get { return m_NegatedExpression; } }
 
         #endregion

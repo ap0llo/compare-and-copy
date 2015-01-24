@@ -93,7 +93,7 @@ namespace ServerSync.Core.Copy
 				}
 
 
-				var absTarget = Path.Combine(transferLocation.Path, this.TransferLocationSubPath, item.RelativePath);
+				var absTarget = Path.Combine(transferLocation.RootPath, this.TransferLocationSubPath, item.RelativePath);
 				var size = new FileInfo(absSource).GetByteSize();                
 			   
 
@@ -146,7 +146,7 @@ namespace ServerSync.Core.Copy
 			var transferLocation = Configuration.GetTransferLocation(this.TransferLocationName);
 
 			// directory doesn't exist => limit not exceeded (no file copied yet)
-			if (!Directory.Exists(transferLocation.Path))
+			if (!Directory.Exists(transferLocation.RootPath))
 			{
 				return false;
 			}
@@ -155,7 +155,7 @@ namespace ServerSync.Core.Copy
 			if(transferLocation.MaximumSize.HasValue)
 			{
 				//get current size
-				var currentSize = IOHelper.GetDirectorySize(transferLocation.Path);
+				var currentSize = IOHelper.GetDirectorySize(transferLocation.RootPath);
 
 				//compare current size + file size + to maximum size
 				return (currentSize + nextFileSize) > transferLocation.MaximumSize;

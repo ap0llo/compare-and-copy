@@ -10,24 +10,34 @@ namespace ServerSync.Model.Filtering
 {
     /// <summary>
     /// Filter expression that filters based on the relative path of a <see cref="FileItem"/> and a regular expression
+    /// To be evaluated to true if a FileItem's relative path matches the expression's regular expression
     /// </summary>
     public class RegexFilterExpression : IFilterExpression
     {
         
         #region Fields
 
-        readonly Regex regex;
+        readonly Regex m_Regex;
 
         #endregion
+
 
         #region Properties
 
-        public Regex Regex { get { return this.regex; } }
+        /// <summary>
+        /// The regular expression to be used to evaluate a FileItem's relative path
+        /// </summary>
+        public Regex Regex { get { return this.m_Regex; } }
 
         #endregion
 
+
         #region Constructor
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="RegexFilterExpression"/>
+        /// </summary>
+        /// <param name="pattern">The regular expression to be evaluated</param>
         public RegexFilterExpression(string pattern)
         {
             if(pattern == null)
@@ -35,7 +45,7 @@ namespace ServerSync.Model.Filtering
                 throw new ArgumentNullException("pattern");
             }
 
-            this.regex = new Regex(pattern);
+            this.m_Regex = new Regex(pattern);
         }
 
         #endregion

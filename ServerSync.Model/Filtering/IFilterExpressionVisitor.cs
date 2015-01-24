@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace ServerSync.Model.Filtering
 {
+    /// <summary>
+    /// Interface for visitors to traverse the expression tree of a filter
+    /// </summary>
+    /// <typeparam name="T1">The visitor's return type</typeparam>
+    /// <typeparam name="T2">The type of the parameter passed to the visitor's Visit() methods</typeparam>
     public interface IFilterExpressionVisitor<T1, T2>
     {
         T1 Visit(AndFilterExpression expression, T2 paramter);

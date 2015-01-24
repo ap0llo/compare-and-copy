@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 namespace ServerSync.Model.Filtering
 {
     /// <summary>
-    /// A filter expression that filters based on an items TransferState property
+    /// A filter expression that filters based on the "TransferState" property of a <see cref="FileItem"/>
+    /// To be evaluated to true for all FileItems which's TransferState is identical to the expression's compare state
     /// </summary>
     public class TransferStateFilterExpression : IFilterExpression
     {
@@ -22,6 +23,9 @@ namespace ServerSync.Model.Filtering
 
         #region Properties
 
+        /// <summary>
+        /// The TransferState to match
+        /// </summary>
         public TransferState TransferState { get { return this.m_TransferState; } }
 
         #endregion

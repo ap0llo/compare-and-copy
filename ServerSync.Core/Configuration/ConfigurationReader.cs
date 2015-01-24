@@ -153,7 +153,20 @@ namespace ServerSync.Core.Configuration
         {
             var name = xmlNode.RequireAttributeValue(XmlAttributeNames.Name);
             var rootPath = pathResolver.GetAbsolutePath(xmlNode.RequireAttributeValue(XmlAttributeNames.RootPath));
-            return new SyncFolderDefinition(name, rootPath);
+
+            if(xmlNode.Name == XmlNames.Left)
+            {
+                return new SyncFolderDefinition(name, rootPath, SyncFolder.Left);
+            }
+            else if(xmlNode.Name == XmlNames.Right)
+            {
+                return new SyncFolderDefinition(name, rootPath, SyncFolder.Right);
+            }
+            else
+            {
+                throw new ConfigurationException(String.Format("Cannot parse xml element '{0} as SyncFolderDefinition'",
+                                                               xmlNode.Name.LocalName));
+            }            
         }
 
         #endregion SyncFolderDefinition

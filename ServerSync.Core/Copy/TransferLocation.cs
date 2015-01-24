@@ -22,7 +22,7 @@ namespace ServerSync.Core.Copy
 
         public string Name { get { return m_Name; } }
 
-        public string Path { get { return m_Path; } }
+        public string RootPath { get { return m_Path; } }
 
         public ByteSize.ByteSize? MaximumSize { get { return m_MaximumSize; } }
 
