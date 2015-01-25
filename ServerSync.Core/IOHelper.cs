@@ -148,6 +148,8 @@ namespace ServerSync.Core
         public static bool CopyFile(string sourcePath, string destinationPath)
         {
 
+
+
             var tmpPath = destinationPath + ".tmp";
             
             try
@@ -155,6 +157,12 @@ namespace ServerSync.Core
                 EnsureDirectoryExists(Path.GetDirectoryName(destinationPath));
 
                 File.Copy(sourcePath, tmpPath, true);
+
+                if(File.Exists(destinationPath))
+                {
+                    File.Delete(destinationPath);
+                }
+
                 File.Move(tmpPath, destinationPath);
 
             }

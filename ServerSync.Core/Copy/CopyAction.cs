@@ -43,8 +43,16 @@ namespace ServerSync.Core.Copy
 
                 m_Logger.Info("Copying {0} to {1}", file.RelativePath, targetRoot);
 
-                IOHelper.EnsureDirectoryExists(Path.GetDirectoryName(absTarget));
-                File.Copy(absSource, absTarget, true);
+
+                var sourceInfo = new FileInfo(absSource);
+                var targetInfo = new FileInfo(absTarget);
+
+                if(!(sourceInfo.Exists && targetInfo.Exists && sourceInfo.LastWriteTime == targetInfo.LastWriteTime
+                    && sourceInfo.Length == targetInfo.Length))
+                {
+                    IOHelper.EnsureDirectoryExists(Path.GetDirectoryName(absTarget));
+                    IOHelper.CopyFile(absSource, absTarget);
+                }                
 
                 this.State.RemoveFile(file);
             }
