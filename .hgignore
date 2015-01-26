@@ -1,8 +1,8 @@
 syntax: glob
 */obj/*
 */bin/*
-packages/*
+src/packages/*
 *.suo
 *.user
-ServerSync.sln.ide/*
+src/ServerSync.sln.ide/*
 */AssemblyInfo.Generated.cs
