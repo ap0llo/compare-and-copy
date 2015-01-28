@@ -38,7 +38,8 @@
     <!--Get the current Mercurial version-->
     <Exec ContinueOnError="False"
 			  ConsoleToMSBuild="True"
-			  Command='hg identify -i $(MSBuildThisFileDirectory)..\'>
+			  Command='hg identify -i'
+			  WorkingDirectory="$(MSBuildThisFileDirectory)">
       <Output TaskParameter="ConsoleOutput" PropertyName="MercurialVersion"/>
     </Exec>
 

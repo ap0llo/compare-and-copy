@@ -56,4 +56,36 @@
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
   <Import Project="$(MSBuildThisFileDirectory)..\Common\Common.targets" />
+  
+  
+  <ItemGroup>
+    <PackageFiles Include="$(OutputPath)*.dll" />
+    <PackageFiles Include="$(OutputPath)$(AssemblyName).exe" />
+    <PackageFiles Include="$(OutputPath)NLog.config" />
+  </ItemGroup>  
+  
+  
+   <!--Set output parameters for the PackageApplication target (Output name should be ServerSync-VERSION-MERCURIALVERSION)-->  
+  <Target Name="_CreatePackageFileName" DependsOnTargets="GetMercurialVersion;Build">
+    <!--Get the version of the assembly that was built-->
+    <GetAssemblyIdentity AssemblyFiles="$(OutputPath)$(AssemblyName).exe">
+      <Output TaskParameter="Assemblies" ItemName="ServerSyncAssemblyIdentities"/>
+    </GetAssemblyIdentity>    
+    <!--Set name of package file-->
+    <CreateProperty Value="$(AssemblyName)-%(ServerSyncAssemblyIdentities.Version)">
+      <Output TaskParameter="Value" PropertyName="PackageFileName"/>
+    </CreateProperty>
+    <!--If we're building debug, append the id of the mercurial changeset to the package filename-->
+    <CreateProperty Condition="'$(Configuration)' == 'Debug'" Value="$(PackageFileName)-$(MercurialVersion)">
+      <Output TaskParameter="Value" PropertyName="PackageFileName"/>
+    </CreateProperty>
+  </Target>
+  
+  <!--Make sure the _CreatePackageFileName target is executed before the package file is created-->
+  <PropertyGroup>
+    <PackageApplicationDependsOn>_CreatePackageFileName;$(PackageApplicationDependsOn)</PackageApplicationDependsOn>
+  </PropertyGroup>
+  
+  <Import Project="$(MSBuildThisFileDirectory)..\common\Packaging.targets" />
+  
 </Project>

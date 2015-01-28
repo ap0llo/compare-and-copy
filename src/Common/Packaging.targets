@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--Import MSBuild Community Tasks (contains Zip task)-->
+  <PropertyGroup>
+    <MSBuildCommunityTasksPath Condition="'$(MSBuildCommunityTasksPath)' == ''">$(MSBuildThisFileDirectory)</MSBuildCommunityTasksPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildThisFileDirectory)\MSBuild.Community.Tasks.Targets" Condition="'$(MSBuildCommunityTasksImported)' != 'True'" />  
+  
+  <!--Set default values for properties necessary for tasks defined here (set only if they haven't been set yet)-->
+  <PropertyGroup Label="DefaultValues">
+    <PackageOutputDirectory Condition="'$(PackageOutputDirectory)' == ''">$(OutputPath)</PackageOutputDirectory>
+    <PackageFileName Condition="'$(PackageFileName)' == ''">$(ProjectName)</PackageFileName>
+  </PropertyGroup>
+
+  <!--Wire up dependencies between targets (as properties so they can be modified from other files, too)-->
+  <PropertyGroup>
+    <PreparePackageApplicationDependsOn>$(PreparePackageApplicationDependsOn);Build</PreparePackageApplicationDependsOn>
+    <PackageApplicationDependsOn>$(PackageApplicationDependsOn);_PreparePackageApplication</PackageApplicationDependsOn>
+  </PropertyGroup>
+    
+  <!--Target to determine the values necessary for the PackageApplication target-->
+  <Target Name="_PreparePackageApplication" DependsOnTargets="$(PreparePackageApplicationDependsOn)">
+    <!--Determine package output path-->
+    <CreateProperty Value="$(PackageOutputDirectory)$(PackageFileName).zip">
+      <Output TaskParameter="Value" PropertyName="PackagePath"/>
+    </CreateProperty>  
+  </Target>
+
+  <!--Create zip package-->
+  <Target Name="PackageApplication"
+          Inputs="@(PackageFiles)"
+          Outputs="$(PackagePath)"
+          DependsOnTargets="$(PackageApplicationDependsOn)">
+    <Message Text="Packaging application files to $(PackagePath)" />
+    <Zip ZipFileName="$(PackagePath)" WorkingDirectory="$(OutputPath)" Files="@(PackageFiles)"/>
+  </Target>
+
+
+  <!--
+		DeletePackagedApplication target:
+      Deletes the zip file created by the PackageApplication target if it exists)
+		-->
+  <Target Name="DeletePackagedApplication" Condition="Exists('$(PackagePath)')"  >
+    <Message Importance="Normal" Text="Removing packaged application at $(PackagePath)" />
+    <Delete Files="$(PackagePath)"/>
+  </Target>
+
+
+  <!--Extend Clean target to to delete package file-->
+  <PropertyGroup>    
+    <CleanDependsOn>DeletePackagedApplication;$(CleanDependsOn)</CleanDependsOn>
+  </PropertyGroup>
+
+</Project>
