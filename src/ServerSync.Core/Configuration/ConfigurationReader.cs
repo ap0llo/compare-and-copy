@@ -106,7 +106,7 @@ namespace ServerSync.Core.Configuration
                 }
                 else if(element.Name == XmlNames.TransferLocation)
                 {
-                    ReadAction(element, configuration, pathResolver);
+                    configuration.AddTransferLocation(ReadTransferLocation(element, pathResolver));
                 }
                 else if (element.Name == XmlNames.ReadSyncState)
                 {
@@ -365,10 +365,6 @@ namespace ServerSync.Core.Configuration
             else if (element.Name == XmlNames.Import)
             {
                 configuration.AddAction(ReadImportAction(element, configuration, pathResolver));
-            }
-            else if (element.Name == XmlNames.TransferLocation)
-            {
-                configuration.AddTransferLocation(ReadTransferLocation(element, pathResolver));
             }
             else if (element.Name == XmlNames.ReadSyncState)
             {
