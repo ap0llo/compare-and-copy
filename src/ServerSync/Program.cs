@@ -57,7 +57,7 @@ namespace ServerSync
                 }
                 catch(ConfigurationException ex)
                 {
-                    s_Logger.Error("Error reading configuration: " + ex.Message);
+                    s_Logger.Error("Error reading configuration", ex);
                     return 1;
                 }
 

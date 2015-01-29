@@ -152,7 +152,7 @@ namespace ServerSync.Core.Configuration
         ISyncFolderDefinition ReadSyncFolderDefinition(XElement xmlNode, IPathResolver pathResolver)
         {
             var name = xmlNode.RequireAttributeValue(XmlAttributeNames.Name);
-            var rootPath = pathResolver.GetAbsolutePath(xmlNode.RequireAttributeValue(XmlAttributeNames.RootPath));
+            var rootPath = pathResolver.GetAbsolutePath(xmlNode.Attribute(XmlAttributeNames.RootPath).Value);
 
             if(xmlNode.Name == XmlNames.Left)
             {
