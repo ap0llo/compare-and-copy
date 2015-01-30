@@ -135,16 +135,16 @@ Actions appear inside a "action group". Action groups only exists to give struct
 
 ####Available Actions
 
-- Compare: Compares the left and right sync folders and thus creates a new sync state. Files which are already present in the sync state and have a SyncState value other than none will retain this value
-- Export: Copies files from one of the sync folders to a transfer location. This will change a file's SyncState property to InTransferToLeft/InTransferToRight 
-- Import: Imports files from a transfer location into one of the sync folders (still supported but deprecated)
-- Copy: Directly copies files from one sync folder to the other
-- ReadSyncState: Replaces the applications state by a new sync state serialized in the specified file. If the file does not exist, the sync state  will be empty.
-- WriteSyncState: Serializes the current sync state to XML and writes it to a file 
-- ApplyFilter: Applies the specified filter to the current sync state
-- AcquireLock: Locks the specified file (can be used to implement locks to synchronize different instances of ServerSync which might operate on the same data)
-- ReleaseLock: Releases the lock on the specified file
-- Sleep: Suspends execution of actions for a specified amount of time
+- Compare
+- Export
+- Import
+- Copy
+- ReadSyncState
+- WriteSyncState 
+- ApplyFilter
+- AcquireLock 
+- ReleaseLock
+- Sleep
 
 ####Example
 	<actions>

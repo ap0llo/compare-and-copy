@@ -62,7 +62,7 @@ namespace ServerSync.Core.Copy
 
 					//check if copying the file would exceed the maximum transfer size
 					//continue because there might be a file that can be copied without exceeding the max size
-					//this way the copy as much as possible                     
+					//this way we copy as much as possible                     
 					if (transferLocation.MaximumSize.HasValue)
 					{
 						var transferSize = IOHelper.GetDirectorySize(transferLocation.RootPath);
