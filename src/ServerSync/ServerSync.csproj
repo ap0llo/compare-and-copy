@@ -57,11 +57,24 @@
   </Target>
   <Import Project="$(MSBuildThisFileDirectory)..\Common\Common.targets" />
   
+
+
+	<PropertyGroup>
+		<PretzelInputDirectory>$(MSBuildThisFileDirectory)..\..\docs\</PretzelInputDirectory>
+		<PretzelOutputDirectory>$(OutputPath)docs\</PretzelOutputDirectory>
+		<PretzelTempDirectory>$(MSBuildThisFileDirectory)obj\docs\</PretzelTempDirectory>
+	</PropertyGroup>
+
   
+	<Import Project="$(MSBuildThisFileDirectory)..\common\Pretzel.targets" />
+  
+    
+    
   <ItemGroup>
     <PackageFiles Include="$(OutputPath)*.dll" />
     <PackageFiles Include="$(OutputPath)$(AssemblyName).exe" />
     <PackageFiles Include="$(OutputPath)NLog.config" />
+	<PackageFiles Include="$(PretzelOutputDirectory)*.*" />
   </ItemGroup>  
   
   
@@ -83,7 +96,7 @@
   
   <!--Make sure the _CreatePackageFileName target is executed before the package file is created-->
   <PropertyGroup>
-    <PackageApplicationDependsOn>_CreatePackageFileName;$(PackageApplicationDependsOn)</PackageApplicationDependsOn>
+    <PackageApplicationDependsOn>PretzelBake;_CreatePackageFileName;$(PackageApplicationDependsOn)</PackageApplicationDependsOn>
   </PropertyGroup>
   
   <Import Project="$(MSBuildThisFileDirectory)..\common\Packaging.targets" />

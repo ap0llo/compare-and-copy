@@ -22,4 +22,4 @@ Core to understanding how ServerSync works is the concept of the "SyncState". Th
 
 based on this concept, ServerSync allows to execute so called "actions" which depending on the action change the current state.
 
-Definitions of the directories to be synced and the actions to be executed are defined in the [Configuration file](ConfigurationFile)
+Definitions of the directories to be synced and the actions to be executed are defined in the [Configuration file](ConfigurationFile.html)

@@ -27,7 +27,7 @@
 			Gets the Mercurial changeset currently building and stores it in the 'MercurialVersion' property
 			Requires Mercurial to be installed. hg.exe needs to be in %PATH% environment variable-->
   <Target Name="GetMercurialVersion">
-
+  
     <Message Text="Determining Mercurial/Hg version" importance="normal" />
 
     <!--If the file exists, read the cached Mercurial version-->
@@ -45,6 +45,8 @@
 
     <Message Text="Mercurial/Hg version is $(MercurialVersion)" importance="normal" />
 
+	<MakeDir Directories="$(MSBuildProjectDirectory)\obj" Condition="!Exists('$(MSBuildProjectDirectory)\obj')"/>	
+	
     <!--Overwrite Mercurial version cache file if version has changed-->
     <WriteLinesToFile Condition="$(MercurialVersion_Cache) != $(MercurialVersion)"
 						  File="$(MercurialVersionCacheFile)"

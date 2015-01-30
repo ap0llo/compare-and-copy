@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<!--
+	Target file to build html documentation files from Markdown using pretzel (https://github.com/Code52/pretzel)	
+	To build documentation, execute the "PretzelBake" target
+	-->
+ 
+	<!-- Set common properties if they haven't been set before -->
+	<PropertyGroup>
+		<PretzelExecutable Condition="'$(PretzelExecutable)' == ''">$(MSBuildThisFileDirectory)pretzel.exe</PretzelExecutable>
+		<PretzelLayoutFile Condition="'$(PretzelLayoutFile)' == ''">$(PretzelInputDirectory)layout.html</PretzelLayoutFile>
+		<PretzelEngineName Condition="'$(PretzelEngineName)' == ''">liquid</PretzelEngineName>
+		<PretzelTempDirectory Condition="'$(PretzelTempDirectory)' == ''">$(PretzelOutputDirectory)tmp\</PretzelTempDirectory>		
+	</PropertyGroup>    
+	
+  
+	<!-- Make sure required parameters have been set -->
+	<Target Name="_CheckDocumentationParameters">
+		<Error Text="'PretzelInputDirectory' property has not been set" Condition="'$(PretzelInputDirectory)' == ''"/>
+		<Error Text="'PretzelOutputDirectory' property has not been set" Condition="'$(PretzelOutputDirectory)' == ''"/>
+	</Target>
+  
+  
+	<!-- Create a yml configutation file for pretzel (_config.yml) in the temp directory -->
+	<Target Name="_CreatePretzelConfig">	 
+		<MakeDir Directories="$(PretzelTempDirectory)" Condition="!Exists($(PretzelTempDirectory))"/>	
+ 	
+		<CreateProperty Value="$(PretzelTempDirectory)_config.yml">
+			<Output TaskParameter="Value" PropertyName="_PretzelConfigPath"/>
+		</CreateProperty>  
+		
+		<WriteLinesToFile File="$(_PretzelConfigPath)"
+						  Lines="pretzel: %0a engine: $(PretzelEngineName)"
+						  Overwrite="true"
+						  Encoding="Unicode" />
+	</Target>
+
+	<!-- Insert a header specifying the layout and site title at the start of all markdown files and write them to the temp directory -->
+	<Target Name="_PreparePretzelInput">    
+	
+		<PropertyGroup>
+			<PretzelLayoutName>$([System.IO.Path]::GetFileNameWithoutExtension('$(PretzelLayoutFile)'))</PretzelLayoutName>				
+		</PropertyGroup>
+		<ItemGroup>
+			<DocumentationFile Include="$(PretzelInputDirectory)*.md" />
+		</ItemGroup>
+	
+		<Message Text="Preparing Markdown file '%(DocumentationFile.FileName)' for pretzel" />
+
+		<WriteLinesToFile File="$(PretzelTempDirectory)%(DocumentationFile.FileName)%(DocumentationFile.Extension)"
+						  Lines="--- %0a layout: $(PretzelLayoutName) %0a title: %(DocumentationFile.FileName) %0a --- %0a%0a $([System.IO.File]::ReadAllText(%(DocumentationFile.FullPath))) "
+						  Overwrite="true"
+						  Encoding="Unicode" />  			  
+	</Target>
+	  
+	<!-- Copy the layout file to the temp directory -->
+	<Target Name="_CopyPretzelLayout">	  
+		<MakeDir Directories="$(PretzelTempDirectory)_layouts"/>	
+		<Copy SourceFiles="$(PretzelLayoutFile)" DestinationFolder="$(PretzelTempDirectory)_layouts" />	
+	</Target>  
+
+	<!-- Execute pretzel, copy output files to final output directory -->
+	<Target Name="PretzelBake" DependsOnTargets="_CheckDocumentationParameters;_CreatePretzelConfig;_PreparePretzelInput;_CopyPretzelLayout">
+		<Exec ContinueOnError="False"			  
+			  Command='$(PretzelExecutable) bake $(PretzelTempDirectory)'
+			  WorkingDirectory="$(MSBuildThisFileDirectory)" />
+			
+		<ItemGroup>
+			<PretzelOutputFiles Include="$(PretzelTempDirectory)_site\*.*" />
+		</ItemGroup>
+		
+		<Copy SourceFiles="@(PretzelOutputFiles)" DestinationFolder="$(PretzelOutputDirectory)" />
+	
+	</Target>
+   
+</Project>
