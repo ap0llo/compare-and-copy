@@ -16,15 +16,38 @@ using ServerSync.Model.Configuration;
 using ServerSync.Model.Filtering;
 using ServerSync.Model.Actions;
 using ServerSync.Model.State;
+using ServerSync.Core.Configuration.Migration;
 
 namespace ServerSync.Core.Configuration
 {
     public class ConfigurationReader : IConfigurationReader
     {
 
+        #region Fields
+
+        readonly IConfigurationMigrator m_Migrator;
+
+        #endregion
+
+
         #region Constants
 
         const string s_ConfigurationSchema = "ServerSync.Core.Configuration.ConfigurationSchema.xsd";
+
+        #endregion
+
+
+        #region Constructor
+
+        public ConfigurationReader(IConfigurationMigrator migrator)
+        {
+            if(migrator == null)
+            {
+                throw new ArgumentNullException("migrator");
+            }
+
+            this.m_Migrator = migrator;
+        }
 
         #endregion
 
@@ -37,6 +60,8 @@ namespace ServerSync.Core.Configuration
         public ISyncConfiguration ReadConfiguration(string fileName)
         {
             XDocument configFile = XDocument.Load(fileName);
+
+            configFile = m_Migrator.UpgradeConfigurationFile(configFile);
 
             ISyncConfiguration configuration = new SyncConfiguration();
 
@@ -59,16 +84,7 @@ namespace ServerSync.Core.Configuration
         #region Private Implementation
 
         void ReadSyncConfiguration(XDocument configFile, ISyncConfiguration configuration, IPathResolver pathResolver)
-        {
-
-            //support for legacy configuration files which did not include any xml namespace
-            if(String.IsNullOrEmpty(configFile.Root.Name.NamespaceName))
-            {
-                configFile.Root.ReplaceNamespace("", XmlNames.GetNamespace());
-            }
-
-            configFile.Validate(GetConfigutationSchema(), (o, e) => { throw new ConfigurationException(e.Message); });
-
+        {           
             foreach (var element in configFile.Root.Elements())
             {
                 if (element.Name == XmlNames.Left)
@@ -92,53 +108,13 @@ namespace ServerSync.Core.Configuration
                 {
                     ReadInclude(element, configuration, pathResolver);
                 }
-                else if (element.Name == XmlNames.Compare)
-                {
-                    ReadAction(element, configuration, pathResolver);
-                }
-                else if (element.Name == XmlNames.Export)
-                {
-                    ReadAction(element, configuration, pathResolver);
-                }
-                else if (element.Name == XmlNames.Import)
-                {
-                    ReadAction(element, configuration, pathResolver);
-                }
                 else if(element.Name == XmlNames.TransferLocation)
                 {
                     configuration.AddTransferLocation(ReadTransferLocation(element, pathResolver));
                 }
-                else if (element.Name == XmlNames.ReadSyncState)
-                {
-                    ReadAction(element, configuration, pathResolver);
-                }
-                else if (element.Name == XmlNames.WriteSyncState)
-                {
-                    ReadAction(element, configuration, pathResolver);
-                }
-                else if (element.Name == XmlNames.ApplyFilter)
-                {
-                    ReadAction(element, configuration, pathResolver);
-                }
-                else if (element.Name == XmlNames.Copy)
-                {
-                    ReadAction(element, configuration, pathResolver);
-                }
                 else if(element.Name == XmlNames.Actions)
                 {
                     ReadActionList(element, configuration, pathResolver);
-                }
-                else if (element.Name == XmlNames.AcquireLock)
-                {
-                    ReadAction(element, configuration, pathResolver);
-                }
-                else if (element.Name == XmlNames.ReleaseLock)
-                {
-                    ReadAction(element, configuration, pathResolver);
-                }
-                else if (element.Name == XmlNames.Sleep)
-                {
-                    ReadAction(element, configuration, pathResolver);
                 }
                 else
                 {
@@ -200,54 +176,10 @@ namespace ServerSync.Core.Configuration
 
         #endregion
 
-        #region Filter
-
-        IEnumerable<IFilterExpression> ReadLegacyFilterExpressionList(XElement listNode)
-        {
-            List<IFilterExpression> filterElements = new List<IFilterExpression>();
-
-            foreach (var elementNode in listNode.Elements())
-            {
-                if(elementNode.Name == XmlNames.Regex)
-                {
-                    var pattern = elementNode.Attribute(XmlAttributeNames.Pattern).Value;
-                    filterElements.Add(new RegexFilterExpression(pattern));
-                }
-                else if(elementNode.Name == XmlNames.CompareState)
-                {
-                    var compareState = ParseCompareState(elementNode.RequireAttributeValue(XmlAttributeNames.Value));
-                    filterElements.Add(new CompareStateFilterExpression(compareState));
-                }
-                else if(elementNode.Name == XmlNames.TransferState)
-                {
-                    var transferState = ParseTransferState(elementNode.RequireAttributeValue(XmlAttributeNames.Value));
-                    filterElements.Add(new TransferStateFilterExpression(transferState));
-                }
-                else if (elementNode.Name == XmlNames.MicroscopeQuery)
-                {
-                    var query = elementNode.RequireAttributeValue(XmlAttributeNames.Query);
-                    filterElements.Add(new MicroscopeFilterExpression(query));
-                }
-                else
-                {
-                    throw new ConfigurationException("Unimplemented filter element: " + elementNode.Name.LocalName);
-                }
-            }
-
-            return filterElements;
-        }
-
-
-
-
+        #region Filter     
 
         IFilter ReadFilter(XElement filterNode)
-        {
-            if(IsLegacyFilter(filterNode))
-            {
-                return ReadLegacyFilter(filterNode);
-            }
-
+        {           
             var name = filterNode.RequireAttributeValue(XmlAttributeNames.Name);
             if(filterNode.Elements().Count() != 1)
             {
@@ -307,39 +239,7 @@ namespace ServerSync.Core.Configuration
                 throw new ConfigurationException(String.Format("Unknown filter-expression '{0}'", filterExpressionNode.Name.LocalName));
             }
         }
-
-        bool IsLegacyFilter(XElement filterNode)
-        {
-            return filterNode.Elements().Count() <= 2 &&
-                (filterNode.Elements().Count(element => element.Name ==  XmlNames.Include) == 1 ||
-                filterNode.Elements().Count(element => element.Name ==  XmlNames.Include) == 1);
-        }
-
-        IFilter ReadLegacyFilter(XElement filterNode)
-        {
-            var includeRules = Enumerable.Empty<IFilterExpression>();
-            var excludeRules = Enumerable.Empty<IFilterExpression>();
-
-
-            if (filterNode.Element(XmlNames.Include) != null)
-            {
-                includeRules= ReadLegacyFilterExpressionList(filterNode.Element(XmlNames.Include));
-            }
-            if (filterNode.Element(XmlNames.Exclude) != null)
-            {
-                excludeRules = ReadLegacyFilterExpressionList(filterNode.Element(XmlNames.Exclude));
-            }
-            var name = filterNode.Attribute(XmlAttributeNames.Name).Value;
-
-#pragma warning disable 612,618 //we need to support legacy filter for backwards compatibility
-
-            var newFilter = new LegacyFilter(name, includeRules, excludeRules);
-
-#pragma warning restore 612, 618
-
-            return newFilter;
-        }
-
+   
         #endregion Filter
 
         #region Actions
@@ -445,54 +345,18 @@ namespace ServerSync.Core.Configuration
 
         void ApplyCommonImportExportActionProperties(XElement actionElement, ImportExportAction actionInstance, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
-            if(actionElement.Attribute(XmlAttributeNames.TransferLocation) != null)
+            //TODO: checks here should already be handled by the strict schema, verify and remove checks
+            if (actionElement.Element(XmlNames.MaxTransferSize) != null)
             {
-                if(actionElement.Attribute(XmlAttributeNames.TransferLocationName) != null ||
-                    actionElement.Attribute(XmlAttributeNames.TransferLocationSubPath) != null)
-                {
-                    throw new ConfigurationException("If 'transferLocation' is specified, the attributes transferLocationName and transferLocationSubPath are not allowed");
-                }
-
-                //create a new TransferLocation instance
-                TransferLocation transferLocation = null;
-                var transferLocationName = String.Format("TransferLocation_{0}", Guid.NewGuid());
-                var transferLocationPath = pathResolver.GetAbsolutePath(actionElement.RequireAttributeValue(XmlAttributeNames.TransferLocation));
-            
-                actionInstance.TransferLocationSubPath = "";
-                actionInstance.TransferLocationName = transferLocationName;
-
-                if (actionElement.Element(XmlNames.MaxTransferSize) != null)
-                {
-                    transferLocation = new TransferLocation(transferLocationName, transferLocationPath, ReadByteSize(actionElement.Element(XmlNames.MaxTransferSize)));                    
-                }
-                else if (actionElement.Element(XmlNames.MaxTransferSizeParent) != null)
-                {
-                    actionInstance.TransferLocationSubPath = Path.GetFileName(transferLocationPath);                                        
-                    transferLocation = new TransferLocation(transferLocationName, Path.GetDirectoryName(transferLocationPath), ReadByteSize(actionElement.Element(XmlNames.MaxTransferSizeParent)));
-                }
-                else
-                {
-                    transferLocation = new TransferLocation(transferLocationName, transferLocationPath, null);
-                }
-
-                configuration.AddTransferLocation(transferLocation);
+                throw new ConfigurationException("You cannot specify MaxTransferSize when referencing transfer locations by name");
             }
-            else
+            else if (actionElement.Element(XmlNames.MaxTransferSizeParent) != null)
             {
-                if (actionElement.Element(XmlNames.MaxTransferSize) != null)
-                {
-                    throw new ConfigurationException("You cannot specify MaxTransferSize when referencing transfer locations by name");
-                }
-                else if (actionElement.Element(XmlNames.MaxTransferSizeParent) != null)
-                {
-                    throw new ConfigurationException("You cannot specify MaxTransferSizeParent when referencing transfer locations by name");
-                }
-
-                actionInstance.TransferLocationName = actionElement.RequireAttributeValue(XmlAttributeNames.TransferLocationName);
-                actionInstance.TransferLocationSubPath = actionElement.RequireAttributeValue(XmlAttributeNames.TransferLocationSubPath);
+                throw new ConfigurationException("You cannot specify MaxTransferSizeParent when referencing transfer locations by name");
             }
 
-            
+            actionInstance.TransferLocationName = actionElement.RequireAttributeValue(XmlAttributeNames.TransferLocationName);
+            actionInstance.TransferLocationSubPath = actionElement.RequireAttributeValue(XmlAttributeNames.TransferLocationSubPath);                       
         }
 
         ByteSize.ByteSize ReadByteSize(XElement byteSizeElement)

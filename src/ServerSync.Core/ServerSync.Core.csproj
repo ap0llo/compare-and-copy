@@ -36,6 +36,9 @@
     <Compile Include="AbstractAction.cs" />
     <Compile Include="Compare\CompareAction.cs" />
     <Compile Include="Configuration\ConfigurationException.cs" />
+    <Compile Include="Configuration\Migration\ConfigurationMigrator.cs" />
+    <Compile Include="Configuration\Migration\IConfigurationMigrator.cs" />
+    <Compile Include="Configuration\Migration\MigrationException.cs" />
     <Compile Include="Copy\ITransferState.cs" />
     <Compile Include="Copy\TransferLocation.cs" />
     <Compile Include="Filters\Model\Filter.cs" />
@@ -87,6 +90,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Configuration\ConfigurationSchema_Strict.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <EmbeddedResource Include="State\SyncStateSchema.xsd">
       <SubType>Designer</SubType>
