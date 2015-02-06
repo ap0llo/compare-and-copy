@@ -14,6 +14,7 @@ namespace ServerSync.Core.State
         #region Fields
 
         readonly string m_RelativePath;
+        readonly string m_NormalizedRelativePath;
 
         #endregion
 
@@ -39,9 +40,52 @@ namespace ServerSync.Core.State
             }
 
             this.m_RelativePath = relativePath;
+            this.m_NormalizedRelativePath = GetNormalizedRelativePath(m_RelativePath);
         }
 
         #endregion
 
+
+        #region Overrides
+
+        public override int GetHashCode()
+        {
+            return m_NormalizedRelativePath.ToLower().GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if(!(obj is IFileItem))
+            {
+                return false;
+            }
+
+            var other = obj as IFileItem;
+            return this.m_NormalizedRelativePath.Equals(GetNormalizedRelativePath(other.RelativePath), 
+                                                        StringComparison.InvariantCultureIgnoreCase)  &&
+                this.CompareState == other.CompareState &&
+                this.TransferState == other.TransferState;
+        }
+
+        #endregion
+
+
+        #region Private Implementation
+
+        string GetNormalizedRelativePath(string path)
+        {
+            path = path.Trim();
+
+            path = path.Replace("\\", "/");
+            while(path.Contains("//"))
+            {
+                path = path.Replace("//", "/");
+            }
+
+            return path;
+
+        }
+
+        #endregion
     }
 }

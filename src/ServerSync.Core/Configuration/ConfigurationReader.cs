@@ -60,17 +60,23 @@ namespace ServerSync.Core.Configuration
         public ISyncConfiguration ReadConfiguration(string fileName)
         {
             XDocument configFile = XDocument.Load(fileName);
-
+            var pathResolver = new PathResolver(Path.GetDirectoryName(fileName));
             configFile = m_Migrator.UpgradeConfigurationFile(configFile);
 
-            ISyncConfiguration configuration = new SyncConfiguration();
+            return ReadConfiguration(configFile, pathResolver);
+            
+        }
 
-            var pathResolver = new PathResolver(Path.GetDirectoryName(fileName));
+
+        public ISyncConfiguration ReadConfiguration(XDocument document, IPathResolver pathResolver)
+        {
+            ISyncConfiguration configuration = new SyncConfiguration();
+            
             try
             {
-                ReadSyncConfiguration(configFile, configuration, pathResolver);
+                ReadSyncConfiguration(document, configuration, pathResolver);
             }
-            catch(ArgumentException ex)
+            catch (ArgumentException ex)
             {
                 throw new ConfigurationException("Error reading configuration", ex);
             }
@@ -404,7 +410,19 @@ namespace ServerSync.Core.Configuration
 
         bool ReadActionEnabled(XElement actionElement)
         {
-            return bool.Parse(actionElement.RequireAttributeValue(XmlAttributeNames.Enable));
+            var value = actionElement.RequireAttributeValue(XmlAttributeNames.Enable).Trim();
+            if (value == "0")
+            {
+                return false;
+            }
+            else if(value == "1")
+            {
+                return true;
+            }
+            else
+            {
+                return bool.Parse(value);
+            }
         }
 
         string ReadActionInputFilterName(XElement actionElement)

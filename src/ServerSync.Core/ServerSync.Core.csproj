@@ -50,9 +50,6 @@
     <Compile Include="Locking\FileLockFactory.cs" />
     <Compile Include="Locking\LockAction.cs" />
     <Compile Include="Locking\ReleaseLockAction.cs" />
-    <Compile Include="PathResolving\IPathResolver.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="PathResolving\PathResolver.cs">
       <SubType>Code</SubType>
     </Compile>

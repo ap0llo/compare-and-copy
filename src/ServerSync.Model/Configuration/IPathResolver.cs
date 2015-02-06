@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Core.PathResolving
 {
-    interface IPathResolver
+    public interface IPathResolver
     {
 
         string GetAbsolutePath(string inputPath);

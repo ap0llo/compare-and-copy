@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<syncConfiguration>
+
+  <timeStampMargin ms="50"/>
+  <right name="right" rootPath="" />
+  <left name="left" rootPath="" />
+
+
+  <sleep enable="true">
+    <timeout ms="20" />
+  </sleep>
+  
+</syncConfiguration>
