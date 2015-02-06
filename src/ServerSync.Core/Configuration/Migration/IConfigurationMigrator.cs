@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace ServerSync.Core.Configuration.Migration
 {
-    interface IConfigurationMigrator
+    public interface IConfigurationMigrator
     {
 
         XDocument UpgradeConfigurationFile(XDocument currentConfiguration);

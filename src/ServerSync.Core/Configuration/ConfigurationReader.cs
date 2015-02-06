@@ -39,9 +39,15 @@ namespace ServerSync.Core.Configuration
 
         #region Constructor
 
+        public ConfigurationReader()
+            : this(new ConfigurationMigrator())
+        {
+
+        }
+
         public ConfigurationReader(IConfigurationMigrator migrator)
         {
-            if(migrator == null)
+            if (migrator == null)
             {
                 throw new ArgumentNullException("migrator");
             }
@@ -64,14 +70,17 @@ namespace ServerSync.Core.Configuration
             configFile = m_Migrator.UpgradeConfigurationFile(configFile);
 
             return ReadConfiguration(configFile, pathResolver);
-            
+
         }
 
 
         public ISyncConfiguration ReadConfiguration(XDocument document, IPathResolver pathResolver)
         {
             ISyncConfiguration configuration = new SyncConfiguration();
-            
+
+            //upgrade configuration file
+            document = m_Migrator.UpgradeConfigurationFile(document);
+
             try
             {
                 ReadSyncConfiguration(document, configuration, pathResolver);
@@ -90,7 +99,7 @@ namespace ServerSync.Core.Configuration
         #region Private Implementation
 
         void ReadSyncConfiguration(XDocument configFile, ISyncConfiguration configuration, IPathResolver pathResolver)
-        {           
+        {
             foreach (var element in configFile.Root.Elements())
             {
                 if (element.Name == XmlNames.Left)
@@ -110,15 +119,15 @@ namespace ServerSync.Core.Configuration
                     var filter = ReadFilter(element);
                     configuration.AddFilter(filter);
                 }
-                else if(element.Name == XmlNames.Include)
+                else if (element.Name == XmlNames.Include)
                 {
                     ReadInclude(element, configuration, pathResolver);
                 }
-                else if(element.Name == XmlNames.TransferLocation)
+                else if (element.Name == XmlNames.TransferLocation)
                 {
                     configuration.AddTransferLocation(ReadTransferLocation(element, pathResolver));
                 }
-                else if(element.Name == XmlNames.Actions)
+                else if (element.Name == XmlNames.Actions)
                 {
                     ReadActionList(element, configuration, pathResolver);
                 }
@@ -136,11 +145,11 @@ namespace ServerSync.Core.Configuration
             var name = xmlNode.RequireAttributeValue(XmlAttributeNames.Name);
             var rootPath = pathResolver.GetAbsolutePath(xmlNode.Attribute(XmlAttributeNames.RootPath).Value);
 
-            if(xmlNode.Name == XmlNames.Left)
+            if (xmlNode.Name == XmlNames.Left)
             {
                 return new SyncFolderDefinition(name, rootPath, SyncFolder.Left);
             }
-            else if(xmlNode.Name == XmlNames.Right)
+            else if (xmlNode.Name == XmlNames.Right)
             {
                 return new SyncFolderDefinition(name, rootPath, SyncFolder.Right);
             }
@@ -148,7 +157,7 @@ namespace ServerSync.Core.Configuration
             {
                 throw new ConfigurationException(String.Format("Cannot parse xml element '{0} as SyncFolderDefinition'",
                                                                xmlNode.Name.LocalName));
-            }            
+            }
         }
 
         #endregion SyncFolderDefinition
@@ -166,9 +175,9 @@ namespace ServerSync.Core.Configuration
 
         void ReadInclude(XElement includeElement, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
-            var includePath = pathResolver.GetAbsolutePath(includeElement.RequireAttributeValue(XmlAttributeNames.Path)); 
+            var includePath = pathResolver.GetAbsolutePath(includeElement.RequireAttributeValue(XmlAttributeNames.Path));
 
-            if(!File.Exists(includePath))
+            if (!File.Exists(includePath))
             {
                 throw new ConfigurationException(String.Format("Included configuration file '{0}' not found", includePath));
             }
@@ -182,30 +191,30 @@ namespace ServerSync.Core.Configuration
 
         #endregion
 
-        #region Filter     
+        #region Filter
 
         IFilter ReadFilter(XElement filterNode)
-        {           
+        {
             var name = filterNode.RequireAttributeValue(XmlAttributeNames.Name);
-            if(filterNode.Elements().Count() != 1)
+            if (filterNode.Elements().Count() != 1)
             {
                 throw new ConfigurationException(String.Format("Invalid configuration. Expected a single root expression in filter '{0}'", name));
             }
 
             var rootExpression = ReadFilterExpression(filterNode.Elements().First());
 
-            return new Filter(name, rootExpression);         
+            return new Filter(name, rootExpression);
         }
 
 
         IFilterExpression ReadFilterExpression(XElement filterExpressionNode)
         {
-            if(filterExpressionNode.Name == XmlNames.Regex)
+            if (filterExpressionNode.Name == XmlNames.Regex)
             {
                 var pattern = filterExpressionNode.RequireAttributeValue(XmlAttributeNames.Pattern);
                 return new RegexFilterExpression(pattern);
             }
-            else if(filterExpressionNode.Name == XmlNames.CompareState)
+            else if (filterExpressionNode.Name == XmlNames.CompareState)
             {
                 var compareState = ParseCompareState(filterExpressionNode.RequireAttributeValue(XmlAttributeNames.Value));
                 return new CompareStateFilterExpression(compareState);
@@ -232,7 +241,7 @@ namespace ServerSync.Core.Configuration
             }
             else if (filterExpressionNode.Name == XmlNames.Not)
             {
-                if(filterExpressionNode.Elements().Count() != 1)
+                if (filterExpressionNode.Elements().Count() != 1)
                 {
                     throw new ConfigurationException("Invalid configuration, expected a single expression in 'not' expression");
                 }
@@ -245,7 +254,7 @@ namespace ServerSync.Core.Configuration
                 throw new ConfigurationException(String.Format("Unknown filter-expression '{0}'", filterExpressionNode.Name.LocalName));
             }
         }
-   
+
         #endregion Filter
 
         #region Actions
@@ -262,11 +271,11 @@ namespace ServerSync.Core.Configuration
         {
             if (element.Name == XmlNames.Compare)
             {
-               configuration.AddAction(ReadCompareAction(element, configuration));
+                configuration.AddAction(ReadCompareAction(element, configuration));
             }
             else if (element.Name == XmlNames.Export)
             {
-                configuration.AddAction(ReadExportAction(element, configuration,pathResolver));
+                configuration.AddAction(ReadExportAction(element, configuration, pathResolver));
             }
             else if (element.Name == XmlNames.Import)
             {
@@ -274,7 +283,7 @@ namespace ServerSync.Core.Configuration
             }
             else if (element.Name == XmlNames.ReadSyncState)
             {
-                configuration.AddAction(ReadReadSyncStateAction(element, configuration,pathResolver));
+                configuration.AddAction(ReadReadSyncStateAction(element, configuration, pathResolver));
             }
             else if (element.Name == XmlNames.WriteSyncState)
             {
@@ -282,23 +291,23 @@ namespace ServerSync.Core.Configuration
             }
             else if (element.Name == XmlNames.ApplyFilter)
             {
-                configuration.AddAction(ReadApplyFilerAction(element,configuration));
+                configuration.AddAction(ReadApplyFilerAction(element, configuration));
             }
             else if (element.Name == XmlNames.Copy)
             {
                 configuration.AddAction(ReadCopyAction(element, configuration));
             }
-            else if(element.Name == XmlNames.AcquireLock)
+            else if (element.Name == XmlNames.AcquireLock)
             {
                 configuration.AddAction(ReadAquireLockAction(element, configuration, pathResolver));
             }
-            else if(element.Name == XmlNames.ReleaseLock)
+            else if (element.Name == XmlNames.ReleaseLock)
             {
                 configuration.AddAction(ReadReleaseLockAction(element, configuration, pathResolver));
             }
-            else if(element.Name == XmlNames.Sleep)
+            else if (element.Name == XmlNames.Sleep)
             {
-                configuration.AddAction(ReadSleepAction(element,configuration));
+                configuration.AddAction(ReadSleepAction(element, configuration));
             }
             else
             {
@@ -308,7 +317,7 @@ namespace ServerSync.Core.Configuration
 
         IAction ReadCompareAction(XElement actionElement, ISyncConfiguration configuration)
         {
-            var enabled = ReadActionEnabled(actionElement);            
+            var enabled = ReadActionEnabled(actionElement);
             return new CompareAction(enabled, configuration);
         }
 
@@ -340,9 +349,9 @@ namespace ServerSync.Core.Configuration
             var inputFilterName = ReadActionInputFilterName(actionElement);
             var syncFolder = ReadActionSyncFolder(actionElement);
 
-            var actionInstance = new CopyAction(enabled, configuration, inputFilterName, syncFolder);            
+            var actionInstance = new CopyAction(enabled, configuration, inputFilterName, syncFolder);
             return actionInstance;
-        }        
+        }
 
         SyncFolder ReadActionSyncFolder(XElement actionElement)
         {
@@ -362,7 +371,17 @@ namespace ServerSync.Core.Configuration
             }
 
             actionInstance.TransferLocationName = actionElement.RequireAttributeValue(XmlAttributeNames.TransferLocationName);
-            actionInstance.TransferLocationSubPath = actionElement.RequireAttributeValue(XmlAttributeNames.TransferLocationSubPath);                       
+
+            var subPathAttribute = actionElement.Attribute(XmlAttributeNames.TransferLocationSubPath);
+            if (subPathAttribute != null)
+            {
+                actionInstance.TransferLocationSubPath = subPathAttribute.Value;
+            }
+            else
+            {
+                actionInstance.TransferLocationSubPath = String.Empty;
+            }
+
         }
 
         ByteSize.ByteSize ReadByteSize(XElement byteSizeElement)
@@ -387,7 +406,7 @@ namespace ServerSync.Core.Configuration
             var enabled = ReadActionEnabled(actionElement);
             var fileName = pathResolver.GetAbsolutePath(actionElement.RequireAttributeValue(XmlAttributeNames.FileName));
 
-            return new ReadSyncStateAction(enabled, configuration, fileName);                        
+            return new ReadSyncStateAction(enabled, configuration, fileName);
         }
 
         IAction ReadWriteSyncStateAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResolver)
@@ -403,8 +422,8 @@ namespace ServerSync.Core.Configuration
         {
             var enabled = ReadActionEnabled(actionElement);
             var inputFilterName = ReadActionInputFilterName(actionElement);
-            
-            return new ApplyFilterAction(enabled, configuration, inputFilterName);            
+
+            return new ApplyFilterAction(enabled, configuration, inputFilterName);
         }
 
 
@@ -415,7 +434,7 @@ namespace ServerSync.Core.Configuration
             {
                 return false;
             }
-            else if(value == "1")
+            else if (value == "1")
             {
                 return true;
             }
@@ -444,12 +463,12 @@ namespace ServerSync.Core.Configuration
             var lockFile = pathResolver.GetAbsolutePath(actionElement.RequireAttributeValue(XmlAttributeNames.LockFile));
 
             TimeSpan? timeout = null;
-            if(actionElement.Element(XmlNames.Timeout) != null)
+            if (actionElement.Element(XmlNames.Timeout) != null)
             {
                 timeout = ReadTimeSpan(actionElement.Element(XmlNames.Timeout));
             }
 
-            var action = new AcquireLockAction(enabled, configuration, lockFile, timeout);           
+            var action = new AcquireLockAction(enabled, configuration, lockFile, timeout);
             return action;
         }
 
@@ -476,7 +495,7 @@ namespace ServerSync.Core.Configuration
         TransferLocation ReadTransferLocation(XElement transferLocationElement, IPathResolver pathResolver)
         {
             ByteSize.ByteSize? maximumSize = null;
-            if(transferLocationElement.Element(XmlNames.MaximumSize) != null)
+            if (transferLocationElement.Element(XmlNames.MaximumSize) != null)
             {
                 maximumSize = ReadByteSize(transferLocationElement.Element(XmlNames.MaximumSize));
             }
@@ -485,7 +504,7 @@ namespace ServerSync.Core.Configuration
                 pathResolver.GetAbsolutePath(transferLocationElement.RequireAttributeValue(XmlAttributeNames.Path)),
                 maximumSize);
         }
-        
+
         #endregion
 
         #region Enum Parsing
@@ -526,12 +545,12 @@ namespace ServerSync.Core.Configuration
 
         TimeSpan ReadTimeSpan(XElement timespanElement)
         {
-            var hours = (int) timespanElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.Hours);
+            var hours = (int)timespanElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.Hours);
             var minutes = (int)timespanElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.Minutes);
             var seconds = (int)timespanElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.Seconds);
             var milliSeconds = (int)timespanElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.MilliSeconds);
 
-            return new TimeSpan(0, hours, minutes, seconds, milliSeconds);            
+            return new TimeSpan(0, hours, minutes, seconds, milliSeconds);
         }
 
         #endregion
