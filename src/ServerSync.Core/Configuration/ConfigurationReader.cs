@@ -32,7 +32,7 @@ namespace ServerSync.Core.Configuration
 
         #region Constants
 
-        const string s_ConfigurationSchema = "ServerSync.Core.Configuration.ConfigurationSchema.xsd";
+        const string s_ConfigurationSchema = "ServerSync.Core.Configuration.ConfigurationSchema_Strict.xsd";
 
         #endregion
 
@@ -76,11 +76,17 @@ namespace ServerSync.Core.Configuration
 
         public ISyncConfiguration ReadConfiguration(XDocument document, IPathResolver pathResolver)
         {
-            ISyncConfiguration configuration = new SyncConfiguration();
 
             //upgrade configuration file
             document = m_Migrator.UpgradeConfigurationFile(document);
 
+            //validate configuration file
+            document.Validate(GetStrictConfigutationSchema(), (s, e) => 
+                {
+                    throw new ConfigurationException("Invalid configuration file: " + e.Message); 
+                });
+
+            ISyncConfiguration configuration = new SyncConfiguration();
             try
             {
                 ReadSyncConfiguration(document, configuration, pathResolver);
@@ -360,16 +366,6 @@ namespace ServerSync.Core.Configuration
 
         void ApplyCommonImportExportActionProperties(XElement actionElement, ImportExportAction actionInstance, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
-            //TODO: checks here should already be handled by the strict schema, verify and remove checks
-            if (actionElement.Element(XmlNames.MaxTransferSize) != null)
-            {
-                throw new ConfigurationException("You cannot specify MaxTransferSize when referencing transfer locations by name");
-            }
-            else if (actionElement.Element(XmlNames.MaxTransferSizeParent) != null)
-            {
-                throw new ConfigurationException("You cannot specify MaxTransferSizeParent when referencing transfer locations by name");
-            }
-
             actionInstance.TransferLocationName = actionElement.RequireAttributeValue(XmlAttributeNames.TransferLocationName);
 
             var subPathAttribute = actionElement.Attribute(XmlAttributeNames.TransferLocationSubPath);
@@ -555,7 +551,7 @@ namespace ServerSync.Core.Configuration
 
         #endregion
 
-        XmlSchemaSet GetConfigutationSchema()
+        XmlSchemaSet GetStrictConfigutationSchema()
         {
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(s_ConfigurationSchema))
             {

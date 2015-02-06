@@ -3,17 +3,22 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Schema;
 
 namespace ServerSync.Core.Configuration.Migration
 {
     class ConfigurationMigrator : IConfigurationMigrator
     {
+        
 
         #region Constants
 
+        const string s_ConfigurationSchema = "ServerSync.Core.Configuration.ConfigurationSchema.xsd";
         const string s_TransferLocation = "TransferLocation_";
 
         static readonly HashSet<XName> s_ActionNames = new HashSet<XName>() {
@@ -43,12 +48,19 @@ namespace ServerSync.Core.Configuration.Migration
 
         public XDocument UpgradeConfigurationFile(XDocument currentConfiguration)
         {
-            var newConfiguration = new XDocument(currentConfiguration);
-
-            //TODO: Validate configuration against backwards compatible schema
-
             m_Logger.Info("Upgrading configuration file to latest configuration version");
 
+
+            //validate input (against a backwards compatible schema that allows all constructs that will be removed during migration)
+            currentConfiguration.Validate(GetConfigutationSchema(), (s, e) => 
+                {
+                    throw new MigrationException("Invalid configuration file: " + e.Message); 
+                });
+
+            //migration is performed on a copy of the configuration
+            var newConfiguration = new XDocument(currentConfiguration);            
+
+            //Perform migration steps
             UpgradeNamespace(newConfiguration);
 
             UpgradeActions(newConfiguration);
@@ -56,8 +68,7 @@ namespace ServerSync.Core.Configuration.Migration
             UpgradeImportExportActions(newConfiguration);
 
             UpgradeFilters(newConfiguration);
-
-            //TODO: Validate upgraded configuration file against a strict schema
+            
 
             return newConfiguration;
         }
@@ -312,6 +323,19 @@ namespace ServerSync.Core.Configuration.Migration
             return filterNode.Elements().Count() <= 2 &&
                 (filterNode.Elements().Count(element => element.Name == XmlNames.Include) == 1 ||
                 filterNode.Elements().Count(element => element.Name == XmlNames.Include) == 1);
+        }
+
+
+        XmlSchemaSet GetConfigutationSchema()
+        {
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(s_ConfigurationSchema))
+            {
+                var schemaSet = new XmlSchemaSet();
+
+                schemaSet.Add(null, XmlReader.Create(stream));
+
+                return schemaSet;
+            }
         }
 
         #endregion

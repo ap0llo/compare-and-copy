@@ -73,7 +73,7 @@
 
   <xs:complexType name="typeApplyFilterAction">
     <xs:attribute name="enable" type="xs:boolean" />
-    <xs:attribute name="inputFilter" type="xs:string" />
+    <xs:attribute name="inputFilter" type="xs:string" use="required" />
   </xs:complexType>
 
   <xs:complexType name="typeIOAction">

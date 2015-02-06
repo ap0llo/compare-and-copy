@@ -1,6 +1,7 @@
 ﻿using Moq;
 using ServerSync.Core.Configuration;
 using ServerSync.Core.Copy;
+using ServerSync.Core.Locking;
 using ServerSync.Core.PathResolving;
 using ServerSync.Core.State;
 using ServerSync.Model.State;
@@ -27,11 +28,14 @@ namespace ServerSync.Core.Test.Configuration
         const string s_Resource_ImplicitTransferLocation1 = "ServerSync.Core.Test.Configuration.TestData.ImplicitTransferLocation1.xml";
         const string s_Resource_ImplicitTransferLocation2 = "ServerSync.Core.Test.Configuration.TestData.ImplicitTransferLocation2.xml";
         const string s_Resource_ImplicitTransferLocation3 = "ServerSync.Core.Test.Configuration.TestData.ImplicitTransferLocation3.xml";
+        
 
         #endregion
 
 
         #region Test Methods
+
+        #region Filter
 
         /// <summary>
         /// Not purely a unit test. 
@@ -87,6 +91,11 @@ namespace ServerSync.Core.Test.Configuration
             Assert.Empty(actualFilterOutput.Except(expectedOutput));
         }
 
+        #endregion
+
+
+        #region Transfer Locations
+
         /// <summary>
         /// Tests reading of implicitly defined transfer locations 
         /// (without maximum size specified for the transfer location)
@@ -122,6 +131,8 @@ namespace ServerSync.Core.Test.Configuration
             Assert.Null(transferLocation.MaximumSize);
             Assert.False(String.IsNullOrWhiteSpace(transferLocation.Name));
         }
+
+        
 
 
         /// <summary>
@@ -200,15 +211,7 @@ namespace ServerSync.Core.Test.Configuration
             Assert.False(String.IsNullOrWhiteSpace(transferLocation.Name));
 
         }
-
-        //TODO:
-        /*
-         * - explicitly defined transfer location (with and without maximum size)
-         * - relative transfer location paths
-         * 
-         */
-
-
+      
         [Fact]
         public void Test_ReadTransferLocation_1()
         {
@@ -302,7 +305,6 @@ namespace ServerSync.Core.Test.Configuration
         }
 
 
-
         /// <summary>
         /// Tests if a ConfigurationException is thrown when a transfer location definition's name is empty or missing
         /// </summary>
@@ -319,9 +321,14 @@ namespace ServerSync.Core.Test.Configuration
 
             var configurationReader = new ConfigurationReader();
 
-            Assert.Throws<ConfigurationException>(() => configurationReader.ReadConfiguration(LoadResource(resourceName), pathResolverMock.Object));
+            var exception = Record.Exception( () => configurationReader.ReadConfiguration(LoadResource(resourceName), pathResolverMock.Object));
+            Assert.True(typeof(ConfigurationException).IsAssignableFrom(exception.GetType()));            
         }
 
+        #endregion
+
+
+        #region Actions
 
 
         /// <summary>
@@ -349,7 +356,66 @@ namespace ServerSync.Core.Test.Configuration
             Assert.Equal(expectedActionCount, config.Actions.Count());            
         }
 
-       
+
+        #endregion
+
+
+        #region AcquireLock Action
+
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_AcquireLock_Success_1.xml", true, "file.lock", null)]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_AcquireLock_Success_2.xml", true, "file.lock", 2)]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_AcquireLock_Success_3.xml", false, "file.lock", null)]
+        public void ReadAction_AcquireLock_Success(string resourceName, bool expectedEnable, string lockFileValue, int? timeoutInMinutes)
+        {
+            var resolvedPath = Guid.NewGuid().ToString();
+
+            var mock = GetDefaultPathResolverMock();
+            mock.Setup(m => m.GetAbsolutePath(lockFileValue)).Returns(resolvedPath);
+
+            var configurationReader = new ConfigurationReader();          
+            var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
+
+            Assert.Equal(1, config.Actions.Count());
+
+            var action = config.Actions.First() as AcquireLockAction;
+            Assert.NotNull(action);
+            
+            
+            Assert.Equal(expectedEnable, action.IsEnabled);
+            Assert.Equal(resolvedPath, action.LockFile);
+
+            if (timeoutInMinutes.HasValue)
+            {
+                Assert.Equal(new TimeSpan(0, timeoutInMinutes.Value, 0), action.Timeout);
+            }
+            else
+            {
+                Assert.Null(action.Timeout);
+            }
+        }
+
+        #endregion
+
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_AcquireLock_Fail_1.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_AcquireLock_Fail_2.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_AcquireLock_Fail_3.xml")]
+        public void ReadAction_Fail(string resourceName)
+        {
+
+            var mock = GetDefaultPathResolverMock();            
+
+            var configurationReader = new ConfigurationReader();
+
+            var exception = Record.Exception(() => configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object));
+            Assert.True(typeof(ConfigurationException).IsAssignableFrom(exception.GetType())); 
+            
+            
+        }
+
+
+
         /// <summary>
         /// Tests if a configuration file in which no XML namespace is specified is read correctly
         /// </summary>
@@ -386,6 +452,13 @@ namespace ServerSync.Core.Test.Configuration
             {
                 return XDocument.Load(stream);
             }
+        }
+
+        Mock<IPathResolver> GetDefaultPathResolverMock()
+        {
+            var mock = new Mock<IPathResolver>();
+            mock.Setup(m => m.GetAbsolutePath(It.IsAny<string>())).Returns((string s) => s);
+            return mock;
         }
 
         #endregion
