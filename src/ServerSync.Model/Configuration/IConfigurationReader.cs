@@ -1,4 +1,7 @@
 ﻿
+using ServerSync.Core.PathResolving;
+using System.Xml.Linq;
+
 namespace ServerSync.Model.Configuration
 {
     /// <summary>
@@ -9,6 +12,11 @@ namespace ServerSync.Model.Configuration
         /// <summary>
         /// Deserializes the specified sync configuration file
         /// </summary>
-        ISyncConfiguration ReadConfiguration(string fileName);       
+        ISyncConfiguration ReadConfiguration(string fileName);
+
+        /// <summary>
+        /// Deserializes the specified sync configuration file
+        /// </summary>
+        ISyncConfiguration ReadConfiguration(XDocument configuration, IPathResolver pathResolver);     
     }
 }

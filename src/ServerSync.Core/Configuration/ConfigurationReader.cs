@@ -37,15 +37,22 @@ namespace ServerSync.Core.Configuration
         public ISyncConfiguration ReadConfiguration(string fileName)
         {
             XDocument configFile = XDocument.Load(fileName);
-
-            ISyncConfiguration configuration = new SyncConfiguration();
-
             var pathResolver = new PathResolver(Path.GetDirectoryName(fileName));
+
+            return ReadConfiguration(configFile, pathResolver);
+            
+        }
+
+
+        public ISyncConfiguration ReadConfiguration(XDocument document, IPathResolver pathResolver)
+        {
+            ISyncConfiguration configuration = new SyncConfiguration();
+            
             try
             {
-                ReadSyncConfiguration(configFile, configuration, pathResolver);
+                ReadSyncConfiguration(document, configuration, pathResolver);
             }
-            catch(ArgumentException ex)
+            catch (ArgumentException ex)
             {
                 throw new ConfigurationException("Error reading configuration", ex);
             }

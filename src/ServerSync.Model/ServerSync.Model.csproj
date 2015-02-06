@@ -12,7 +12,7 @@
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <ItemGroup>
-  <Reference Include="ByteSize">
+    <Reference Include="ByteSize">
       <HintPath>..\packages\ByteSize.0.3.0\lib\portable-net4+sl5+netcore45+wp8+MonoAndroid1+MonoTouch1\ByteSize.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -28,6 +28,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\IPathResolver.cs" />
     <Compile Include="State\CompareState.cs" />
     <Compile Include="Filtering\Expressions\AndFilterExpression.cs" />
     <Compile Include="Filtering\Expressions\Base\MultiFilterExpression.cs" />
