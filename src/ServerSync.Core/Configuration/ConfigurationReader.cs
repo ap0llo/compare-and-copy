@@ -547,7 +547,19 @@ namespace ServerSync.Core.Configuration
 
         bool ReadActionEnabled(XElement actionElement)
         {
-            return bool.Parse(actionElement.RequireAttributeValue(XmlAttributeNames.Enable));
+            var value = actionElement.RequireAttributeValue(XmlAttributeNames.Enable).Trim();
+            if (value == "0")
+            {
+                return false;
+            }
+            else if(value == "1")
+            {
+                return true;
+            }
+            else
+            {
+                return bool.Parse(value);
+            }
         }
 
         string ReadActionInputFilterName(XElement actionElement)
