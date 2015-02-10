@@ -324,7 +324,8 @@ namespace ServerSync.Core.Configuration
         IAction ReadCompareAction(XElement actionElement, ISyncConfiguration configuration)
         {
             var enabled = ReadActionEnabled(actionElement);
-            return new CompareAction(enabled, configuration);
+            var filterName = ReadActionInputFilterName(actionElement);
+            return new CompareAction(enabled, filterName, configuration);
         }
 
         IAction ReadExportAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResolver)
@@ -445,7 +446,15 @@ namespace ServerSync.Core.Configuration
             var inputFilterAttribute = actionElement.Attribute(XmlAttributeNames.InputFilter);
             if (inputFilterAttribute != null)
             {
-                return inputFilterAttribute.Value;
+                var value = inputFilterAttribute.Value;
+                if(String.IsNullOrEmpty(value))
+                {
+                    throw new ConfigurationException(String.Format("The value for attribute {0} must not be empty (action {1})", 
+                                                                   XmlAttributeNames.InputFilter, 
+                                                                   actionElement.Name.LocalName));
+                }
+
+                return value;
             }
             else
             {

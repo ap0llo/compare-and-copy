@@ -9,8 +9,10 @@ Applies the specified filter to the current sync state. All files not included b
 	- Allowed values: 
 		- true
 		- false
-- inputFilter: The name of the filter to apply to the current sync state
+- inputFilter (optional): The name of the filter to apply to the current sync state
 
+
+*Note: The attribute inputFilter is optional. Omitting it for this action however is not very useful. It will result in a action that will not affect the sync state in any way.*
 
 
 ###Example

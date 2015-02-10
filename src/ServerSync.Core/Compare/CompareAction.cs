@@ -1,4 +1,5 @@
 ﻿using NLog;
+using ServerSync.Core.State;
 using ServerSync.Model.Configuration;
 using ServerSync.Model.State;
 using System.Linq;
@@ -30,8 +31,8 @@ namespace ServerSync.Core.Compare
         #region Constructor
 
 
-        public CompareAction(bool isEnabled, ISyncConfiguration configuration)
-            : base(isEnabled, configuration, null)
+        public CompareAction(bool isEnabled, string inputFilterName, ISyncConfiguration configuration)
+            : base(isEnabled, configuration, inputFilterName)
         {
 
         }
@@ -55,7 +56,7 @@ namespace ServerSync.Core.Compare
 
 
             //combine new and old sync states
-            var combinedState = MergeSyncStates(this.State, comparisonResult);
+            var combinedState = MergeSyncStates(new SyncState(GetFilteredInput()), comparisonResult);
             this.State = combinedState;
         }
 

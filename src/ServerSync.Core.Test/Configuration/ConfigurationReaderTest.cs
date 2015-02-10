@@ -1,9 +1,12 @@
 ﻿using Moq;
+using ServerSync.Core.Compare;
 using ServerSync.Core.Configuration;
 using ServerSync.Core.Copy;
+using ServerSync.Core.Filters;
 using ServerSync.Core.Locking;
 using ServerSync.Core.PathResolving;
 using ServerSync.Core.State;
+using ServerSync.Model.Configuration;
 using ServerSync.Model.State;
 using System;
 using System.Collections.Generic;
@@ -356,9 +359,38 @@ namespace ServerSync.Core.Test.Configuration
             Assert.Equal(expectedActionCount, config.Actions.Count());            
         }
 
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_AcquireLock_Fail_1.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_AcquireLock_Fail_2.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_AcquireLock_Fail_3.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ApplyFilter_Fail_1.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ApplyFilter_Fail_2.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ApplyFilter_Fail_3.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Fail_1.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Fail_2.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Fail_3.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Copy_Fail_1.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Copy_Fail_2.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Copy_Fail_3.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Copy_Fail_4.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReadSyncState_Fail_1.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReadSyncState_Fail_2.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReadSyncState_Fail_3.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReadSyncState_Fail_4.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReadSyncState_Fail_5.xml")]
+        public void ReadAction_Fail(string resourceName)
+        {
 
-        #endregion
+            var mock = GetDefaultPathResolverMock();
 
+            var configurationReader = new ConfigurationReader();
+
+            var exception = Record.Exception(() => configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object));
+            Assert.NotNull(exception);
+            Assert.True(typeof(ConfigurationException).IsAssignableFrom(exception.GetType()));
+
+
+        }
 
         #region AcquireLock Action
 
@@ -397,24 +429,138 @@ namespace ServerSync.Core.Test.Configuration
 
         #endregion
 
-        [Theory]
-        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_AcquireLock_Fail_1.xml")]
-        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_AcquireLock_Fail_2.xml")]
-        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_AcquireLock_Fail_3.xml")]
-        public void ReadAction_Fail(string resourceName)
-        {
 
-            var mock = GetDefaultPathResolverMock();            
+        #region ApplyFilter Action
+
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ApplyFilter_Success_1.xml", true, "filter1")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ApplyFilter_Success_2.xml", false, "filter2")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ApplyFilter_Success_3.xml",true, null)]
+        public void ReadAction_ApplyFilter_Success(string resourceName, bool expectedEnable, string expectedFilterName)
+        {
+            var mock = GetDefaultPathResolverMock();
 
             var configurationReader = new ConfigurationReader();
+            var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
 
-            var exception = Record.Exception(() => configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object));
-            Assert.True(typeof(ConfigurationException).IsAssignableFrom(exception.GetType())); 
-            
-            
+            mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Never());
+
+            Assert.Equal(1, config.Actions.Count());
+
+            var action = config.Actions.First() as ApplyFilterAction;
+            Assert.NotNull(action);
+
+
+            Assert.Equal(expectedEnable, action.IsEnabled);
+            Assert.Equal(expectedFilterName, action.InputFilterName);
         }
 
 
+        #endregion
+        
+        #region Compare Action
+
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Success_1.xml", true, "filter1")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Success_2.xml", true, "filter1")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Success_3.xml", false, "filter1")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Success_4.xml", false, "filter1")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Success_5.xml", false, null)]        
+        public void ReadAction_Compare_Success(string resourceName, bool expectedEnable, string expectedFilterName)
+        {
+            var mock = GetDefaultPathResolverMock();
+
+            var configurationReader = new ConfigurationReader();
+            var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
+
+            mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Never());
+
+            Assert.Equal(1, config.Actions.Count());
+
+            var action = config.Actions.First() as CompareAction;
+            Assert.NotNull(action);
+
+
+            Assert.Equal(expectedEnable, action.IsEnabled);
+            Assert.Equal(expectedFilterName, action.InputFilterName);
+        }
+
+        #endregion
+
+        #region Copy Action
+
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Copy_Success_1.xml", true, SyncFolder.Left, "filter1")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Copy_Success_2.xml", true, SyncFolder.Left, "filter1")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Copy_Success_3.xml", false, SyncFolder.Right, "filter1")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Copy_Success_4.xml", false, SyncFolder.Right, "filter1")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Copy_Success_5.xml", true, SyncFolder.Left, null)]
+        public void ReadAction_Copy_Success(string resourceName, bool expectedEnable, SyncFolder expectedSyncFolder, string expectedFilterName)
+        {
+            var mock = GetDefaultPathResolverMock();
+
+            var configurationReader = new ConfigurationReader();
+            var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
+
+            mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Never());
+
+            Assert.Equal(1, config.Actions.Count());
+
+            var action = config.Actions.First() as CopyAction;
+            Assert.NotNull(action);
+
+
+            Assert.Equal(expectedEnable, action.IsEnabled);
+            Assert.Equal(expectedSyncFolder, action.SyncFolder);
+            Assert.Equal(expectedFilterName, action.InputFilterName);
+        }
+
+        #endregion
+
+
+        //TODO: Export Action
+
+        //TODO: Import Action
+
+
+        #region ReadSyncState Action
+
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReadSyncState_Success_1.xml", true, "fileName")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReadSyncState_Success_2.xml", true, "fileName")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReadSyncState_Success_3.xml", false, "fileName")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReadSyncState_Success_4.xml", false, "fileName")]
+        public void ReadAction_ReadSyncState_Success(string resourceName, bool expectedEnable, string fileName)
+        {
+            var expectedFileName = Guid.NewGuid().ToString();
+
+            var mock = GetDefaultPathResolverMock();
+            mock.Setup(m => m.GetAbsolutePath(fileName)).Returns(expectedFileName);
+
+            var configurationReader = new ConfigurationReader();
+            var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
+
+            mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Once());
+
+            Assert.Equal(1, config.Actions.Count());
+
+            var action = config.Actions.First() as ReadSyncStateAction;
+            Assert.NotNull(action);
+
+
+            Assert.Equal(expectedEnable, action.IsEnabled);
+            Assert.Equal(expectedFileName, action.FileName);            
+        }
+
+        #endregion
+
+        //TODO: ReleaseLock action
+
+        //TODO: Sleep Action
+
+        //TODO: WriteSyncState action
+
+        #endregion Actions
 
         /// <summary>
         /// Tests if a configuration file in which no XML namespace is specified is read correctly
