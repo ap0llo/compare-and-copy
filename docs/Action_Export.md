@@ -63,7 +63,7 @@ Referenced Transfer location
 				transferLocationName="Filserver" 
 				transferLocationSubPath="Exported" 
 				syncFolder="left" 
-				inputFilter="MissingRightFilter">		
+				inputFilter="MissingRightFilter" />		
 
 
 ###Versions

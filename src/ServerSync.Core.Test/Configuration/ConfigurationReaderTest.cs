@@ -388,6 +388,13 @@ namespace ServerSync.Core.Test.Configuration
         [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_WriteSyncState_Fail_3.xml")]
         [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_WriteSyncState_Fail_4.xml")]
         [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_WriteSyncState_Fail_5.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Fail_1.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Fail_2.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Fail_3.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Fail_4.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Fail_5.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Fail_7.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Fail_6.xml")]
         public void ReadAction_Fail(string resourceName)
         {
 
@@ -527,8 +534,43 @@ namespace ServerSync.Core.Test.Configuration
 
         #endregion
 
+        #region Export Action
 
         //TODO: Export Action
+
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Success_1.xml", true, "transferLocation1", "subPath1", SyncFolder.Left, "filter1")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Success_2.xml", true, "transferLocation2", "", SyncFolder.Left, "filter2")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Success_3.xml", false, "transferLocation3", "", SyncFolder.Right, "filter3")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Success_4.xml", false, "transferLocation4", "subPath4", SyncFolder.Right, null)]
+        public void ReadAction_Export_Success(string resourceName, bool expectedIsEnabled, 
+                                              string expectedTransferLocationName, string expectedTransferLocationSubPath, 
+                                              SyncFolder expectedSyncFolder, string expectedFilterName)
+        
+        {
+            
+            var mock = GetDefaultPathResolverMock();
+            
+
+            var configurationReader = new ConfigurationReader();
+            var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
+
+            mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Never());
+
+            Assert.Equal(1, config.Actions.Count());
+
+            var action = config.Actions.First() as ExportAction;
+            Assert.NotNull(action);
+
+            Assert.Equal(expectedIsEnabled, action.IsEnabled);
+            Assert.Equal(expectedTransferLocationName, action.TransferLocationName);
+            Assert.Equal(expectedTransferLocationSubPath, action.TransferLocationSubPath);
+            Assert.Equal(expectedSyncFolder, action.SyncFolder);
+            Assert.Equal(expectedFilterName, action.InputFilterName);        
+
+        }
+
+        #endregion
 
         //TODO: Import Action
 
