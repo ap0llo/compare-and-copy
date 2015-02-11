@@ -120,7 +120,7 @@
 
   <xs:complexType name="typeWriteSyncStateAction">
     <xs:attribute name="enable" type="xs:boolean" use="required" />
-    <xs:attribute name="inputFilter" type="xs:string" />
+    <xs:attribute name="inputFilter" type="xs:string" use="optional" />
     <xs:attribute name="fileName" type="xs:string" use="required" />
   </xs:complexType>
 

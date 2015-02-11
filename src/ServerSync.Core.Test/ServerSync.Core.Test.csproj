@@ -208,6 +208,75 @@
   <ItemGroup>
     <EmbeddedResource Include="Configuration\TestData\Action_ReadSyncState_Fail_5.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_ReleaseLock_Success_1.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_ReleaseLock_Success_2.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_ReleaseLock_Success_3.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_ReleaseLock_Success_4.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_ReleaseLock_Fail_1.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_ReleaseLock_Fail_2.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_ReleaseLock_Fail_3.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_Sleep_Success_1.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_Sleep_Success_1 - Copy.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_Sleep_Success_2.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_Sleep_Success_3.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_Sleep_Success_4.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_Sleep_Fail_1.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_Sleep_Fail_2.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Success_1.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Success_4.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Success_2.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Success_3.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Fail_1.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Fail_2.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Fail_3.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Fail_4.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Fail_5.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildThisFileDirectory)..\common\Packaging.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

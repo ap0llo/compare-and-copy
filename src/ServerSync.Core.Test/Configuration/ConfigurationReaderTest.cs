@@ -1,4 +1,4 @@
-﻿using Moq;
+using Moq;
 using ServerSync.Core.Compare;
 using ServerSync.Core.Configuration;
 using ServerSync.Core.Copy;
@@ -378,6 +378,16 @@ namespace ServerSync.Core.Test.Configuration
         [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReadSyncState_Fail_3.xml")]
         [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReadSyncState_Fail_4.xml")]
         [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReadSyncState_Fail_5.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReleaseLock_Fail_1.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReleaseLock_Fail_2.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReleaseLock_Fail_3.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Sleep_Fail_1.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Sleep_Fail_2.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_WriteSyncState_Fail_1.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_WriteSyncState_Fail_2.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_WriteSyncState_Fail_3.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_WriteSyncState_Fail_4.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_WriteSyncState_Fail_5.xml")]
         public void ReadAction_Fail(string resourceName)
         {
 
@@ -554,11 +564,99 @@ namespace ServerSync.Core.Test.Configuration
 
         #endregion
 
-        //TODO: ReleaseLock action
 
-        //TODO: Sleep Action
+        #region ReleaseLock Action
 
-        //TODO: WriteSyncState action
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReleaseLock_Success_1.xml", true, "file.lock")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReleaseLock_Success_2.xml", true, "file.lock")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReleaseLock_Success_3.xml", false, "file.lock")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_ReleaseLock_Success_4.xml", false, "file.lock")]
+        public void ReadAction_ReleaseLock_Success(string resourceName, bool expectedEnable, string lockfileName)
+        {
+            var expectedLockFileName = Guid.NewGuid().ToString();
+            var mock = GetDefaultPathResolverMock();
+            mock.Setup(m => m.GetAbsolutePath(lockfileName)).Returns(expectedLockFileName);
+
+
+
+            var configurationReader = new ConfigurationReader();
+            var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
+
+            mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Once());
+
+            Assert.Equal(1, config.Actions.Count());
+
+            var action = config.Actions.First() as ReleaseLockAction;
+            Assert.NotNull(action);
+
+            Assert.Equal(expectedEnable, action.IsEnabled);
+            Assert.Equal(expectedLockFileName, action.LockFile);            
+
+        }
+
+        #endregion
+
+
+        #region Sleep Action
+
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Sleep_Success_1.xml", true, 2)]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Sleep_Success_2.xml", true, 2 * 60)]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Sleep_Success_3.xml", false, 2 * 60 * 60)]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Sleep_Success_4.xml", false, (2 * 60) + 2)]
+        public void ReadAction_Sleep_Success(string resourceName, bool expectedEnable, int expectedTimeoutInSeconds)
+        {
+            var mock = GetDefaultPathResolverMock();
+            
+            var configurationReader = new ConfigurationReader();
+            var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
+
+            mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Never());
+
+            Assert.Equal(1, config.Actions.Count());
+
+            var action = config.Actions.First() as SleepAction;
+            Assert.NotNull(action);
+
+            Assert.Equal(expectedEnable, action.IsEnabled);
+            Assert.Equal(new TimeSpan(0, 0, expectedTimeoutInSeconds), action.Timeout);            
+        }
+
+        #endregion
+
+        #region WriteSyncState Action
+
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_WriteSyncState_Success_1.xml", true, null, "fileName")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_WriteSyncState_Success_2.xml", true, null, "fileName")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_WriteSyncState_Success_3.xml", false, "filter3", "fileName")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_WriteSyncState_Success_4.xml", false, "filter4", "fileName")]
+        public void ReadAction_WriteSyncState_Success(string resourceName, bool expectedEnable, string expectedFilterName, string fileName)
+        {
+
+            var expectedFileName = Guid.NewGuid().ToString();
+            var mock = GetDefaultPathResolverMock();
+            mock.Setup(m => m.GetAbsolutePath(fileName)).Returns(expectedFileName);
+
+
+            var configurationReader = new ConfigurationReader();
+            var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
+
+            mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Once());
+
+            Assert.Equal(1, config.Actions.Count());
+
+            var action = config.Actions.First() as WriteSyncStateAction;
+            Assert.NotNull(action);
+
+            Assert.Equal(expectedEnable, action.IsEnabled);
+            Assert.Equal(expectedFilterName, action.InputFilterName);
+            Assert.Equal(expectedFileName, action.FileName);        
+
+        }
+
+        #endregion
 
         #endregion Actions
 
