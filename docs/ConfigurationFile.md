@@ -50,6 +50,11 @@ The value of the time-span is the sum of all attribute values.
 
 ***Note: Versions before v1.3.0 do only support the 'ms' attribute***
 
+***Note: Defining the time-stamp margin at the global level has been deprecated.
+   Beginning with version 1.5, the margin should be specified in the
+   configuration of the compare action. However, all 1.x versions are backwards
+   compatible and support the global defintion of the time stamp margin***
+
 #####Example
 	<timeStampMargin h="1" m="2" s="3" />
 
