@@ -21,12 +21,7 @@ namespace ServerSync.Model.Configuration
         /// <summary>
         /// The "right" of the folders to be synced
         /// </summary>
-        ISyncFolderDefinition Right { get; set; }
-
-        /// <summary>
-        /// The margin by which timestamps of files may differ while still being regarded as identical
-        /// </summary>
-        TimeSpan TimeStampMargin { get; set; }
+        ISyncFolderDefinition Right { get; set; }        
 
         /// <summary>
         /// All filters defined for the sync job

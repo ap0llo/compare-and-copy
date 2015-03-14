@@ -17,6 +17,7 @@ namespace ServerSync.Core
     /// </summary>
     public abstract class AbstractAction : IAction
     {
+
         #region Fields
 
         readonly bool m_IsEnabled;
@@ -72,6 +73,7 @@ namespace ServerSync.Core
 
 
         #endregion
+
 
         #region Public Methods
 

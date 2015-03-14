@@ -22,7 +22,9 @@ namespace ServerSync.Core.Compare
 
         Logger m_Logger = LogManager.GetCurrentClassLogger();
 
-        private ISyncConfiguration config;
+
+        readonly ISyncConfiguration config;
+		readonly TimeSpan timeStampMargin;
 
         private List<string> filesMissingLeft = new List<string>();
         private List<string> filesMissingRight = new List<string>();
@@ -38,9 +40,13 @@ namespace ServerSync.Core.Compare
         /// Initializes a new instance of FolderComparer
         /// </summary>
         /// <param name="config">The configuration to use for comparison</param>
-        public FolderComparer(ISyncConfiguration config)
+		/// <param name="timeStampMargin">The maximum time span by which two file timestamps may differ to be considered equal</param>
+        public FolderComparer(ISyncConfiguration config, TimeSpan timeStampMargin)
         {
+			if (config == null) throw new ArgumentNullException("config");
+			
             this.config = config;
+			this.timeStampMargin = timeStampMargin;
         }
 
         #endregion Constructor
@@ -209,7 +215,7 @@ namespace ServerSync.Core.Compare
             var sizeDifference = info1.Length - info2.Length;           
             var modifiedDifference = (info1.LastWriteTime - info2.LastWriteTime).TotalMilliseconds;
 
-            return sizeDifference == 0 && Math.Abs(modifiedDifference) <= config.TimeStampMargin.TotalMilliseconds;
+            return sizeDifference == 0 && Math.Abs(modifiedDifference) <= timeStampMargin.TotalMilliseconds;
         }        
 
         #endregion Private Implementation

@@ -2,7 +2,9 @@
 <syncConfiguration xmlns="http://grynwald.net/schemas/2014/ServerSync/v1/Configuration/">
 
 
-  <compare enable="1" inputFilter="filter1"/>
+  <compare enable="1" inputFilter="filter1">
+      <timeStampMargin s="1" />
+  </compare>
 
 
 </syncConfiguration>

@@ -116,10 +116,6 @@ namespace ServerSync.Core.Configuration
                 {
                     configuration.Right = ReadSyncFolderDefinition(element, pathResolver);
                 }
-                else if (element.Name == XmlNames.TimeStampMargin)
-                {
-                    configuration.TimeStampMargin = ReadTimeSpan(element);
-                }
                 else if (element.Name == XmlNames.Filter)
                 {
                     var filter = ReadFilter(element);
@@ -167,15 +163,6 @@ namespace ServerSync.Core.Configuration
         }
 
         #endregion SyncFolderDefinition
-
-        #region Global Properties
-
-        long ReadTimeStampMargin(XElement element)
-        {
-            return long.Parse(element.Attribute("ms").Value);
-        }
-
-        #endregion Global Properties
 
         #region Include
 
@@ -325,7 +312,13 @@ namespace ServerSync.Core.Configuration
         {
             var enabled = ReadActionEnabled(actionElement);
             var filterName = ReadActionInputFilterName(actionElement);
-            return new CompareAction(enabled, filterName, configuration);
+
+			var timeStampMarginElement = actionElement.Element(XmlNames.TimeStampMargin);
+			var timeStampMargin = (timeStampMarginElement == null)
+				? TimeSpan.FromSeconds(0)
+				: ReadTimeSpan(timeStampMarginElement);
+							
+            return new CompareAction(enabled, filterName, configuration, timeStampMargin);
         }
 
         IAction ReadExportAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResolver)

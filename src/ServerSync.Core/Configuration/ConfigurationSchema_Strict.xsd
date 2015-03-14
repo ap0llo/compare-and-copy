@@ -10,8 +10,7 @@
   <xs:complexType name="typeSyncConfiguration">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="left" type="typeSyncFolderDefinition" />
-      <xs:element name="right" type="typeSyncFolderDefinition" />
-      <xs:element name="timeStampMargin" type="typeTimespan" />            
+      <xs:element name="right" type="typeSyncFolderDefinition" />           
       <xs:element name="filter" type="typeFilter" />
       <xs:element name="include" type="typeInclude" />
       <xs:element name="transferLocation" type="typeTransferLocation" />
@@ -67,6 +66,9 @@
   
   <!-- Actions -->  
   <xs:complexType name="typeCompareAction">
+	  <xs:sequence>
+		  <xs:element name="timeStampMargin" type="typeTimespan" minOccurs="0" maxOccurs="1" />
+	  </xs:sequence>
     <xs:attribute name="enable" type="xs:boolean" />
     <xs:attribute name="inputFilter" type="xs:string" />
   </xs:complexType>
