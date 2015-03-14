@@ -83,6 +83,9 @@
   
   <!-- Actions -->  
   <xs:complexType name="typeCompareAction">
+	<xs:sequence>
+		<xs:element name="timeStampMargin" type="typeTimespan" minOccurs="0" maxOccurs="1" /> 
+	</xs:sequence>
     <xs:attribute name="enable" type="xs:boolean" />
     <xs:attribute name="inputFilter" type="xs:string" />
   </xs:complexType>

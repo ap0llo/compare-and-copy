@@ -14,7 +14,7 @@ namespace ServerSync.Core.Configuration.Migration
 {
     class ConfigurationMigrator : IConfigurationMigrator
     {
-        
+
 
         #region Constants
 
@@ -52,13 +52,13 @@ namespace ServerSync.Core.Configuration.Migration
 
 
             //validate input (against a backwards compatible schema that allows all constructs that will be removed during migration)
-            currentConfiguration.Validate(GetConfigutationSchema(), (s, e) => 
+            currentConfiguration.Validate(GetConfigutationSchema(), (s, e) =>
                 {
-                    throw new MigrationException("Invalid configuration file: " + e.Message); 
+                    throw new MigrationException("Invalid configuration file: " + e.Message);
                 });
 
             //migration is performed on a copy of the configuration
-            var newConfiguration = new XDocument(currentConfiguration);            
+            var newConfiguration = new XDocument(currentConfiguration);
 
             //Perform migration steps
             UpgradeNamespace(newConfiguration);
@@ -68,7 +68,8 @@ namespace ServerSync.Core.Configuration.Migration
             UpgradeImportExportActions(newConfiguration);
 
             UpgradeFilters(newConfiguration);
-            
+
+            UpgradeTimeStampMargin(newConfiguration);
 
             return newConfiguration;
         }
@@ -99,7 +100,7 @@ namespace ServerSync.Core.Configuration.Migration
             //find all elements on the root level of the configuration file
             var rootElements = document.Root.Elements().ToArray();
 
-            m_Logger.Debug("Upgrading action {0} elements", rootElements.Length);            
+            m_Logger.Debug("Upgrading action {0} elements", rootElements.Length);
 
             //iterate over all elements. We need to wrap all elements that are action into a <action /> element
             XElement currentActionList = null;
@@ -153,7 +154,7 @@ namespace ServerSync.Core.Configuration.Migration
                 .ToList();
 
             foreach (var action in importExportActions)
-            {                
+            {
 
                 //check if the action uses a implicit transfer location
                 if (action.Attribute(XmlAttributeNames.TransferLocation) != null)
@@ -187,7 +188,7 @@ namespace ServerSync.Core.Configuration.Migration
                         m_Logger.Debug("Action specified a maximum size, migrating to maximum size of transfer location");
 
                         //create MaximumSize element
-                        maximumSizeElement = new XElement(XmlNames.MaximumSize, action.Element(XmlNames.MaxTransferSize).Attributes());                        
+                        maximumSizeElement = new XElement(XmlNames.MaximumSize, action.Element(XmlNames.MaxTransferSize).Attributes());
                     }
                     else if (action.Element(XmlNames.MaxTransferSizeParent) != null)
                     {
@@ -203,7 +204,7 @@ namespace ServerSync.Core.Configuration.Migration
                         m_Logger.Debug("New transfer-location sub-path for the action is {0}", transferLocationSubPath);
 
                         //create MaximumSize element
-                        maximumSizeElement = new XElement(XmlNames.MaximumSize, action.Element(XmlNames.MaxTransferSizeParent).Attributes());                        
+                        maximumSizeElement = new XElement(XmlNames.MaximumSize, action.Element(XmlNames.MaxTransferSizeParent).Attributes());
                     }
 
 
@@ -215,7 +216,7 @@ namespace ServerSync.Core.Configuration.Migration
                         new XAttribute(XmlAttributeNames.Name, transferLocationName),
                         new XAttribute(XmlAttributeNames.Path, transferLocationPath));
 
-                    if(maximumSizeElement != null)
+                    if (maximumSizeElement != null)
                     {
                         m_Logger.Debug("Maximum size for transfer location: {0}", maximumSizeElement.ToString());
                         transferLocationDefinition.Add(maximumSizeElement);
@@ -228,7 +229,7 @@ namespace ServerSync.Core.Configuration.Migration
                     m_Logger.Debug("Updating action element to use the new transfer-location");
 
                     if (action.Element(XmlNames.MaxTransferSize) != null)
-                    {                        
+                    {
                         action.Element(XmlNames.MaxTransferSize).Remove();
                     }
                     else if (action.Element(XmlNames.MaxTransferSizeParent) != null)
@@ -239,8 +240,8 @@ namespace ServerSync.Core.Configuration.Migration
                     action.Add(new XAttribute(XmlAttributeNames.TransferLocationName, transferLocationName));
                     action.Add(new XAttribute(XmlAttributeNames.TransferLocationSubPath, transferLocationSubPath));
 
-                    
-                }        
+
+                }
             }
 
         }
@@ -255,7 +256,7 @@ namespace ServerSync.Core.Configuration.Migration
             var filters = document.Root.Elements(XmlNames.Filter).Where(IsLegacyFilter).ToList();
 
             foreach (var filter in filters)
-            {               
+            {
                 var name = filter.RequireAttributeValue(XmlAttributeNames.Name);
 
                 m_Logger.Debug("Upgrading legacy filter {0}", name);
@@ -306,6 +307,37 @@ namespace ServerSync.Core.Configuration.Migration
             }
 
         }
+
+        /// <summary>
+        /// Upgrades the time span margin element of the Compare action.
+        /// Before version 1.5, the time-stamp margin was specified as global element in the configuration file.
+        /// As it is only relevant for the compare action, it was moved to the compare action element.
+        /// 
+        /// This method adds a copy of the global time-stamp margin element to all compare action elements 
+        /// that do not specify an own timeSpanMargin element
+        /// </summary>
+        /// <param name="document"></param>
+        void UpgradeTimeStampMargin(XDocument document)
+        {
+            var globalTimesStampMargin = document.Root.Element(XmlNames.TimeStampMargin);
+
+            if (globalTimesStampMargin != null)
+            {
+                globalTimesStampMargin.Remove();
+
+                var compareActions = document.Descendants(XmlNames.Actions)
+                    .SelectMany(actionlist => actionlist.Elements(XmlNames.Compare));
+
+                foreach (var compareAction in compareActions)
+                {
+                    if (compareAction.Element(XmlNames.TimeStampMargin) == null)
+                    {
+                        compareAction.Add(globalTimesStampMargin);
+                    }
+                }
+            }
+        }
+
 
         /// <summary>
         /// Determines if the specified element is an action element

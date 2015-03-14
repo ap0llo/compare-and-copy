@@ -478,12 +478,12 @@ namespace ServerSync.Core.Test.Configuration
         #region Compare Action
 
         [Theory]
-        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Success_1.xml", true, "filter1")]
-        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Success_2.xml", true, "filter1")]
-        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Success_3.xml", false, "filter1")]
-        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Success_4.xml", false, "filter1")]
-        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Success_5.xml", false, null)]        
-        public void ReadAction_Compare_Success(string resourceName, bool expectedEnable, string expectedFilterName)
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Success_1.xml", true, "filter1", 1000)]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Success_2.xml", true, "filter1", 1337)]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Success_3.xml", false, "filter1", 42)]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Success_4.xml", false, "filter1",0 )]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Compare_Success_5.xml", false, null, 0)]        
+        public void ReadAction_Compare_Success(string resourceName, bool expectedEnable, string expectedFilterName, long expectedTimeStampMargin)
         {
             var mock = GetDefaultPathResolverMock();
 
@@ -500,6 +500,7 @@ namespace ServerSync.Core.Test.Configuration
 
             Assert.Equal(expectedEnable, action.IsEnabled);
             Assert.Equal(expectedFilterName, action.InputFilterName);
+            Assert.Equal(TimeSpan.FromMilliseconds(expectedTimeStampMargin), action.TimeStampMargin);
         }
 
         #endregion
@@ -722,8 +723,7 @@ namespace ServerSync.Core.Test.Configuration
 
             Assert.Equal("left", config.Left.Name);
             Assert.Equal("right", config.Right.Name);
-            Assert.Equal(1, config.Actions.Count());
-            Assert.Equal(new TimeSpan(0, 0, 0, 0, 50), config.TimeStampMargin);
+            Assert.Equal(1, config.Actions.Count());            
         }
 
 

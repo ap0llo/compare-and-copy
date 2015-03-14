@@ -28,9 +28,7 @@ namespace ServerSync.Core.Configuration
 
         public ISyncFolderDefinition Left { get; set; }
 
-        public ISyncFolderDefinition Right { get; set; }
-
-        public TimeSpan TimeStampMargin { get; set; }
+        public ISyncFolderDefinition Right { get; set; }   
         
         public IEnumerable<IFilter> Filters
         {
