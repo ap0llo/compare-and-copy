@@ -395,6 +395,11 @@ namespace ServerSync.Core.Test.Configuration
         [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Fail_5.xml")]
         [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Fail_7.xml")]
         [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Fail_6.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_RunSyncJob_Fail_1.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_RunSyncJob_Fail_2.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_RunSyncJob_Fail_3.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_RunSyncJob_Fail_4.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_RunSyncJob_Fail_5.xml")]
         public void ReadAction_Fail(string resourceName)
         {
 
@@ -698,6 +703,40 @@ namespace ServerSync.Core.Test.Configuration
             Assert.Equal(expectedFileName, action.FileName);        
 
         }
+
+        #endregion
+
+
+        #region RunSyncJob Action
+
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_RunSyncJob_Success_1.xml", true, "path1")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_RunSyncJob_Success_2.xml", false, "path2")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_RunSyncJob_Success_3.xml", true, "path3")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_RunSyncJob_Success_4.xml", false, "path4")]
+        public void ReadAction_RunSyncJob_Success(string resourceName, bool expectedEnable, string path)
+        {
+            var expectedPath = Guid.NewGuid().ToString();
+
+            var mock = GetDefaultPathResolverMock();
+            mock.Setup(r => r.GetAbsolutePath(path)).Returns(expectedPath);
+
+            var configurationReader = new ConfigurationReader();
+            var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
+
+
+            mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Once());
+
+            Assert.Equal(1, config.Actions.Count());
+
+            var action = config.Actions.First() as RunSyncJobAction;
+            Assert.NotNull(action);
+
+            Assert.Equal(expectedEnable, action.IsEnabled);
+            Assert.Equal(expectedPath, action.ConfigurationPath);
+            Assert.Null(action.InputFilterName);
+        }
+
 
         #endregion
 

@@ -31,7 +31,8 @@ namespace ServerSync.Core.Configuration.Migration
             XmlNames.Copy,
             XmlNames.AcquireLock,
             XmlNames.ReleaseLock,
-            XmlNames.Sleep
+            XmlNames.Sleep,
+			XmlNames.RunSyncJob
         };
 
         #endregion
