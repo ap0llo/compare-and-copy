@@ -53,6 +53,7 @@
     <Compile Include="PathResolving\PathResolver.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="RunSyncJob\RunSyncJobAction.cs" />
     <Compile Include="SleepAction.cs" />
     <Compile Include="XElementExtensions.cs" />
     <Compile Include="Configuration\XmlAttributeNames.cs" />

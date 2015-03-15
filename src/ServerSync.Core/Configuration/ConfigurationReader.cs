@@ -262,50 +262,54 @@ namespace ServerSync.Core.Configuration
 
         void ReadAction(XElement element, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
-            if (element.Name == XmlNames.Compare)
-            {
-                configuration.AddAction(ReadCompareAction(element, configuration));
-            }
-            else if (element.Name == XmlNames.Export)
-            {
-                configuration.AddAction(ReadExportAction(element, configuration, pathResolver));
-            }
-            else if (element.Name == XmlNames.Import)
-            {
-                configuration.AddAction(ReadImportAction(element, configuration, pathResolver));
-            }
-            else if (element.Name == XmlNames.ReadSyncState)
-            {
-                configuration.AddAction(ReadReadSyncStateAction(element, configuration, pathResolver));
-            }
-            else if (element.Name == XmlNames.WriteSyncState)
-            {
-                configuration.AddAction(ReadWriteSyncStateAction(element, configuration, pathResolver));
-            }
-            else if (element.Name == XmlNames.ApplyFilter)
-            {
-                configuration.AddAction(ReadApplyFilerAction(element, configuration));
-            }
-            else if (element.Name == XmlNames.Copy)
-            {
-                configuration.AddAction(ReadCopyAction(element, configuration));
-            }
-            else if (element.Name == XmlNames.AcquireLock)
-            {
-                configuration.AddAction(ReadAquireLockAction(element, configuration, pathResolver));
-            }
-            else if (element.Name == XmlNames.ReleaseLock)
-            {
-                configuration.AddAction(ReadReleaseLockAction(element, configuration, pathResolver));
-            }
-            else if (element.Name == XmlNames.Sleep)
-            {
-                configuration.AddAction(ReadSleepAction(element, configuration));
-            }
-            else
-            {
-                throw new ConfigurationException("Unknown element " + element.Name.LocalName + " in Configuration");
-            }
+			if (element.Name == XmlNames.Compare)
+			{
+				configuration.AddAction(ReadCompareAction(element, configuration));
+			}
+			else if (element.Name == XmlNames.Export)
+			{
+				configuration.AddAction(ReadExportAction(element, configuration, pathResolver));
+			}
+			else if (element.Name == XmlNames.Import)
+			{
+				configuration.AddAction(ReadImportAction(element, configuration, pathResolver));
+			}
+			else if (element.Name == XmlNames.ReadSyncState)
+			{
+				configuration.AddAction(ReadReadSyncStateAction(element, configuration, pathResolver));
+			}
+			else if (element.Name == XmlNames.WriteSyncState)
+			{
+				configuration.AddAction(ReadWriteSyncStateAction(element, configuration, pathResolver));
+			}
+			else if (element.Name == XmlNames.ApplyFilter)
+			{
+				configuration.AddAction(ReadApplyFilerAction(element, configuration));
+			}
+			else if (element.Name == XmlNames.Copy)
+			{
+				configuration.AddAction(ReadCopyAction(element, configuration));
+			}
+			else if (element.Name == XmlNames.AcquireLock)
+			{
+				configuration.AddAction(ReadAquireLockAction(element, configuration, pathResolver));
+			}
+			else if (element.Name == XmlNames.ReleaseLock)
+			{
+				configuration.AddAction(ReadReleaseLockAction(element, configuration, pathResolver));
+			}
+			else if (element.Name == XmlNames.Sleep)
+			{
+				configuration.AddAction(ReadSleepAction(element, configuration));
+			}
+			else if (element.Name == XmlNames.RunSyncJob)
+			{
+				configuration.AddAction(ReadRunSyncJobAction(element, configuration, pathResolver));
+			}
+			else
+			{
+				throw new ConfigurationException("Unknown element " + element.Name.LocalName + " in Configuration");
+			}
         }
 
         IAction ReadCompareAction(XElement actionElement, ISyncConfiguration configuration)
@@ -484,6 +488,15 @@ namespace ServerSync.Core.Configuration
             var timeout = ReadTimeSpan(actionElement.Element(XmlNames.Timeout));
 
             return new SleepAction(enabled, configuration, timeout);
+        }
+
+		IAction ReadRunSyncJobAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResovler)
+		{
+			var enabled = ReadActionEnabled(actionElement);
+			var path = pathResovler.GetAbsolutePath(actionElement.RequireAttributeValue(XmlAttributeNames.Path));
+
+			var action = new RunSyncJobAction(enabled, configuration, null, path);
+			return action;
         }
 
         #endregion Actions
