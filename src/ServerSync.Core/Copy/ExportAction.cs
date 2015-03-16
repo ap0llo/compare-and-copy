@@ -21,7 +21,7 @@ namespace ServerSync.Core.Copy
 
 		#region Fields
 
-		Logger m_Logger = LogManager.GetCurrentClassLogger(); 
+		readonly Logger m_Logger = LogManager.GetCurrentClassLogger(); 
 
 		#endregion
 
@@ -48,6 +48,7 @@ namespace ServerSync.Core.Copy
 
 		#endregion
 
+
 		#region Public Method
 
 		public override void Run()
@@ -63,9 +64,7 @@ namespace ServerSync.Core.Copy
 			//determine all file times to copy
 			var copyItems = GetFilteredInput();
 
-
 			var transferLocation = this.Configuration.GetTransferLocation(this.TransferLocationName);
-
 
 			if(transferLocation.MaximumSize.HasValue)
 			{
@@ -74,16 +73,21 @@ namespace ServerSync.Core.Copy
 
 		   
 			foreach (var item in copyItems)
-			{
-			  
+			{			  
 				if(item.TransferState == newTransferState)
 				{
 					continue;
 				}
 
+
 				//determine absolute paths for the copy operation
 				var absSource = Path.Combine(rootDir, item.RelativePath);
 
+                if (IOHelper.PathLeavesRoot(rootDir, absSource))
+				{
+					throw new InvalidPathException(String.Format("Path '{0}' references file outside the root directory '{1}'",
+                        absSource, rootDir));
+				}
 
 				//source file not found => skip file, write error to log
 				if(!File.Exists(absSource))
@@ -92,8 +96,15 @@ namespace ServerSync.Core.Copy
 					continue;
 				}
 
-
+		 
 				var absTarget = Path.Combine(transferLocation.RootPath, this.TransferLocationSubPath, item.RelativePath);
+		
+				if(IOHelper.PathLeavesRoot(transferLocation.RootPath, absTarget))
+				{
+					throw new InvalidPathException(String.Format("Path '{0}' references file outside root directory '{1}'",
+						absTarget, transferLocation.RootPath));
+				}
+				
 				var size = new FileInfo(absSource).GetByteSize();                
 			   
 
