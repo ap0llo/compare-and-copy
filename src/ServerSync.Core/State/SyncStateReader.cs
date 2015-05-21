@@ -78,13 +78,13 @@ namespace ServerSync.Core.State
             }
 
             var transferStateStr = item.RequireAttributeValue(XmlAttributeNames.TransferState);
-            TransferState transferState;
-            if(!Enum.TryParse<TransferState>(transferStateStr, out transferState))
+            TransferDirection transferState;
+            if(!Enum.TryParse<TransferDirection>(transferStateStr, out transferState))
             {
                 throw new SyncStateException("Unknown type: " + transferStateStr);
             }
 
-            return new FileItem(path) { CompareState = compareState, TransferState = transferState };
+            return new FileItem(path) { CompareState = compareState, TransferState = new TransferState(transferState) };
         }
 
         XmlSchemaSet GetSyncStateSchema()

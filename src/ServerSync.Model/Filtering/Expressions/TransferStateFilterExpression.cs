@@ -16,7 +16,7 @@ namespace ServerSync.Model.Filtering
         
         #region Fields
 
-        readonly TransferState m_TransferState;
+        readonly TransferDirection m_TransferState;
 
         #endregion
 
@@ -26,14 +26,14 @@ namespace ServerSync.Model.Filtering
         /// <summary>
         /// The TransferState to match
         /// </summary>
-        public TransferState TransferState { get { return this.m_TransferState; } }
+        public TransferDirection TransferState { get { return this.m_TransferState; } }
 
         #endregion
 
 
         #region Constructor
 
-        public TransferStateFilterExpression(TransferState state)
+        public TransferStateFilterExpression(TransferDirection state)
         {
             this.m_TransferState = state;
         }

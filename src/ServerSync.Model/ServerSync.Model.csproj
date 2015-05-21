@@ -50,6 +50,7 @@
     <Compile Include="Configuration\ITransferLocation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\SyncFolder.cs" />
+    <Compile Include="State\TransferDirection.cs" />
     <Compile Include="State\TransferState.cs" />
   </ItemGroup>
   <ItemGroup>

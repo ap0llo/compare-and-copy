@@ -39,8 +39,8 @@ namespace ServerSync.Core.Copy
 		public override void Run()
 		{
 			var sourceTransferState = this.SyncFolder == SyncFolder.Left ?
-					TransferState.InTransferToLeft : 
-					TransferState.InTransferToRight;
+					TransferDirection.InTransferToLeft : 
+					TransferDirection.InTransferToRight;
 
 			var targetRoot = GetSyncFolderDefinition().RootPath;
 
@@ -100,10 +100,10 @@ namespace ServerSync.Core.Copy
 
 
 
-		private IEnumerable<IFileItem> GetItemsToCopy(TransferState state)
+		private IEnumerable<IFileItem> GetItemsToCopy(TransferDirection direction)
 		{
 			return GetFilteredInput()
-					.Where(fileItem => fileItem.TransferState == state)
+					.Where(fileItem => fileItem.TransferState.Direction == direction)
 					.ToList();
 		}
 	}

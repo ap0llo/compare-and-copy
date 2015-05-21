@@ -530,10 +530,10 @@ namespace ServerSync.Core.Configuration
             return state;
         }
 
-        TransferState ParseTransferState(string value)
+        TransferDirection ParseTransferState(string value)
         {
-            TransferState state;
-            if (!Enum.TryParse<TransferState>(value, true, out state))
+            TransferDirection state;
+            if (!Enum.TryParse<TransferDirection>(value, true, out state))
             {
                 throw new ArgumentException("Could not parse '" + value + "' as TransferState");
             }
