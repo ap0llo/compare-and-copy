@@ -183,6 +183,43 @@ namespace ServerSync.Core
             return true;
         }
 
+
+        /// <summary>
+        /// Determines if the specified relative path, when combined with the specified root path,
+        /// references a file that is not within the root path
+        /// </summary>
+        public static bool PathLeavesRoot(string rootPath, string relativePath)
+        {
+            if(rootPath == null)
+            {
+                throw new ArgumentNullException("rootPath");
+            }
+
+            if(relativePath == null)
+            {
+                throw new ArgumentNullException("relativePath");
+            }
+
+            if(String.IsNullOrWhiteSpace(rootPath))
+            {
+                rootPath = ".";
+            }
+
+            rootPath = Path.GetFullPath(rootPath);
+            string absolutePath;
+            if(Path.IsPathRooted(relativePath))
+            {
+                absolutePath = relativePath;
+            }
+            else
+            {
+                absolutePath = Path.Combine(rootPath, relativePath);
+            }
+            absolutePath = Path.GetFullPath(absolutePath);
+
+            return !absolutePath.StartsWith(rootPath, StringComparison.InvariantCultureIgnoreCase);
+        }
+
         #endregion
 
     }

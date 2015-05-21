@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerSync", "ServerSync\ServerSync.csproj", "{5BFF8047-2DCF-4CAC-A628-02A0FEDAE137}"
 EndProject
@@ -22,6 +22,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{749AC9C4-D163-4D2C-9F9A-0FD18FB6C46D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerSync.Core.Test", "ServerSync.Core.Test\ServerSync.Core.Test.csproj", "{543E1DD9-40E3-45F5-A5D6-0927AEBDD2F3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Product", "Product", "{E0358FE1-8362-413F-A098-A5046D2276FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +52,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{5BFF8047-2DCF-4CAC-A628-02A0FEDAE137} = {E0358FE1-8362-413F-A098-A5046D2276FF}
+		{660FFCF6-E738-4BF3-9959-81EFD54F1EE4} = {E0358FE1-8362-413F-A098-A5046D2276FF}
+		{374C13C6-AA45-4D65-9F0C-228AD35EBB25} = {E0358FE1-8362-413F-A098-A5046D2276FF}
 		{543E1DD9-40E3-45F5-A5D6-0927AEBDD2F3} = {749AC9C4-D163-4D2C-9F9A-0FD18FB6C46D}
 	EndGlobalSection
 EndGlobal

@@ -54,6 +54,19 @@ namespace ServerSync.Core.Copy
 				var absSource = Path.Combine(transferLocation.RootPath, this.TransferLocationSubPath, file.RelativePath);
 				var absTarget = Path.Combine(targetRoot, file.RelativePath);
 
+                if (IOHelper.PathLeavesRoot(transferLocation.RootPath, absSource))
+                {
+                    throw new InvalidPathException(String.Format("Path '{0}' references file outside the root directory '{1}'",
+                        absSource, transferLocation.RootPath));
+                }
+
+                if (IOHelper.PathLeavesRoot(targetRoot, absTarget))
+                {
+                    throw new InvalidPathException(String.Format("Path '{0}' references file outside the root directory '{1}'",
+                        absTarget, targetRoot));
+                }
+
+
 
 				if(File.Exists(absSource))
 				{

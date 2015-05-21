@@ -43,6 +43,7 @@
     <Compile Include="Copy\TransferLocation.cs" />
     <Compile Include="Filters\Model\Filter.cs" />
     <Compile Include="Filters\Visitor\ExpressionEvaluationVisitor.cs" />
+    <Compile Include="InvalidPathException.cs" />
     <Compile Include="JobExecutionException.cs" />
     <Compile Include="JobRunner.cs" />
     <Compile Include="Locking\AcquireLockAction.cs" />
