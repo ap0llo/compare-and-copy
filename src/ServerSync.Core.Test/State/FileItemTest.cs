@@ -29,13 +29,13 @@ namespace ServerSync.Core.Test.State
         public void Test_Equals()
         {
 
-            var fileItem1 = new FileItem("relative/path") { CompareState = CompareState.Conflict, TransferState = new TransferState(TransferDirection.None) };
-            var fileItem2 = new FileItem("relative/Path") { CompareState = CompareState.Conflict, TransferState = new TransferState(TransferDirection.None) };
-            var fileItem3 = new FileItem("RELATIVE\\path") { CompareState = CompareState.MissingLeft, TransferState = new TransferState(TransferDirection.None) };
-            var fileItem4 = new FileItem("relative/path") { CompareState = CompareState.Conflict, TransferState = new TransferState(TransferDirection.InTransferToLeft) };
-            var fileItem5 = new FileItem("RELATIVE\\path") { CompareState = CompareState.Conflict, TransferState = new TransferState(TransferDirection.InTransferToLeft) };
-            var fileItem6 = new FileItem("RELATIVE\\path") { CompareState = CompareState.Conflict, TransferState = new TransferState(TransferDirection.InTransferToRight) };
-            var fileItem7 = new FileItem("relative///path") { CompareState = CompareState.Conflict, TransferState = new TransferState(TransferDirection.None) };
+            var fileItem1 = new FileItem("relative/path", new TransferState(TransferDirection.None)) { CompareState = CompareState.Conflict };
+            var fileItem2 = new FileItem("relative/Path", new TransferState(TransferDirection.None)) { CompareState = CompareState.Conflict };
+            var fileItem3 = new FileItem("RELATIVE\\path", new TransferState(TransferDirection.None)) { CompareState = CompareState.MissingLeft };
+            var fileItem4 = new FileItem("relative/path", new TransferState(TransferDirection.InTransferToLeft)) { CompareState = CompareState.Conflict, };
+            var fileItem5 = new FileItem("RELATIVE\\path", new TransferState(TransferDirection.InTransferToLeft)) { CompareState = CompareState.Conflict };
+            var fileItem6 = new FileItem("RELATIVE\\path", new TransferState(TransferDirection.InTransferToRight)) { CompareState = CompareState.Conflict };
+            var fileItem7 = new FileItem("relative///path", new TransferState(TransferDirection.None)) { CompareState = CompareState.Conflict};
 
 
             Assert.True(fileItem1.Equals(fileItem1));

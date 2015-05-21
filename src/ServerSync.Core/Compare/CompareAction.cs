@@ -87,8 +87,10 @@ namespace ServerSync.Core.Compare
 				//if file exists in both states, set TransferState to value from existing sync state
 				if (filesExisting.ContainsKey(key))
 				{
-					fileItem.TransferState = filesExisting[key].TransferState;
-				}
+					fileItem.TransferState.Direction = filesExisting[key].TransferState.Direction;
+                    fileItem.TransferState.TranferLocations = filesExisting[key].TransferState.TranferLocations;
+
+                }
 			}         
 
 			return newSyncState;

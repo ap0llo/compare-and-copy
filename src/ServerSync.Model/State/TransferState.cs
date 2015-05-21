@@ -11,13 +11,26 @@ namespace ServerSync.Model.State
 
         #region Fields
 
-        readonly HashSet<string> m_TransferLocations;
+        HashSet<string> m_TransferLocations;
 
         #endregion
 
         #region Properties
 
         public TransferDirection Direction { get; set; }
+
+        public IEnumerable<string> TranferLocations
+        {
+            get { return m_TransferLocations.ToList(); }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+                this.m_TransferLocations = new HashSet<string>(value, StringComparer.InvariantCultureIgnoreCase);
+            }
+        }
 
         #endregion
 
@@ -46,7 +59,6 @@ namespace ServerSync.Model.State
         }
 
         #endregion
-
 
         #region Public Methods
 

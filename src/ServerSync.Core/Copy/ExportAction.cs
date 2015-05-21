@@ -138,7 +138,8 @@ namespace ServerSync.Core.Copy
 				if (success)
 				{
 					//set the item's new state
-					item.TransferState = new TransferState(newTransferDirection);                			        
+					item.TransferState.Direction = newTransferDirection;
+                    item.TransferState.AddTransferLocation(transferLocation.RootPath);                			        
 				}
 
 			}                       

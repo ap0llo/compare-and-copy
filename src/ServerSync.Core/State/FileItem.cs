@@ -15,6 +15,7 @@ namespace ServerSync.Core.State
 
         readonly string m_RelativePath;
         readonly string m_NormalizedRelativePath;
+        readonly TransferState m_TransferState;
 
         #endregion
 
@@ -25,22 +26,33 @@ namespace ServerSync.Core.State
 
         public CompareState CompareState { get; set; }
 
-        public TransferState TransferState { get; set; }
+        public TransferState TransferState { get { return m_TransferState; } }
 
         #endregion
 
 
         #region Constructor
-        
-        public FileItem(string relativePath)
+
+        public FileItem(string relativePath) : this(relativePath, new TransferState())
+        {
+
+        }
+
+        public FileItem(string relativePath, TransferState transferState)
         {
             if(relativePath == null)
             {
                 throw new ArgumentNullException("relativePath");
             }
 
+            if(transferState == null)
+            {
+                throw new ArgumentNullException("transferState");
+            }
+
             this.m_RelativePath = relativePath;
             this.m_NormalizedRelativePath = GetNormalizedRelativePath(m_RelativePath);
+            this.m_TransferState = transferState;
         }
 
         #endregion
