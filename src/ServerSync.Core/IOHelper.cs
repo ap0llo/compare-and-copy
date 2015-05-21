@@ -190,6 +190,21 @@ namespace ServerSync.Core
         /// </summary>
         public static bool PathLeavesRoot(string rootPath, string relativePath)
         {
+            if(rootPath == null)
+            {
+                throw new ArgumentNullException("rootPath");
+            }
+
+            if(relativePath == null)
+            {
+                throw new ArgumentNullException("relativePath");
+            }
+
+            if(String.IsNullOrWhiteSpace(rootPath))
+            {
+                rootPath = ".";
+            }
+
             rootPath = Path.GetFullPath(rootPath);
             string absolutePath;
             if(Path.IsPathRooted(relativePath))
