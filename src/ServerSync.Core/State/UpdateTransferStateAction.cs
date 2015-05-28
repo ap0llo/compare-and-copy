@@ -17,6 +17,8 @@ namespace ServerSync.Core.State
 
         public IEnumerable<string> TranferLocations { get; private set; }
 
+        public IEnumerable<string> InterimLocations { get; private set; }
+
         public override string Name
         {
             get
@@ -32,8 +34,9 @@ namespace ServerSync.Core.State
 
 
         public UpdateTransferStateAction(bool isEnabled, ISyncConfiguration configuration, 
-                                         string inputFilterName, SyncFolder syncFolder,
-                                         IEnumerable<string> transferLocations)
+                                         string inputFilterName, 
+                                         IEnumerable<string> transferLocations,
+                                         IEnumerable<string> interimLocations)
             : base(isEnabled, configuration, inputFilterName)
         {
 
@@ -42,7 +45,13 @@ namespace ServerSync.Core.State
                 throw new ArgumentNullException("transferLocations");
             }
 
+            if(interimLocations == null)
+            {
+                throw new ArgumentNullException("interimLocations");
+            }
+
             this.TranferLocations = transferLocations.ToList();
+            this.InterimLocations = interimLocations.ToList();
         }
         #endregion
 
@@ -51,17 +60,17 @@ namespace ServerSync.Core.State
 
         public override void Run()
         {
+
+            var allPaths = TranferLocations.Select(t => Configuration.GetTransferLocation(t))
+                                           .Select(t => t.RootPath)
+                                           .Union(InterimLocations).ToList();
+
             var state = GetFilteredInput();
 
             //update the list of transfer locations the file exists in
-            foreach(var file in state)
-            {
-                if(file.TransferState.Direction == TransferDirection.None)
-                {
-                    continue;
-                }
-
-                foreach (var path in TranferLocations)
+            foreach(var file in state.Where(f=> f.TransferState.Direction != TransferDirection.None))
+            {               
+                foreach (var path in allPaths)
                 {
                     var absolutePath = Path.Combine(path, file.RelativePath);
                     if(File.Exists(absolutePath))
@@ -72,11 +81,11 @@ namespace ServerSync.Core.State
                     {
                         file.TransferState.RemoveTransferLocation(path);
                     }
-                }
+                }                
             }
 
             //remove all files from sync state that are not present in any transfer location
-            var filesToRemove = state.Where(file => !file.TransferState.TranferLocations.Any()).ToList();
+            var filesToRemove = state.Where(file => !file.TransferState.Locations.Any()).ToList();
             foreach (var item in filesToRemove)
             {
                 State.RemoveFile(item);

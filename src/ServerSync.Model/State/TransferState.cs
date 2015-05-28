@@ -19,7 +19,7 @@ namespace ServerSync.Model.State
 
         public TransferDirection Direction { get; set; }
 
-        public IEnumerable<string> TranferLocations
+        public IEnumerable<string> Locations
         {
             get { return m_TransferLocations.ToList(); }
             set

@@ -88,7 +88,7 @@ namespace ServerSync.Core.Compare
 				if (filesExisting.ContainsKey(key))
 				{
 					fileItem.TransferState.Direction = filesExisting[key].TransferState.Direction;
-                    fileItem.TransferState.TranferLocations = filesExisting[key].TransferState.TranferLocations;
+                    fileItem.TransferState.Locations = filesExisting[key].TransferState.Locations;
 
                 }
 			}         
