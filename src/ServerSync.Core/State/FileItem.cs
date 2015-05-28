@@ -76,7 +76,7 @@ namespace ServerSync.Core.State
             return this.m_NormalizedRelativePath.Equals(GetNormalizedRelativePath(other.RelativePath), 
                                                         StringComparison.InvariantCultureIgnoreCase)  &&
                 this.CompareState == other.CompareState &&
-                this.TransferState == other.TransferState;
+                this.TransferState.Equals(other.TransferState);
         }
 
         #endregion

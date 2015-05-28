@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServerSync.Model.State
 {
-    public class TransferState
+    public class TransferState : IEquatable<TransferState>
     {
 
         #region Fields
@@ -73,5 +73,38 @@ namespace ServerSync.Model.State
         }
 
         #endregion
+
+        #region Overrides
+
+        public override int GetHashCode()
+        {
+            int hash = Direction.GetHashCode();
+
+            foreach (var item in Locations)
+            {
+                hash |= item.GetHashCode();                
+            }
+
+            return hash;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as TransferState);
+        }
+
+        public bool Equals(TransferState other)
+        {
+            if(other == null)
+            {
+                return false;
+            }
+
+            return other.Direction == this.Direction &&
+                !other.Locations.Except(this.Locations, StringComparer.InvariantCultureIgnoreCase).Any();
+        }
+
+        #endregion
+
     }
 }
