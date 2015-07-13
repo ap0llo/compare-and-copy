@@ -81,7 +81,7 @@ namespace ServerSync.Core.Filters
 
         public bool Visit(TransferStateFilterExpression expression, IFileItem parameter)
         {
-            return parameter.TransferState == expression.TransferState;
+            return parameter.TransferState.Direction == expression.TransferState;
         }
 
         #endregion

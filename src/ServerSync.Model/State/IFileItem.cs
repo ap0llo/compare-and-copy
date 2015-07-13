@@ -24,7 +24,7 @@ namespace ServerSync.Model.State
         /// <summary>
         /// The current TransferState of the file
         /// </summary>
-        TransferState TransferState { get; set; }
+        TransferState TransferState { get; }
 
     }
 }

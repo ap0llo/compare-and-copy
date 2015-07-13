@@ -306,7 +306,11 @@ namespace ServerSync.Core.Configuration
 			{
 				configuration.AddAction(ReadRunSyncJobAction(element, configuration, pathResolver));
 			}
-			else
+            else if (element.Name == XmlNames.UpdateTransferState)
+            {
+                configuration.AddAction(ReadUpdateTransferStateAction(element, configuration, pathResolver));
+            }
+            else
 			{
 				throw new ConfigurationException("Unknown element " + element.Name.LocalName + " in Configuration");
 			}
@@ -499,6 +503,19 @@ namespace ServerSync.Core.Configuration
 			return action;
         }
 
+        IAction ReadUpdateTransferStateAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResolver)
+        {
+            var enabled = ReadActionEnabled(actionElement);
+            var transferLocations = actionElement.Elements(XmlNames.TransferLocation)
+                .Select(xml => xml.RequireAttributeValue(XmlAttributeNames.Name));
+
+            var interimLocations = actionElement.Elements(XmlNames.InterimLocation)
+                .Select(xml => xml.RequireAttributeValue(XmlAttributeNames.Path))
+                .Select(p => pathResolver.GetAbsolutePath(p));
+
+            return new UpdateTransferStateAction(enabled, configuration, null, transferLocations, interimLocations);
+        }
+
         #endregion Actions
 
         #region TransferLocation
@@ -530,10 +547,10 @@ namespace ServerSync.Core.Configuration
             return state;
         }
 
-        TransferState ParseTransferState(string value)
+        TransferDirection ParseTransferState(string value)
         {
-            TransferState state;
-            if (!Enum.TryParse<TransferState>(value, true, out state))
+            TransferDirection state;
+            if (!Enum.TryParse<TransferDirection>(value, true, out state))
             {
                 throw new ArgumentException("Could not parse '" + value + "' as TransferState");
             }

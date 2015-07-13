@@ -39,8 +39,7 @@ namespace ServerSync.Core.Copy
 
 		#region Constructor
 		
-		public ExportAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, 
-							SyncFolder syncFolder)
+		public ExportAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, SyncFolder syncFolder)
 			: base(isEnabled, configuration, inputFilterName, syncFolder)
 		{
 
@@ -57,9 +56,9 @@ namespace ServerSync.Core.Copy
 			var rootDir = GetSyncFolderDefinition().RootPath;
 
 			//determine the state to set for the items once they have been exported
-			var newTransferState = SyncFolder == SyncFolder.Left ?
-					TransferState.InTransferToRight :
-					TransferState.InTransferToLeft;
+			var newTransferDirection = SyncFolder == SyncFolder.Left ?
+					TransferDirection.InTransferToRight :
+					TransferDirection.InTransferToLeft;
 
 			//determine all file times to copy
 			var copyItems = GetFilteredInput();
@@ -74,7 +73,7 @@ namespace ServerSync.Core.Copy
 		   
 			foreach (var item in copyItems)
 			{			  
-				if(item.TransferState == newTransferState)
+				if(item.TransferState.Direction == newTransferDirection)
 				{
 					continue;
 				}
@@ -138,7 +137,8 @@ namespace ServerSync.Core.Copy
 				if (success)
 				{
 					//set the item's new state
-					item.TransferState = newTransferState;                			        
+					item.TransferState.Direction = newTransferDirection;
+                    item.TransferState.AddTransferLocation(transferLocation.RootPath);                			        
 				}
 
 			}                       

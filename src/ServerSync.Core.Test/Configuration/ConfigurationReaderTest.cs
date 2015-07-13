@@ -400,6 +400,8 @@ namespace ServerSync.Core.Test.Configuration
         [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_RunSyncJob_Fail_3.xml")]
         [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_RunSyncJob_Fail_4.xml")]
         [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_RunSyncJob_Fail_5.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_UpdateTransferState_Fail_1.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_UpdateTransferState_Fail_2.xml")]
         public void ReadAction_Fail(string resourceName)
         {
 
@@ -737,6 +739,115 @@ namespace ServerSync.Core.Test.Configuration
             Assert.Null(action.InputFilterName);
         }
 
+
+        #endregion
+
+        #region UpdateTransferState
+
+
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_UpdateTransferState_Success_1.xml")]
+        public void ReadAction_UpdateTransferState_Success_1(string resourceName)
+        {
+            var expectedPath = Guid.NewGuid().ToString();
+
+            var mock = GetDefaultPathResolverMock();
+            mock.Setup(r => r.GetAbsolutePath(It.IsAny<string>())).Returns(expectedPath);
+
+            var configurationReader = new ConfigurationReader();
+            var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
+
+            mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Once());
+
+            Assert.Equal(1, config.Actions.Count());
+
+            var action = config.Actions.First() as UpdateTransferStateAction;
+            Assert.NotNull(action);
+
+            Assert.Equal(true, action.IsEnabled);
+            Assert.Equal(1, action.TranferLocations.Count());
+            Assert.Equal("foo", action.TranferLocations.First());
+
+            Assert.Equal(1, action.InterimLocations.Count());
+            Assert.Equal(expectedPath, action.InterimLocations.First());
+        }
+
+
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_UpdateTransferState_Success_2.xml")]
+        public void ReadAction_UpdateTransferState_Success_2(string resourceName)
+        {
+            var expectedPath = Guid.NewGuid().ToString();
+
+            var mock = GetDefaultPathResolverMock();
+            mock.Setup(r => r.GetAbsolutePath(It.IsAny<string>())).Returns(expectedPath);
+
+            var configurationReader = new ConfigurationReader();
+            var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
+            
+
+            Assert.Equal(1, config.Actions.Count());
+
+            var action = config.Actions.First() as UpdateTransferStateAction;
+            Assert.NotNull(action);
+
+            Assert.Equal(false, action.IsEnabled);
+            Assert.Equal(1, action.TranferLocations.Count());
+            Assert.Equal("foo", action.TranferLocations.First());
+
+            Assert.Equal(0, action.InterimLocations.Count());
+        }
+
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_UpdateTransferState_Success_3.xml")]
+        public void ReadAction_UpdateTransferState_Success_3(string resourceName)
+        {
+            var expectedPath = Guid.NewGuid().ToString();
+
+            var mock = GetDefaultPathResolverMock();
+            mock.Setup(r => r.GetAbsolutePath(It.IsAny<string>())).Returns(expectedPath);
+
+            var configurationReader = new ConfigurationReader();
+            var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
+
+            mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Once());
+
+            Assert.Equal(1, config.Actions.Count());
+
+            var action = config.Actions.First() as UpdateTransferStateAction;
+            Assert.NotNull(action);
+
+            Assert.Equal(false, action.IsEnabled);
+            Assert.Equal(0, action.TranferLocations.Count());
+
+            Assert.Equal(1, action.InterimLocations.Count());
+            Assert.Equal(expectedPath, action.InterimLocations.First());
+        }
+
+        [Theory]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_UpdateTransferState_Success_4.xml")]
+        public void ReadAction_UpdateTransferState_Success_4(string resourceName)
+        {
+            var expectedPath = Guid.NewGuid().ToString();
+
+            var mock = GetDefaultPathResolverMock();
+            mock.Setup(r => r.GetAbsolutePath(It.IsAny<string>())).Returns(expectedPath);
+
+            var configurationReader = new ConfigurationReader();
+            var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
+
+            
+
+            Assert.Equal(1, config.Actions.Count());
+
+            var action = config.Actions.First() as UpdateTransferStateAction;
+            Assert.NotNull(action);
+
+            Assert.Equal(true, action.IsEnabled);
+            Assert.Equal(0, action.TranferLocations.Count());
+
+            Assert.Equal(0, action.InterimLocations.Count());            
+        }
 
         #endregion
 

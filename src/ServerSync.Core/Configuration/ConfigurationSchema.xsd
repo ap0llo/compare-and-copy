@@ -31,6 +31,7 @@
 				<xs:element name="releaseLock" type="typeReleaseLockAction" />
 				<xs:element name="sleep" type="typeSleepAction" />
 				<xs:element name="runSyncJob" type="typeRunSyncJobAction" />
+				<xs:element name="updateTransferState" type="typeUpdateTransferStateAction" />
 			</xs:choice>
 			<xs:element name="actions" type="typeActionList" />
 		</xs:choice>
@@ -80,6 +81,7 @@
 			<xs:element name="releaseLock" type="typeReleaseLockAction" />
 			<xs:element name="sleep" type="typeSleepAction" />
 			<xs:element name="runSyncJob" type="typeRunSyncJobAction" />
+			<xs:element name="updateTransferState" type="typeUpdateTransferStateAction" />
 		</xs:choice>
 	</xs:complexType>
 
@@ -154,6 +156,23 @@
 		<xs:attribute name="path" type="xs:string" use="required" />
 	</xs:complexType>
 
+	<xs:complexType name="typeUpdateTransferStateAction">
+		<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="transferLocation" >
+					<xs:complexType>
+						<xs:attribute name="name" type="xs:string" use="required" />
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="interimLocation">
+					<xs:complexType>
+						<xs:attribute name="path" type="xs:string" use="required" />
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="enable" type="xs:boolean" use="required" />
+	</xs:complexType>
 
 	<!--CompareState-->
 	<xs:simpleType name="typeCompareState">
