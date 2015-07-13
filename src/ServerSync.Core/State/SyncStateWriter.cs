@@ -38,10 +38,12 @@ namespace ServerSync.Core.State
 
         XElement GetFileItemElement(IFileItem file)
         {
-            return new XElement( XmlNames.File.LocalName,
+            return new XElement(XmlNames.File.LocalName,
                                  new XAttribute(XmlAttributeNames.Path, file.RelativePath),
                                  new XAttribute(XmlAttributeNames.CompareState, file.CompareState),
-                                 new XAttribute(XmlAttributeNames.TransferState, file.TransferState));
+                                 new XAttribute(XmlAttributeNames.TransferState, file.TransferState.Direction),
+                                 file.TransferState.Locations.Select(path => 
+                                    new XElement(XmlNames.Location.LocalName, new XAttribute(XmlAttributeNames.Path, path))));
         }
 
         #endregion Private Implementation

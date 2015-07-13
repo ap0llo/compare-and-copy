@@ -14,6 +14,9 @@
 
 
   <xs:complexType name="FileT">
+	  <xs:sequence>
+		  <xs:element name="location" type="LocationT" minOccurs="0" maxOccurs="unbounded" />
+	  </xs:sequence>
     <xs:attribute name="path" type="xs:string" use="required" />
     <xs:attribute name="compareState" type="CompareStateT" use="required" />
     <xs:attribute name="transferState" type="TransferStateT" use="required" />
@@ -35,6 +38,10 @@
     </xs:restriction>
   </xs:simpleType>
 
+
+	<xs:complexType name="LocationT">
+		<xs:attribute name="path" type="xs:string" use="required" />
+	</xs:complexType>
 
   <xs:element name="fileList" type="FileListT" />
 
