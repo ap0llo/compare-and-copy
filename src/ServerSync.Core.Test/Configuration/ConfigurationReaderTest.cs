@@ -402,6 +402,7 @@ namespace ServerSync.Core.Test.Configuration
         [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_RunSyncJob_Fail_5.xml")]
         [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_UpdateTransferState_Fail_1.xml")]
         [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_UpdateTransferState_Fail_2.xml")]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_UpdateTransferState_Fail_3.xml")]
         public void ReadAction_Fail(string resourceName)
         {
 
@@ -765,8 +766,9 @@ namespace ServerSync.Core.Test.Configuration
             Assert.NotNull(action);
 
             Assert.Equal(true, action.IsEnabled);
-            Assert.Equal(1, action.TranferLocations.Count());
-            Assert.Equal("foo", action.TranferLocations.First());
+            Assert.Equal(1, action.TransferLocationPaths.Count());
+            Assert.Equal("foo", action.TransferLocationPaths.First().TransferLocationName);
+            Assert.Equal("bar", action.TransferLocationPaths.First().TransferLocationSubPath);
 
             Assert.Equal(1, action.InterimLocations.Count());
             Assert.Equal(expectedPath, action.InterimLocations.First());
@@ -792,8 +794,11 @@ namespace ServerSync.Core.Test.Configuration
             Assert.NotNull(action);
 
             Assert.Equal(false, action.IsEnabled);
-            Assert.Equal(1, action.TranferLocations.Count());
-            Assert.Equal("foo", action.TranferLocations.First());
+            Assert.Equal(1, action.TransferLocationPaths.Count());
+            Assert.Equal("foo", action.TransferLocationPaths.First().TransferLocationName);
+            Assert.Equal("bar", action.TransferLocationPaths.First().TransferLocationSubPath);
+
+
 
             Assert.Equal(0, action.InterimLocations.Count());
         }
@@ -818,7 +823,7 @@ namespace ServerSync.Core.Test.Configuration
             Assert.NotNull(action);
 
             Assert.Equal(false, action.IsEnabled);
-            Assert.Equal(0, action.TranferLocations.Count());
+            Assert.Equal(0, action.TransferLocationPaths.Count());
 
             Assert.Equal(1, action.InterimLocations.Count());
             Assert.Equal(expectedPath, action.InterimLocations.First());
@@ -844,7 +849,7 @@ namespace ServerSync.Core.Test.Configuration
             Assert.NotNull(action);
 
             Assert.Equal(true, action.IsEnabled);
-            Assert.Equal(0, action.TranferLocations.Count());
+            Assert.Equal(0, action.TransferLocationPaths.Count());
 
             Assert.Equal(0, action.InterimLocations.Count());            
         }

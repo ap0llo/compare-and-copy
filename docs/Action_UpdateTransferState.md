@@ -11,8 +11,6 @@ All files for which the state contains no locations will be removed from the syn
 	- Allowed values:
 		- true
 		- false
-- inputFilter (optional): The name of the filter to apply to the current
-  sync state
 - child elements
 	- transferLocation: Specifies a transfer-location to be scanned (referenced by name)
 	- interimLocation: Specifies a "interim location" (a path that is not a transfer-location but might contain
@@ -22,7 +20,7 @@ All files for which the state contains no locations will be removed from the syn
 
 ###Example
 	<updateTransferState enable="true">
-		<transferLocation name="foo" />
+		<transferLocation transferLocationName="foo" transferLocationSubPath="bar" />
 		<interimLocation path="\\foo\bar"/>
 	</updateTransferState>
 

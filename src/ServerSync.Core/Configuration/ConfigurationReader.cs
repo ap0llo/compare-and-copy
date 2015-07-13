@@ -506,14 +506,14 @@ namespace ServerSync.Core.Configuration
         IAction ReadUpdateTransferStateAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
             var enabled = ReadActionEnabled(actionElement);
-            var transferLocations = actionElement.Elements(XmlNames.TransferLocation)
-                .Select(xml => xml.RequireAttributeValue(XmlAttributeNames.Name));
 
+            var transferLocationPaths = actionElement.Elements(XmlNames.TransferLocation).Select(ReadTransferLocationReference);
+            
             var interimLocations = actionElement.Elements(XmlNames.InterimLocation)
                 .Select(xml => xml.RequireAttributeValue(XmlAttributeNames.Path))
                 .Select(p => pathResolver.GetAbsolutePath(p));
 
-            return new UpdateTransferStateAction(enabled, configuration, null, transferLocations, interimLocations);
+            return new UpdateTransferStateAction(enabled, configuration, null, transferLocationPaths, interimLocations);
         }
 
         #endregion Actions
@@ -531,6 +531,12 @@ namespace ServerSync.Core.Configuration
             return new TransferLocation(transferLocationElement.RequireAttributeValue(XmlAttributeNames.Name),
                 pathResolver.GetAbsolutePath(transferLocationElement.RequireAttributeValue(XmlAttributeNames.Path)),
                 maximumSize);
+        }
+
+        TransferLocationReference ReadTransferLocationReference(XElement element)
+        {
+            return new TransferLocationReference(element.RequireAttributeValue(XmlAttributeNames.TransferLocationName),
+                element.RequireAttributeValue(XmlAttributeNames.TransferLocationSubPath));
         }
 
         #endregion

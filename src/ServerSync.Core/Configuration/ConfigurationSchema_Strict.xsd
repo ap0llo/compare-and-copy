@@ -136,7 +136,8 @@
 			<xs:choice minOccurs="0" maxOccurs="unbounded">				
 				<xs:element name="transferLocation" >
 					<xs:complexType>
-						<xs:attribute name="name" type="xs:string" use="required" />
+						<xs:attribute name="transferLocationName" type="xs:string" use="required" />
+						<xs:attribute name="transferLocationSubPath" type="xs:string" use="required" />
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="interimLocation">

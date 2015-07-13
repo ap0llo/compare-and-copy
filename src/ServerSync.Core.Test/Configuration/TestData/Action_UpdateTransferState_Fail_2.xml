@@ -3,7 +3,7 @@
 
 
 	<updateTransferState enable="true" inputFilter="filter1">
-		<transferLocation name="foo" />
+		<transferLocation transferLocationName="foo" transferLocationSubPath="bar" />
     <interimLocation path="\\foo\bar"/>
 	</updateTransferState>
 

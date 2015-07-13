@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NLog;
+using ServerSync.Core.Configuration;
 using ServerSync.Model.Configuration;
 using ServerSync.Model.State;
 
@@ -22,7 +23,7 @@ namespace ServerSync.Core.State
 
         #region Properties
 
-        public IEnumerable<string> TranferLocations { get; private set; }
+        public IEnumerable<TransferLocationReference> TransferLocationPaths { get; private set; }
 
         public IEnumerable<string> InterimLocations { get; private set; }
 
@@ -42,14 +43,14 @@ namespace ServerSync.Core.State
 
         public UpdateTransferStateAction(bool isEnabled, ISyncConfiguration configuration, 
                                          string inputFilterName, 
-                                         IEnumerable<string> transferLocations,
+                                         IEnumerable<TransferLocationReference> transferLocationPaths,
                                          IEnumerable<string> interimLocations)
             : base(isEnabled, configuration, inputFilterName)
         {
 
-            if(transferLocations == null)
+            if(transferLocationPaths == null)
             {
-                throw new ArgumentNullException("transferLocations");
+                throw new ArgumentNullException("transferLocationPaths");
             }
 
             if(interimLocations == null)
@@ -57,7 +58,7 @@ namespace ServerSync.Core.State
                 throw new ArgumentNullException("interimLocations");
             }
 
-            this.TranferLocations = transferLocations.ToList();
+            this.TransferLocationPaths = transferLocationPaths.ToList();
             this.InterimLocations = interimLocations.ToList();
         }
         #endregion
@@ -68,9 +69,9 @@ namespace ServerSync.Core.State
         public override void Run()
         {
 
-            var allPaths = TranferLocations.Select(t => Configuration.GetTransferLocation(t))
-                                           .Select(t => t.RootPath)
-                                           .Union(InterimLocations).ToList();
+            var allPaths = TransferLocationPaths.Select(t => Path.Combine(Configuration.GetTransferLocation(t.TransferLocationName).RootPath, 
+                                                                          t.TransferLocationSubPath))
+                                                .Union(InterimLocations).ToList();
 
             var state = GetFilteredInput();
 

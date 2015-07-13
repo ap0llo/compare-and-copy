@@ -25,7 +25,7 @@ namespace ServerSync.Core.Copy
 
 		public string TransferLocationName { get; set; }
 
-		public string TransferLocationSubPath { get; set;}
+		public string TransferLocationSubPath { get; set; }
 	   
 		#endregion
 
