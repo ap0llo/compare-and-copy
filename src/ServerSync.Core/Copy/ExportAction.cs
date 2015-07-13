@@ -39,8 +39,7 @@ namespace ServerSync.Core.Copy
 
 		#region Constructor
 		
-		public ExportAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, 
-							SyncFolder syncFolder)
+		public ExportAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, SyncFolder syncFolder)
 			: base(isEnabled, configuration, inputFilterName, syncFolder)
 		{
 
