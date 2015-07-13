@@ -16,8 +16,18 @@ namespace ServerSync.Core.Configuration
 
         public TransferLocationReference(string transferLocationName, string transferLocationSubPath)
         {
+            if(transferLocationName == null)
+            {
+                throw new ArgumentNullException("transferLocationName");
+            }
+
+            if(transferLocationSubPath == null)
+            {
+                throw new ArgumentNullException("transferLocationSubPath");
+            }
+
             this.TransferLocationName = transferLocationName;
-            this.TransferLocationSubPath = TransferLocationSubPath;
+            this.TransferLocationSubPath = transferLocationSubPath;
         }
 
     }

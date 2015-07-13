@@ -78,7 +78,7 @@ namespace ServerSync.Core.State
             //update the list of transfer locations the file exists in
             foreach(var file in state.Where(f=> f.TransferState.Direction != TransferDirection.None))
             {               
-                foreach (var path in allPaths)
+                foreach (var path in allPaths.Where(Directory.Exists))
                 {
                     var absolutePath = Path.Combine(path, file.RelativePath);
                     if(File.Exists(absolutePath))
