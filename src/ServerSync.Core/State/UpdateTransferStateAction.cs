@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NLog;
 using ServerSync.Model.Configuration;
 using ServerSync.Model.State;
 
@@ -12,8 +13,14 @@ namespace ServerSync.Core.State
     public class UpdateTransferStateAction : AbstractAction
     {
 
-        #region Properties
+        #region Fields
 
+        readonly Logger m_Logger = LogManager.GetCurrentClassLogger();
+
+        #endregion
+
+
+        #region Properties
 
         public IEnumerable<string> TranferLocations { get; private set; }
 
@@ -88,6 +95,7 @@ namespace ServerSync.Core.State
             var filesToRemove = state.Where(file => !file.TransferState.Locations.Any()).ToList();
             foreach (var item in filesToRemove)
             {
+                m_Logger.Info("Removing file '{0}' from sync state", item.RelativePath);
                 State.RemoveFile(item);
             }
         }
