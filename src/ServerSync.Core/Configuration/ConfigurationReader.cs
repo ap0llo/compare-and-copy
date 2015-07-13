@@ -177,6 +177,8 @@ namespace ServerSync.Core.Configuration
 
             var configurationDocument = XDocument.Load(includePath);
 
+            configurationDocument = m_Migrator.UpgradeConfigurationFile(configurationDocument);
+
             var includePathResolver = new PathResolver(Path.GetDirectoryName(includePath));
             ReadSyncConfiguration(configurationDocument, configuration, includePathResolver);
 
