@@ -38,10 +38,17 @@ namespace ServerSync.Core.State
 
         XElement GetFileItemElement(IFileItem file)
         {
-            return new XElement( XmlNames.File.LocalName,
+            var locations = Flags.EnabledExtendedTransferState
+                ? file.TransferState.Locations
+                : Enumerable.Empty<string>();
+
+
+            return new XElement(XmlNames.File.LocalName,
                                  new XAttribute(XmlAttributeNames.Path, file.RelativePath),
                                  new XAttribute(XmlAttributeNames.CompareState, file.CompareState),
-                                 new XAttribute(XmlAttributeNames.TransferState, file.TransferState));
+                                 new XAttribute(XmlAttributeNames.TransferState, file.TransferState.Direction),
+                                 locations.Select(path => 
+                                    new XElement(XmlNames.Location.LocalName, new XAttribute(XmlAttributeNames.Path, path))));
         }
 
         #endregion Private Implementation

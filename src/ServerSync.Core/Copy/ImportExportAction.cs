@@ -14,24 +14,25 @@ namespace ServerSync.Core.Copy
 	/// </summary>
 	abstract class ImportExportAction : IOAction
 	{
-		#region Fields
+        #region Fields
 
-		//readonly string m_TransferLocationName;
-		//readonly string m_TransferLocationSubPath;
+        readonly IDictionary<string, ByteSize.ByteSize> m_TransferLocationSizeCache = new Dictionary<string, ByteSize.ByteSize>();
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		public string TransferLocationName { get; set; }
+        public string TransferLocationName { get; set; }
 
-		public string TransferLocationSubPath { get; set;}
+		public string TransferLocationSubPath { get; set; }
 	   
-		#endregion
+        public bool AssumeExclusiveWriteAccess { get; set; }
 
-		#region Constructor
-		
-		public ImportExportAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, 
+        #endregion
+
+        #region Constructor
+
+        public ImportExportAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, 
 								 SyncFolder syncFolder)
 			: base(isEnabled, configuration, inputFilterName, syncFolder)
 		{
@@ -50,8 +51,54 @@ namespace ServerSync.Core.Copy
 		}
 
 
-		#endregion
+        #endregion
 
+        /// <summary>
+        /// Checks whether copying a file of the specified size would exceed the maximum specified size for the transfer location
+        /// </summary>
+        protected bool CheckNextFileExceedsMaxTransferSize(ByteSize.ByteSize nextFileSize)
+        {
+            var transferLocation = Configuration.GetTransferLocation(this.TransferLocationName);
 
-	}
+            // directory doesn't exist => limit not exceeded (no file copied yet)
+            if (!Directory.Exists(transferLocation.RootPath))
+            {
+                return false;
+            }
+
+            if (AssumeExclusiveWriteAccess)
+            {
+                if (!m_TransferLocationSizeCache.ContainsKey(transferLocation.RootPath))
+                {
+                    m_TransferLocationSizeCache.Add(transferLocation.RootPath, IOHelper.GetDirectorySize(transferLocation.RootPath));
+                }
+            }
+
+            //  maximum size for the transfer location itself has been specified
+            if (transferLocation.MaximumSize.HasValue)
+            {
+                var currentSize = AssumeExclusiveWriteAccess
+                    ? m_TransferLocationSizeCache[transferLocation.RootPath]
+                    : IOHelper.GetDirectorySize(transferLocation.RootPath);
+
+                //compare current size + file size + to maximum size
+                return (currentSize + nextFileSize) > transferLocation.MaximumSize;
+            }
+            //  no maximum specified => no limit exceeded
+            else
+            {
+                return false;
+            }
+
+        }
+
+	    protected void UpdateTransferLocationSizeCache(ITransferLocation transferLocation, ByteSize.ByteSize fileSize)
+	    {
+            if (AssumeExclusiveWriteAccess)
+            {
+                m_TransferLocationSizeCache[transferLocation.RootPath] += fileSize;
+            }
+        }
+
+    }
 }

@@ -25,6 +25,11 @@ namespace ServerSync.Core.Locking
             get { return "AcquireLock"; }
         }
 
+        public TimeSpan? Timeout
+        {
+            get { return m_Timeout; }
+        }
+
         #endregion
 
 

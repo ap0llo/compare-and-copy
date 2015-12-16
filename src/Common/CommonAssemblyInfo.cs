@@ -21,11 +21,11 @@ using System.Runtime.InteropServices;
  *   - For bug-fixes increment Patch-Number
  *  
  *   - Build-Number other than zero indicates a development build based of the version MAJOR.MINOR.PATCH.
- *   - Increment Build-Number with at least with every checkin. 
+ *   - Increment Build-Number with at least with every check-in. 
  *   - Reset Build-Number to 0 when releasing a new version (which means incrementing either Major, Minor or Patch numbers) 
  * 
  */
 
 
-[assembly: AssemblyVersion("1.4.2.0")]
-[assembly: AssemblyFileVersion("1.4.2.0")]
+[assembly: AssemblyVersion("1.5")]
+[assembly: AssemblyFileVersion("1.5")]

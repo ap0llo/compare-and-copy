@@ -38,6 +38,18 @@ namespace ServerSync.Core.Copy
 
             foreach (var file in GetFilteredInput())
             {
+                if(IOHelper.PathLeavesRoot(sourceRoot, file.RelativePath))
+                {
+                    throw new InvalidPathException(String.Format("Relative path '{0}' references file outside the root directory '{1}'", 
+                        file.RelativePath, sourceRoot));                    
+                }
+
+                if (IOHelper.PathLeavesRoot(targetRoot, file.RelativePath))
+                {
+                    throw new InvalidPathException(String.Format("Relative path '{0}' references file outside the root directory '{1}'",
+                        file.RelativePath, sourceRoot));
+                }
+
                 var absSource = Path.Combine(sourceRoot, file.RelativePath);
                 var absTarget = Path.Combine(targetRoot, file.RelativePath);
 

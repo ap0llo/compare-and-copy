@@ -40,6 +40,9 @@ namespace ServerSync.Core.Configuration
         public static readonly XName And = s_Namespace.GetName("and");
         public static readonly XName Or = s_Namespace.GetName("or");
         public static readonly XName Not = s_Namespace.GetName("not");
+		public static readonly XName RunSyncJob = s_Namespace.GetName("runSyncJob");
+        public static readonly XName UpdateTransferState = s_Namespace.GetName("updateTransferState");
+        public static readonly XName InterimLocation = s_Namespace.GetName("interimLocation");
 
         public static XNamespace GetNamespace()
         {

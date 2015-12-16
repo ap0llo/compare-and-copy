@@ -50,7 +50,6 @@ namespace ServerSync.Core.State
             document.Validate(GetSyncStateSchema(), (o, e) => { throw new SyncStateException(e.Message); });
 
 
-
             var files = document.Descendants(XmlNames.File).Select(ReadFileItem);
 
             return new SyncState(files.ToList());
@@ -61,7 +60,7 @@ namespace ServerSync.Core.State
 
         #region Private Implementation
 
-        IFileItem ReadFileItem( XElement item)
+        IFileItem ReadFileItem(XElement item)
         {
             string path = item.Attribute(XmlAttributeNames.Path).Value;
 
@@ -78,13 +77,17 @@ namespace ServerSync.Core.State
             }
 
             var transferStateStr = item.RequireAttributeValue(XmlAttributeNames.TransferState);
-            TransferState transferState;
-            if(!Enum.TryParse<TransferState>(transferStateStr, out transferState))
+            TransferDirection transferDirection;
+            if(!Enum.TryParse<TransferDirection>(transferStateStr, out transferDirection))
             {
                 throw new SyncStateException("Unknown type: " + transferStateStr);
             }
+            
+            var locations = Flags.EnabledExtendedTransferState
+                ? item.Elements(XmlNames.Location).Select(xml => xml.RequireAttributeValue(XmlAttributeNames.Path))
+                : Enumerable.Empty<string>();
 
-            return new FileItem(path) { CompareState = compareState, TransferState = transferState };
+            return new FileItem(path, new TransferState(transferDirection, locations)) { CompareState = compareState };
         }
 
         XmlSchemaSet GetSyncStateSchema()

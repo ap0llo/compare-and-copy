@@ -16,7 +16,7 @@ namespace ServerSync.Core.Copy
 	class ImportAction : ImportExportAction
 	{
 
-		Logger m_logger = LogManager.GetCurrentClassLogger();
+		Logger m_Logger = LogManager.GetCurrentClassLogger();
 
 
 		public override string Name
@@ -39,8 +39,8 @@ namespace ServerSync.Core.Copy
 		public override void Run()
 		{
 			var sourceTransferState = this.SyncFolder == SyncFolder.Left ?
-					TransferState.InTransferToLeft : 
-					TransferState.InTransferToRight;
+					TransferDirection.InTransferToLeft : 
+					TransferDirection.InTransferToRight;
 
 			var targetRoot = GetSyncFolderDefinition().RootPath;
 
@@ -54,44 +54,59 @@ namespace ServerSync.Core.Copy
 				var absSource = Path.Combine(transferLocation.RootPath, this.TransferLocationSubPath, file.RelativePath);
 				var absTarget = Path.Combine(targetRoot, file.RelativePath);
 
+                if (IOHelper.PathLeavesRoot(transferLocation.RootPath, absSource))
+                {
+                    throw new InvalidPathException(String.Format("Path '{0}' references file outside the root directory '{1}'",
+                        absSource, transferLocation.RootPath));
+                }
+
+                if (IOHelper.PathLeavesRoot(targetRoot, absTarget))
+                {
+                    throw new InvalidPathException(String.Format("Path '{0}' references file outside the root directory '{1}'",
+                        absTarget, targetRoot));
+                }
+
+
 
 				if(File.Exists(absSource))
 				{
-					var dir = Path.GetDirectoryName(absTarget);
-					var size = new FileInfo(absSource).Length;
+					var size = new FileInfo(absSource).GetByteSize();
 
-					//check if copying the file would exceed the maximum transfer size
-					//continue because there might be a file that can be copied without exceeding the max size
-					//this way we copy as much as possible                     
-					if (transferLocation.MaximumSize.HasValue)
-					{
-						var transferSize = IOHelper.GetDirectorySize(transferLocation.RootPath);
+                    //check if copying the file would exceed the maximum transfer size
+                    //continue because there might be a file that can be copied without exceeding the max size
+                    //this way the copy as much as possible                 
+                    if (CheckNextFileExceedsMaxTransferSize(size))
+                    {
+                        m_Logger.Info("Skipping '{0}' because copying it would exceed the maximum transfer size", file.RelativePath);
+                        continue;
+                    }
+                    
+					var success = IOHelper.CopyFile(absSource, absTarget);
+				    if (success)
+				    {
+				        UpdateTransferLocationSizeCache(transferLocation, size);
+				    }
 
-						if (transferSize.AddBytes(size) > transferLocation.MaximumSize)
-						{
-							m_logger.Info("Skipping '{0}' because copying it would exceed the maximum transfer size", file.RelativePath);
-							continue;
-						}
-					}
 
-					IOHelper.EnsureDirectoryExists(dir);
-					File.Copy(absSource, absTarget);
 					State.RemoveFile(file);
 				}
 				else
 				{
-					m_logger.Info("File not found: '{0}'", absSource);
+					m_Logger.Info("File not found: '{0}'", absSource);
 				}
 			}
 		 }
 
 
 
-		private IEnumerable<IFileItem> GetItemsToCopy(TransferState state)
+		private IEnumerable<IFileItem> GetItemsToCopy(TransferDirection direction)
 		{
 			return GetFilteredInput()
-					.Where(fileItem => fileItem.TransferState == state)
+					.Where(fileItem => fileItem.TransferState.Direction == direction)
 					.ToList();
-		}
-	}
+        }
+
+
+
+    }
 }

@@ -29,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\IPathResolver.cs" />
+    <Compile Include="Flags.cs" />
     <Compile Include="State\CompareState.cs" />
     <Compile Include="Filtering\Expressions\AndFilterExpression.cs" />
     <Compile Include="Filtering\Expressions\Base\MultiFilterExpression.cs" />
@@ -50,6 +51,7 @@
     <Compile Include="Configuration\ITransferLocation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\SyncFolder.cs" />
+    <Compile Include="State\TransferDirection.cs" />
     <Compile Include="State\TransferState.cs" />
   </ItemGroup>
   <ItemGroup>

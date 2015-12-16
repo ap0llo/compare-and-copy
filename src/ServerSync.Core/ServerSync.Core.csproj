@@ -36,10 +36,15 @@
     <Compile Include="AbstractAction.cs" />
     <Compile Include="Compare\CompareAction.cs" />
     <Compile Include="Configuration\ConfigurationException.cs" />
+    <Compile Include="Configuration\Migration\ConfigurationMigrator.cs" />
+    <Compile Include="Configuration\Migration\IConfigurationMigrator.cs" />
+    <Compile Include="Configuration\Migration\MigrationException.cs" />
+    <Compile Include="Configuration\TransferLocationPath.cs" />
     <Compile Include="Copy\ITransferState.cs" />
     <Compile Include="Copy\TransferLocation.cs" />
     <Compile Include="Filters\Model\Filter.cs" />
     <Compile Include="Filters\Visitor\ExpressionEvaluationVisitor.cs" />
+    <Compile Include="InvalidPathException.cs" />
     <Compile Include="JobExecutionException.cs" />
     <Compile Include="JobRunner.cs" />
     <Compile Include="Locking\AcquireLockAction.cs" />
@@ -50,7 +55,9 @@
     <Compile Include="PathResolving\PathResolver.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="RunSyncJob\RunSyncJobAction.cs" />
     <Compile Include="SleepAction.cs" />
+    <Compile Include="State\UpdateTransferStateAction.cs" />
     <Compile Include="XElementExtensions.cs" />
     <Compile Include="Configuration\XmlAttributeNames.cs" />
     <Compile Include="Configuration\XmlNames.cs" />
@@ -84,6 +91,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Configuration\ConfigurationSchema_Strict.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <EmbeddedResource Include="State\SyncStateSchema.xsd">
       <SubType>Designer</SubType>

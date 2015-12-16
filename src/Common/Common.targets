@@ -73,18 +73,18 @@
 
     <Message Text="Generating AssemblyInfo at $(GeneratedAssemblyInfoPath)" importance="normal" />
 
-    <AssemblyInfo
+    <!--<AssemblyInfo
 				CodeLanguage="CS"
 				OutputFile="$(GeneratedAssemblyInfoPath)"
 				AssemblyInformationalVersion="$(MercurialVersion)">
-    </AssemblyInfo>
+    </AssemblyInfo>-->
 
   </Target>
 
 
   <!--Include the generated assembly info in all assemblies being built-->
   <ItemGroup>
-    <Compile Include="$(GeneratedAssemblyInfoPath)" />
+    <!--<Compile Include="$(GeneratedAssemblyInfoPath)" />-->
   </ItemGroup>
 
 
