@@ -7,11 +7,14 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using Microsoft.Framework.Configuration;
 
 namespace ServerSync
 {
     class Program
     {
+
+        const string s_ServerSyncIniFileName = "ServerSync.ini";
 
         #region Fields
 
@@ -27,6 +30,8 @@ namespace ServerSync
         {
             //Display Version Information
             WriteVersionInfo();            
+
+            LoadFlags();
 
             //Check arguments
             if(args.Length < 1)
@@ -86,6 +91,31 @@ namespace ServerSync
             var assembly = Assembly.GetExecutingAssembly();            
             s_Logger.Info("{0}, Version {1}", assembly.GetName().Name, assembly.GetName().Version);
         }
+
+
+        static void LoadFlags()
+        {
+            var directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var fileName = Path.Combine(directory, s_ServerSyncIniFileName);
+
+            if (File.Exists(fileName))
+            {                
+                var config = new ConfigurationBuilder()
+                    .AddIniFile(fileName)
+                    .Build();
+
+                Flags.EnabledExtendedTransferState = GetFlag(config, nameof(Flags.EnabledExtendedTransferState));                
+            }
+
+        }
+
+        static bool GetFlag(IConfiguration configuration, string flagName)
+        {
+            var strValue = configuration[$"Flags:{flagName}"];
+            return strValue != null ? bool.Parse(strValue) : false;
+
+        }
+
 
         #endregion
 
