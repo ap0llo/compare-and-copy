@@ -16,7 +16,7 @@ namespace ServerSync.Core.Copy
 	class ImportAction : ImportExportAction
 	{
 
-		Logger m_logger = LogManager.GetCurrentClassLogger();
+		Logger m_Logger = LogManager.GetCurrentClassLogger();
 
 
 		public override string Name
@@ -70,30 +70,29 @@ namespace ServerSync.Core.Copy
 
 				if(File.Exists(absSource))
 				{
-					var dir = Path.GetDirectoryName(absTarget);
-					var size = new FileInfo(absSource).Length;
+					var size = new FileInfo(absSource).GetByteSize();
 
-					//check if copying the file would exceed the maximum transfer size
-					//continue because there might be a file that can be copied without exceeding the max size
-					//this way we copy as much as possible                     
-					if (transferLocation.MaximumSize.HasValue)
-					{
-						var transferSize = IOHelper.GetDirectorySize(transferLocation.RootPath);
+                    //check if copying the file would exceed the maximum transfer size
+                    //continue because there might be a file that can be copied without exceeding the max size
+                    //this way the copy as much as possible                 
+                    if (CheckNextFileExceedsMaxTransferSize(size))
+                    {
+                        m_Logger.Info("Skipping '{0}' because copying it would exceed the maximum transfer size", file.RelativePath);
+                        continue;
+                    }
+                    
+					var success = IOHelper.CopyFile(absSource, absTarget);
+				    if (success)
+				    {
+				        UpdateTransferLocationSizeCache(transferLocation, size);
+				    }
 
-						if (transferSize.AddBytes(size) > transferLocation.MaximumSize)
-						{
-							m_logger.Info("Skipping '{0}' because copying it would exceed the maximum transfer size", file.RelativePath);
-							continue;
-						}
-					}
 
-					IOHelper.EnsureDirectoryExists(dir);
-					File.Copy(absSource, absTarget);
 					State.RemoveFile(file);
 				}
 				else
 				{
-					m_logger.Info("File not found: '{0}'", absSource);
+					m_Logger.Info("File not found: '{0}'", absSource);
 				}
 			}
 		 }
@@ -105,6 +104,9 @@ namespace ServerSync.Core.Copy
 			return GetFilteredInput()
 					.Where(fileItem => fileItem.TransferState.Direction == direction)
 					.ToList();
-		}
-	}
+        }
+
+
+
+    }
 }

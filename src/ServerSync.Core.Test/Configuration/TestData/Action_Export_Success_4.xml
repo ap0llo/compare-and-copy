@@ -5,6 +5,8 @@
            transferLocationName="transferLocation4"
            transferLocationSubPath="subPath4"
            syncFolder="right"
+          assumeExclusiveWriteAccess="true"
+          
             />
 
   </syncConfiguration>

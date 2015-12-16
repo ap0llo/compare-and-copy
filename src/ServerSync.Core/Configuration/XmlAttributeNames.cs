@@ -37,6 +37,8 @@ namespace ServerSync.Core.Configuration
 
         public const string Query = "query";
 
+        public const string AssumeExclusiveWriteAccess = "assumeExclusiveWriteAccess";
+
 
         //byte sizes
         public const string TeraByte = "tb";

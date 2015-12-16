@@ -382,6 +382,32 @@ namespace ServerSync.Core.Configuration
                 actionInstance.TransferLocationSubPath = String.Empty;
             }
 
+            var exclusiveWriteAccessAttribute = actionElement.Attribute(XmlAttributeNames.AssumeExclusiveWriteAccess);
+            if (exclusiveWriteAccessAttribute != null)
+            {
+                actionInstance.AssumeExclusiveWriteAccess = ParseBool(exclusiveWriteAccessAttribute.Value);
+            }
+            else
+            {
+                actionInstance.AssumeExclusiveWriteAccess = false;
+            }
+        
+        }
+
+        bool ParseBool(string value)
+        {
+            if (value == "0")
+            {
+                return false;
+            }
+            else if (value == "1")
+            {
+                return true;
+            }
+            else
+            {
+                return bool.Parse(value);
+            }
         }
 
         ByteSize.ByteSize ReadByteSize(XElement byteSizeElement)
@@ -430,18 +456,7 @@ namespace ServerSync.Core.Configuration
         bool ReadActionEnabled(XElement actionElement)
         {
             var value = actionElement.RequireAttributeValue(XmlAttributeNames.Enable).Trim();
-            if (value == "0")
-            {
-                return false;
-            }
-            else if (value == "1")
-            {
-                return true;
-            }
-            else
-            {
-                return bool.Parse(value);
-            }
+            return ParseBool(value);
         }
 
         string ReadActionInputFilterName(XElement actionElement)

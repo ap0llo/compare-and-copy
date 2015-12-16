@@ -21,7 +21,7 @@ namespace ServerSync.Core.Copy
 
 		#region Fields
 
-		readonly Logger m_Logger = LogManager.GetCurrentClassLogger(); 
+		readonly Logger m_Logger = LogManager.GetCurrentClassLogger();         
 
 		#endregion
 
@@ -130,7 +130,12 @@ namespace ServerSync.Core.Copy
 				}
 				else
 				{
-					success = IOHelper.CopyFile(absSource, absTarget);	
+					success = IOHelper.CopyFile(absSource, absTarget);
+
+				    if (success )
+				    {
+				        UpdateTransferLocationSizeCache(transferLocation, size);
+				    }
 				}
 
 
@@ -149,35 +154,8 @@ namespace ServerSync.Core.Copy
 
 		#region Private Methods
 
-		/// <summary>
-		/// Checks whether copying a file of the specified size would exceed the maximum specified size for the transfer location
-		/// </summary>
-		private bool CheckNextFileExceedsMaxTransferSize(ByteSize.ByteSize nextFileSize)
-		{
-			var transferLocation = Configuration.GetTransferLocation(this.TransferLocationName);
-
-			// directory doesn't exist => limit not exceeded (no file copied yet)
-			if (!Directory.Exists(transferLocation.RootPath))
-			{
-				return false;
-			}
-
-			//  maximum size for the transfer location itself has been specified
-			if(transferLocation.MaximumSize.HasValue)
-			{
-				//get current size
-				var currentSize = IOHelper.GetDirectorySize(transferLocation.RootPath);
-
-				//compare current size + file size + to maximum size
-				return (currentSize + nextFileSize) > transferLocation.MaximumSize;
-			}			
-			//  no maximum specified => no limit exceeded
-			else
-			{
-				return false;
-			}
-
-		}    
+		
+	   
 
 		#endregion
 

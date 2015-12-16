@@ -118,6 +118,7 @@
 		<xs:attribute name="transferLocation" type="xs:string" />
 		<xs:attribute name="transferLocationName" type="xs:string" />
 		<xs:attribute name="transferLocationSubPath" type="xs:string" />
+    <xs:attribute name="assumeExclusiveWriteAccess" type="xs:boolean" use="optional" />
 	</xs:complexType>
 
 	<xs:complexType name="typeReadSyncStateAction">

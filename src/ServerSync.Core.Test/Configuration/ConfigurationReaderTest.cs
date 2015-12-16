@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Xunit;
 using Xunit.Extensions;
+using Xunit.Sdk;
 
 namespace ServerSync.Core.Test.Configuration
 {
@@ -548,13 +549,13 @@ namespace ServerSync.Core.Test.Configuration
         //TODO: Export Action
 
         [Theory]
-        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Success_1.xml", true, "transferLocation1", "subPath1", SyncFolder.Left, "filter1")]
-        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Success_2.xml", true, "transferLocation2", "", SyncFolder.Left, "filter2")]
-        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Success_3.xml", false, "transferLocation3", "", SyncFolder.Right, "filter3")]
-        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Success_4.xml", false, "transferLocation4", "subPath4", SyncFolder.Right, null)]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Success_1.xml", true, "transferLocation1", "subPath1", SyncFolder.Left, "filter1", false)]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Success_2.xml", true, "transferLocation2", "", SyncFolder.Left, "filter2", false)]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Success_3.xml", false, "transferLocation3", "", SyncFolder.Right, "filter3", false)]
+        [InlineData("ServerSync.Core.Test.Configuration.TestData.Action_Export_Success_4.xml", false, "transferLocation4", "subPath4", SyncFolder.Right, null, true)]
         public void ReadAction_Export_Success(string resourceName, bool expectedIsEnabled, 
                                               string expectedTransferLocationName, string expectedTransferLocationSubPath, 
-                                              SyncFolder expectedSyncFolder, string expectedFilterName)
+                                              SyncFolder expectedSyncFolder, string expectedFilterName, bool expectedAssumeExclusiveWriteAccess)
         
         {
             
@@ -576,7 +577,7 @@ namespace ServerSync.Core.Test.Configuration
             Assert.Equal(expectedTransferLocationSubPath, action.TransferLocationSubPath);
             Assert.Equal(expectedSyncFolder, action.SyncFolder);
             Assert.Equal(expectedFilterName, action.InputFilterName);        
-
+            Assert.Equal(expectedAssumeExclusiveWriteAccess, action.AssumeExclusiveWriteAccess);
         }
 
         #endregion
