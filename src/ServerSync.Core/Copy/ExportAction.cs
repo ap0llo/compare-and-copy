@@ -131,19 +131,20 @@ namespace ServerSync.Core.Copy
 				else
 				{
 					success = IOHelper.CopyFile(absSource, absTarget);
-
-				    if (success )
-				    {
-				        UpdateTransferLocationSizeCache(transferLocation, size);
-				    }
 				}
 
 
 				if (success)
 				{
-					//set the item's new state
-					item.TransferState.Direction = newTransferDirection;
-                    item.TransferState.AddTransferLocation(transferLocation.RootPath);                			        
+                    UpdateTransferLocationSizeCache(transferLocation, size);
+
+                    //set the item's new state
+                    item.TransferState.Direction = newTransferDirection;
+
+				    if (Flags.EnabledExtendedTransferState)
+				    {
+                        item.TransferState.AddTransferLocation(transferLocation.RootPath);                			        				        
+				    }
 				}
 
 			}                       

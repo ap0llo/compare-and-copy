@@ -82,9 +82,10 @@ namespace ServerSync.Core.State
             {
                 throw new SyncStateException("Unknown type: " + transferStateStr);
             }
-
-
-            var locations = item.Elements(XmlNames.Location).Select(xml => xml.RequireAttributeValue(XmlAttributeNames.Path));
+            
+            var locations = Flags.EnabledExtendedTransferState
+                ? item.Elements(XmlNames.Location).Select(xml => xml.RequireAttributeValue(XmlAttributeNames.Path))
+                : Enumerable.Empty<string>();
 
             return new FileItem(path, new TransferState(transferDirection, locations)) { CompareState = compareState };
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ServerSync.Core;
 
 namespace ServerSync.Model.State
 {
@@ -55,7 +56,11 @@ namespace ServerSync.Model.State
             }
 
             this.Direction = direction;
-            this.m_TransferLocations = new HashSet<string>(transferLocations, StringComparer.InvariantCultureIgnoreCase);
+
+            if (Flags.EnabledExtendedTransferState)
+            {
+                this.m_TransferLocations = new HashSet<string>(transferLocations, StringComparer.InvariantCultureIgnoreCase);                
+            }
         }
 
         #endregion
@@ -64,12 +69,18 @@ namespace ServerSync.Model.State
 
         public void AddTransferLocation(string path)
         {
-            m_TransferLocations.Add(path.Trim());            
+            if (Flags.EnabledExtendedTransferState)
+            {
+                m_TransferLocations.Add(path.Trim());                            
+            }
         }
 
         public void RemoveTransferLocation(string path)
         {
-            m_TransferLocations.Remove(path.Trim());
+            if (Flags.EnabledExtendedTransferState)
+            {
+                m_TransferLocations.Remove(path.Trim());                
+            }
         }
 
         #endregion
@@ -80,9 +91,12 @@ namespace ServerSync.Model.State
         {
             int hash = Direction.GetHashCode();
 
-            foreach (var item in Locations)
-            {
-                hash |= item.GetHashCode();                
+            if (Flags.EnabledExtendedTransferState)
+            {                
+                foreach (var item in Locations)
+                {
+                    hash |= item.GetHashCode();                
+                }
             }
 
             return hash;
@@ -100,8 +114,16 @@ namespace ServerSync.Model.State
                 return false;
             }
 
-            return other.Direction == this.Direction &&
-                !other.Locations.Except(this.Locations, StringComparer.InvariantCultureIgnoreCase).Any();
+
+            if (Flags.EnabledExtendedTransferState)
+            {
+                return other.Direction == this.Direction &&
+                       !other.Locations.Except(this.Locations, StringComparer.InvariantCultureIgnoreCase).Any();
+            }
+            else
+            {
+                return other.Direction == this.Direction;
+            }
         }
 
         #endregion

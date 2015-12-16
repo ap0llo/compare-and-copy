@@ -68,6 +68,12 @@ namespace ServerSync.Core.State
 
         public override void Run()
         {
+            if (Flags.EnabledExtendedTransferState == false)
+            {
+                m_Logger.Info($"Extended TransferState is disabled, action {Name} has no effect");
+                return;
+            }
+
 
             var allPaths = TransferLocationPaths.Select(t => Path.Combine(Configuration.GetTransferLocation(t.TransferLocationName).RootPath, 
                                                                           t.TransferLocationSubPath))

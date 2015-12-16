@@ -38,11 +38,16 @@ namespace ServerSync.Core.State
 
         XElement GetFileItemElement(IFileItem file)
         {
+            var locations = Flags.EnabledExtendedTransferState
+                ? file.TransferState.Locations
+                : Enumerable.Empty<string>();
+
+
             return new XElement(XmlNames.File.LocalName,
                                  new XAttribute(XmlAttributeNames.Path, file.RelativePath),
                                  new XAttribute(XmlAttributeNames.CompareState, file.CompareState),
                                  new XAttribute(XmlAttributeNames.TransferState, file.TransferState.Direction),
-                                 file.TransferState.Locations.Select(path => 
+                                 locations.Select(path => 
                                     new XElement(XmlNames.Location.LocalName, new XAttribute(XmlAttributeNames.Path, path))));
         }
 
