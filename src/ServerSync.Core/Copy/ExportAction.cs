@@ -82,11 +82,18 @@ namespace ServerSync.Core.Copy
 				//determine absolute paths for the copy operation
 				var absSource = Path.Combine(rootDir, item.RelativePath);
 
-                if (IOHelper.PathLeavesRoot(rootDir, absSource))
-				{
-					throw new InvalidPathException(String.Format("Path '{0}' references file outside the root directory '{1}'",
-                        absSource, rootDir));
-				}
+			    try
+			    {
+			        if (IOHelper.PathLeavesRoot(rootDir, absSource))
+			        {
+			            throw new InvalidPathException($"Path '{absSource}' references file outside the root directory '{rootDir}'");
+			        }
+			    }
+			    catch (PathTooLongException ex)
+			    {
+                    m_Logger.Error($"Could not copy file '{item.RelativePath}': {ex.GetType().Name}");
+                    continue;
+			    }
 
 				//source file not found => skip file, write error to log
 				if(!File.Exists(absSource))
@@ -97,12 +104,19 @@ namespace ServerSync.Core.Copy
 
 		 
 				var absTarget = Path.Combine(transferLocation.RootPath, this.TransferLocationSubPath, item.RelativePath);
-		
-				if(IOHelper.PathLeavesRoot(transferLocation.RootPath, absTarget))
-				{
-					throw new InvalidPathException(String.Format("Path '{0}' references file outside root directory '{1}'",
-						absTarget, transferLocation.RootPath));
-				}
+
+			    try
+			    {
+			        if (IOHelper.PathLeavesRoot(transferLocation.RootPath, absTarget))
+			        {
+			            throw new InvalidPathException($"Path '{absTarget}' references file outside root directory '{transferLocation.RootPath}'");
+			        }
+			    }
+			    catch (PathTooLongException ex)
+			    {
+			        m_Logger.Error($"Could not copy file '{item.RelativePath}': {ex.GetType().Name}");
+                    continue;
+			    }
 				
 				var size = new FileInfo(absSource).GetByteSize();                
 			   
