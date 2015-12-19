@@ -112,13 +112,35 @@ namespace ServerSync.Core
 
             var result = ByteSize.ByteSize.FromBytes(0);
 
-            foreach(var file in Directory.GetFiles(path))
+            string[] files;            
+            try
+            {
+                files = Directory.GetFiles(path);                
+            }
+            catch (UnauthorizedAccessException)
+            {
+                s_Logger.Error($"Could not get files from directory {path}. Assuming an empty directory");
+                files = new string[0];
+            }
+
+            foreach (var file in files)
             {
                 var fileSize = new FileInfo(file).Length;
                 result = result.AddBytes(fileSize);
             }
 
-            foreach (var directory in Directory.GetDirectories(path))
+            string[] dirs;
+            try
+            {
+                dirs = Directory.GetDirectories(path);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                s_Logger.Error($"Could not get directories from directory {path}. Assuming an empty directory");
+                dirs = new string[0];
+            }
+
+            foreach (var directory in dirs)
             {
                 var dirSize = GetDirectorySize(directory);
                 result += dirSize;
