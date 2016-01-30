@@ -1,11 +1,8 @@
-﻿using ServerSync.Core.Configuration;
-using ServerSync.Model.Configuration;
-using System;
+﻿using ServerSync.Model.Configuration;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using NLog;
+using ServerSync.Model.State;
 
 namespace ServerSync.Core.Copy
 {
@@ -13,50 +10,106 @@ namespace ServerSync.Core.Copy
 	/// Base class for both Import and Export action
 	/// </summary>
 	abstract class ImportExportAction : IOAction
-	{
-        #region Fields
-
+	{        
+	    readonly Logger m_Logger = LogManager.GetCurrentClassLogger();
         readonly IDictionary<string, ByteSize.ByteSize> m_TransferLocationSizeCache = new Dictionary<string, ByteSize.ByteSize>();
 
-        #endregion
-
-        #region Properties
-
+     
+           
         public string TransferLocationName { get; set; }
 
 		public string TransferLocationSubPath { get; set; }
 	   
         public bool AssumeExclusiveWriteAccess { get; set; }
 
-        #endregion
-
-        #region Constructor
-
-        public ImportExportAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, 
-								 SyncFolder syncFolder)
+        
+                
+        protected ImportExportAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName,  SyncFolder syncFolder)
 			: base(isEnabled, configuration, inputFilterName, syncFolder)
-		{
-			//if(transferLocationName == null)
-			//{
-			//    throw new ArgumentNullException("transferLocationName");
-			//}
-
-			//if(transferLocationName == null)
-			//{
-			//    throw new ArgumentNullException("transferLocationSubPath");
-			//}
-
-			//this.m_TransferLocationName = transferLocationName;
-			//this.m_TransferLocationSubPath = transferLocationSubPath;
+		{			
 		}
 
 
-        #endregion
+        public override void Run()
+        {            
+            //determine all file times to copy
+            var itemsToCopy = GetItemsToCopy();
+
+            var transferLocation = Configuration.GetTransferLocation(TransferLocationName);
+            if (transferLocation.MaximumSize.HasValue)
+            {
+                m_Logger.Info("Maximum size for transfer location: {0}", transferLocation.MaximumSize.Value.ToString("GB"));
+            }
+
+
+            foreach (var item in itemsToCopy)
+            {
+                //determine absolute paths for the copy operation
+                var absSource = GetSourcePath(item);
+                var absTarget = GetTargetPath(item);
+
+                try
+                {
+                    EnsurePathIsWithinSourceRoot(absSource);
+                    EnsurePathIsWithinTargetRoot(absSource);
+                }
+                catch (PathTooLongException ex)
+                {
+                    m_Logger.Error($"Could not copy file '{item.RelativePath}': {ex.GetType().Name}");
+                    continue;
+                }
+
+                //source file not found => skip file, write error to log
+                if (!File.Exists(absSource))
+                {
+                    m_Logger.Error("File '{0}' could not be found", absSource);
+                    continue;
+                }
+
+                var size = new FileInfo(absSource).GetByteSize();
+
+                //check if copying the file would exceed the maximum transfer size
+                //continue because there might be a file that can be copied without exceeding the max size
+                //this way the copy as much as possible                 
+                if (CheckNextFileExceedsMaxTransferSize(size))
+                {
+                    m_Logger.Info("Skipping '{0}' because copying it would exceed the maximum transfer size", item.RelativePath);
+                    continue;
+                }
+
+                m_Logger.Info("Copying {0}", item.RelativePath);
+
+                var success = FileEquals(absSource, absTarget) || IOHelper.CopyFile(absSource, absTarget); 
+
+                if (success)
+                {
+                    UpdateTransferLocationSizeCache(transferLocation, size);
+                    OnItemCopied(item);
+                }
+
+            }
+        }
+
+    
+
+        protected abstract IEnumerable<IFileItem> GetItemsToCopy();
+
+	    protected abstract string GetSourcePath(IFileItem item);
+
+	    protected abstract string GetTargetPath(IFileItem item);
+
+	    protected abstract void EnsurePathIsWithinSourceRoot(string path);
+
+	    protected abstract void EnsurePathIsWithinTargetRoot(string path);
+
+	    protected abstract void OnItemCopied(IFileItem item);
+
+
 
         /// <summary>
         /// Checks whether copying a file of the specified size would exceed the maximum specified size for the transfer location
         /// </summary>
-        protected bool CheckNextFileExceedsMaxTransferSize(ByteSize.ByteSize nextFileSize)
+        private bool CheckNextFileExceedsMaxTransferSize(ByteSize.ByteSize nextFileSize)
         {
             var transferLocation = Configuration.GetTransferLocation(this.TransferLocationName);
 
@@ -92,13 +145,30 @@ namespace ServerSync.Core.Copy
 
         }
 
-	    protected void UpdateTransferLocationSizeCache(ITransferLocation transferLocation, ByteSize.ByteSize fileSize)
-	    {
+        private void UpdateTransferLocationSizeCache(ITransferLocation transferLocation, ByteSize.ByteSize fileSize)
+        {
             if (AssumeExclusiveWriteAccess)
             {
                 m_TransferLocationSizeCache[transferLocation.RootPath] += fileSize;
             }
         }
+
+        private bool FileEquals(string path1, string path2)
+        {
+            var fileInfo1 = new FileInfo(path1);
+            var fileInfo2 = new FileInfo(path2);
+
+            if (!fileInfo1.Exists || !fileInfo2.Exists || fileInfo1.Exists != fileInfo2.Exists)
+            {
+                return false;
+            }
+            else
+            {
+                return fileInfo1.Length == fileInfo2.Length && fileInfo1.LastWriteTime == fileInfo2.LastWriteTime;
+            }
+
+        }
+
 
     }
 }
