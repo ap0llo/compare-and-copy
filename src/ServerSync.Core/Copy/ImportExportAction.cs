@@ -51,7 +51,7 @@ namespace ServerSync.Core.Copy
                 try
                 {
                     EnsurePathIsWithinSourceRoot(absSource);
-                    EnsurePathIsWithinTargetRoot(absSource);
+                    EnsurePathIsWithinTargetRoot(absTarget);
                 }
                 catch (PathTooLongException ex)
                 {
