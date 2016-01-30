@@ -39,6 +39,8 @@ namespace ServerSync.Core.Configuration
 
         public const string AssumeExclusiveWriteAccess = "assumeExclusiveWriteAccess";
 
+        public const string DeleteSourceFiles = "deleteSourceFiles";
+
 
         //byte sizes
         public const string TeraByte = "tb";

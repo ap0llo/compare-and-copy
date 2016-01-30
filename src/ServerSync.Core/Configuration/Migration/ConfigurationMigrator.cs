@@ -33,7 +33,8 @@ namespace ServerSync.Core.Configuration.Migration
             XmlNames.ReleaseLock,
             XmlNames.Sleep,
 			XmlNames.RunSyncJob,
-            XmlNames.UpdateTransferState
+            XmlNames.UpdateTransferState,
+            XmlNames.ExportDirectory
         };
 
         #endregion

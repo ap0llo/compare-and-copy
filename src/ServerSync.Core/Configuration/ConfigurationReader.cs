@@ -312,6 +312,10 @@ namespace ServerSync.Core.Configuration
             {
                 configuration.AddAction(ReadUpdateTransferStateAction(element, configuration, pathResolver));
             }
+            else if (element.Name == XmlNames.ExportDirectory)
+            {
+                configuration.AddAction(ReadExportDirectoryAction(element, configuration, pathResolver));
+            }
             else
 			{
 				throw new ConfigurationException("Unknown element " + element.Name.LocalName + " in Configuration");
@@ -361,6 +365,19 @@ namespace ServerSync.Core.Configuration
 
             var actionInstance = new CopyAction(enabled, configuration, inputFilterName, syncFolder);
             return actionInstance;
+        }
+
+        IAction ReadExportDirectoryAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResolver)
+        {
+            var enabled = ReadActionEnabled(actionElement);            
+            // SyncFolder and input filter not relevant for this action, so just use default values
+            var action = new ExportDirectoryAction(enabled, configuration, default(string), default(SyncFolder))
+            {
+                SourcePath = pathResolver.GetAbsolutePath(actionElement.RequireAttributeValue(XmlAttributeNames.Path)),
+                DeleteSourceFiles = ParseBool(actionElement.Attribute(XmlAttributeNames.DeleteSourceFiles)?.Value ?? "false")
+            };
+            ApplyCommonImportExportActionProperties(actionElement, action, configuration, pathResolver);
+            return action;
         }
 
         SyncFolder ReadActionSyncFolder(XElement actionElement)

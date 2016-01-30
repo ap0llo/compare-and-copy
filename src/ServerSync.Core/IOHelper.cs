@@ -242,6 +242,20 @@ namespace ServerSync.Core
             return !absolutePath.StartsWith(rootPath, StringComparison.InvariantCultureIgnoreCase);
         }
 
+
+        public static IEnumerable<string> GetAllFilesRelative(string directory)
+        {
+            if (!Directory.Exists(directory))
+            {
+                return Enumerable.Empty<string>();
+            }
+            else
+            {
+                var allFiles = Directory.GetFiles(directory, "*", SearchOption.AllDirectories);
+                return allFiles.Select(path => GetRelativePath(path, directory, true));
+            }
+        } 
+
         #endregion
 
     }

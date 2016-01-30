@@ -40,6 +40,7 @@
     <Compile Include="Configuration\Migration\IConfigurationMigrator.cs" />
     <Compile Include="Configuration\Migration\MigrationException.cs" />
     <Compile Include="Configuration\TransferLocationPath.cs" />
+    <Compile Include="Copy\ExportDirectoryAction.cs" />
     <Compile Include="Copy\ITransferState.cs" />
     <Compile Include="Copy\TransferLocation.cs" />
     <Compile Include="Filters\Model\Filter.cs" />
