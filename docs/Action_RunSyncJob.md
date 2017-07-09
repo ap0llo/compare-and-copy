@@ -2,7 +2,7 @@ RunSyncJob Action
 ==============
 Runs the specified sync configuration in the current instance of ServerSync
 
-###Attributes
+### Attributes
 - enable: Specifies if the action is to be executed. If value is set to false,
   the action will be skipped
 	- Allowed values:
@@ -13,9 +13,9 @@ Runs the specified sync configuration in the current instance of ServerSync
   directory the current sync configuration file is located in
 
 
-###Example
+### Example
 
 	<runSyncJob enable="true" path="..\OtherConfiguration.xml" />
 
-###Versions
+### Versions
 Supported in version 1.5 and above.  

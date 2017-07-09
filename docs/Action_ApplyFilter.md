@@ -4,7 +4,7 @@ Applies the specified filter to the current sync state. All files not included
 by the filter will be removed from the sync state.
 
 
-###Attributes
+### Attributes
 - enable: Specifies if the action is to be executed. If value is set to false,
 	the action will be skipped
 	- Allowed values:
@@ -19,9 +19,9 @@ by the filter will be removed from the sync state.
  the sync state in any way.*
 
 
-###Example
+### Example
 	<applyFilter enable="true" inputFilter="_fileFilter"/>
 
 
-###Versions
+### Versions
 Supported in Version 1.1.0 and above

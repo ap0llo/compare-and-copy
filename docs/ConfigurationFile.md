@@ -14,28 +14,28 @@ Basics
 
 Global Elements
 -----------------
-###Folder definitions
+### Folder definitions
 Most of the actions that can be executed by ServerSync require the sync-folders
 to be defined. There must be exactly one "left" and one "right" sync folder.
 
-####Attributes
+#### Attributes
 - *name* : Defines the name of the sync folder
 - *rootPath*: The root path of the sync folder. ServerSync references all files
    using relative paths which are relative to the root paths of the sync folders.
 
-####Example
+#### Example
 	<left name="MusicLeft" rootPath="C:\Music" />
 	<right name="MusicRight" rootPath="G:\Music" />
 
 --------------------------------------------------------------------------------
 
-###Time-Stamp margin
+### Time-Stamp margin
 This optional element allows to specify a margin by which time stamps of files
 may differ to still be considered equal. This property is only used by the
 "Compare" action. The value is specified as time span with the individuals
 components of the time span being defined as individual XML attributes.
 
-####Attributes
+#### Attributes
 - *h*: Specifies a number of hours to be added to the time-span
 - *m*: Specifies a number of minutes to be added to the time-span
 - *s*: Specifies a number of seconds to be added to the time-span
@@ -55,7 +55,7 @@ The value of the time-span is the sum of all attribute values.
    configuration of the compare action. However, all 1.x versions are backwards
    compatible and support the global defintion of the time stamp margin***
 
-#####Example
+##### Example
 	<timeStampMargin h="1" m="2" s="3" />
 
 Defines the length of 1 hours, 2 minutes and 3 seconds.
@@ -63,7 +63,7 @@ Defines the length of 1 hours, 2 minutes and 3 seconds.
 
 --------------------------------------------------------------------------------
 
-###Include
+### Include
 ***Note: The include element is supported in versions 1.3.0 and higher***
 
 Include enables referencing other configuration files so settings that are
@@ -72,38 +72,38 @@ The referenced configuration file is processed as if all it's contents would be
 copied from the reference file into the referencing file at the location of the
 include element.
 
-####Attributes
+#### Attributes
 - *path*: The relative or absolute path to the configuration file to be included
 
-####Example
+#### Example
 	<include path="..\_common\TransferLocations.xml" />
 
 --------------------------------------------------------------------------------
 
-###Transfer location definitions
+### Transfer location definitions
 Defines a transfer location to be used by the Export action.
 
 ***Note: Transfer location definitions are supported in versions 1.3.0 and
    later***
 
-####Attributes
+#### Attributes
 - *name*: The name of the transfer location. This named needs to be unique
    within an configuration file (an it's included files)
 - *path*: The root path of the transfer location
 
-####Child Elements
+#### Child Elements
 - *maximumSize* (optional): If defined limits the maximum size of the transfer
   location. Before copying a file, the combined size of all files in the
 	transfer location will be calculated. If the file to be copied is larger than
 	the difference between the maximum and current size, it will be skipped.
 
-####Example
+#### Example
 	<transferLocation name="transferLocation1" path="\\server\Transfer">
 		<maximumSize gb="40" />
 	</transferLocation>
 
 --------------------------------------------------------------------------------
-###Filter definitions
+### Filter definitions
 Defines a filter that can be applied to the sync state in various actions.
 
 ***Note: Definition of a filter as expression tree is only supported in version
@@ -131,7 +131,7 @@ The following nodes are supported:
   SyncState matches the SyncState defined in the expression
 
 
-####Legacy Filters
+#### Legacy Filters
 Versions before 1.4.0 do only support a more limited filtering functionality.
 Filters in this version consits of only two elements
 
@@ -160,7 +160,7 @@ is performed internally if such a filter is encountered in a configuration file)
 
 --------------------------------------------------------------------------------
 
-###Actions
+### Actions
 After parsing a configuration file ServerSync will execute all actions found in
 the file in the order in which they appear.  
 Actions appear inside a "action group". Action groups only exists to give
@@ -174,7 +174,7 @@ wrapped in it's own action group)
 	 future versions***
 
 
-####Available Actions
+#### Available Actions
 - Compare
 - Export
 - Import
@@ -186,7 +186,7 @@ wrapped in it's own action group)
 - ReleaseLock
 - Sleep
 
-####Example
+#### Example
 	<actions>
 		<acquireLock enable="true" lockFile="locks\file.lock">
 			<timeout m="2" />

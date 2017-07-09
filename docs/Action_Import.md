@@ -7,7 +7,7 @@ Only files present in the current sync state will be copied.
 Inline definition of transfer location
 --------------------------------------
 
-###Attributes
+### Attributes
 - enable: Specifies if the action is to be executed. If value is set to false,
   the action will be skipped
 	- Allowed values:
@@ -23,7 +23,7 @@ Inline definition of transfer location
   The relative paths of the files within the transfer location will be the same
 	as the relative path in the sync state.
 
-###Child Elements
+### Child Elements
 - maxTransferSize (optional): The maximum value for the combined size all files
   in the transfer location. If importing a file would exceed this limit,
 	it will be skipped,
@@ -34,14 +34,14 @@ Inline definition of transfer location
 *Note: maxTransferSize and maxTransferSizeParent are mutually exclusive.
  At most one of the two elements may be used*
 
-###Example
+### Example
 		<import enable="true"
 				transferLocation="\\fileserver\Transfer\Imported"
 				syncFolder="left"
 				inputFilter="_fileFilter" />
 
 
-###Versions
+### Versions
 Supported in Version 1.1.0 and above.
 This feature is obsolete and will be removed in version 2.0
 
@@ -49,7 +49,7 @@ This feature is obsolete and will be removed in version 2.0
 Referenced Transfer location
 ----------------------------
 
-###Attributes
+### Attributes
 - enable: Specifies if the action is to be executed. If value is set to false,
   the action will be skipped
 	- Allowed values:
@@ -69,12 +69,12 @@ Referenced Transfer location
 	directory for the action. The relative paths of the files within the transfer
 	location will be the same as the relative path in the sync state.
 
-###Example
+### Example
 		<import enable="true"
 				transferLocationName="Fileserver"
 				transferLocationSubPath="Imported"
 				syncFolder="left"
 				inputFilter="_fileFilter" />
 
-###Versions
+### Versions
 Supported in Version 1.3.0 and above

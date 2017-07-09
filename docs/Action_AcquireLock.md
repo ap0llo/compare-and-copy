@@ -13,7 +13,7 @@ If the file is already locked, ServerSync will wait until a lock on the file
 can be acquired.
 
 
-###Attributes
+### Attributes
 - enable: Specifies if the action is to be executed. If value is set to false,
   the action will be skipped
 	- Allowed values:
@@ -22,7 +22,7 @@ can be acquired.
 - lockFile: The relative or absolute path of the file that will be locked.
 
 
-###Child Elements
+### Child Elements
 - timeout (optional): Specifies a maximum amout of time to wait for the file
   to be locked. If the file cannot be locked within the specified duration,
 	execution of the actions in the current configuration file will be aborted.  
@@ -31,7 +31,7 @@ can be acquired.
 	file.
 
 
-###Examples
+### Examples
 Acquire lock with timeout
 
 	<acquireLock enable="true" lockFile="..\file.lock">
@@ -43,5 +43,5 @@ Acquire lock without timeout
 	<acquireLock enable="true" lockFile="..\file.lock" />
 
 
-###Versions
+### Versions
 Supported in Version 1.3.0 and above

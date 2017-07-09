@@ -3,7 +3,7 @@ WriteSyncState Action
 Serializes the current sync state to XML and writes it to a file.
 
 
-###Attributes
+### Attributes
 - enable: Specifies if the action is to be executed. If value is set to false,
   the action will be skipped
 	- Allowed values:
@@ -15,9 +15,9 @@ Serializes the current sync state to XML and writes it to a file.
   state to.
 
 
-###Example
+### Example
 	<writeSyncState enable="true" fileName="C:\SyncState.xml" />
 
 
-###Versions
+### Versions
 Supported in Version 1.1.0 and above

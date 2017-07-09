@@ -3,7 +3,7 @@ Export Action
 
 Inline definition of transfer location
 --------------------------------------
-###Attributes
+### Attributes
 - enable: Specifies if the action is to be executed. If value is set to false,
   the action will be skipped
 	- Allowed values:
@@ -20,7 +20,7 @@ Inline definition of transfer location
 	as the relative path in the sync state.
 
 
-###Child Elements
+### Child Elements
 - maxTransferSize (optional): The maximum value for the combined size all files
   in the transfer location. If exporting a file would exceed this limit, it will
 	be skipped,
@@ -32,7 +32,7 @@ Inline definition of transfer location
  At most one of the two elements may be used*
 
 
-###Example
+### Example
 		<export enable="true"
 				transferLocation="\\fileserver\Transfer\Exported"
 				syncFolder="left"
@@ -41,7 +41,7 @@ Inline definition of transfer location
 		</export>
 
 
-###Versions
+### Versions
 Supported in Version 1.1.0 and above
 
 **This feature is obsolete and will be removed in version 2.0**
@@ -49,7 +49,7 @@ Supported in Version 1.1.0 and above
 
 Referenced Transfer location
 ----------------------------
-###Attributes
+### Attributes
 - enable: Specifies if the action is to be executed. If value is set to false,
   the action will be skipped
 	- Allowed values:
@@ -70,7 +70,7 @@ Referenced Transfer location
 	location will be the same as the relative path in the sync state.
 
 
-###Example
+### Example
 		<export enable="true"
 				transferLocationName="Filserver"
 				transferLocationSubPath="Exported"
@@ -78,5 +78,5 @@ Referenced Transfer location
 				inputFilter="MissingRightFilter" />
 
 
-###Versions
+### Versions
 Supported in Version 1.3.0 and above

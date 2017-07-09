@@ -4,7 +4,7 @@ Copies all contents of an arbitrary directory to a transfer location.
 The sync state is not taken into consideration for this action, the directory
 being exported does not have to be part of sync
 
-###Attributes
+### Attributes
 - enable: Specifies if the action is to be executed. If value is set to false,
   the action will be skipped
 	- Allowed values:
@@ -22,7 +22,7 @@ being exported does not have to be part of sync
 	location will be the same as the relative path in the sync state.
 
 
-###Example
+### Example
 		<exportDirectory enable="true"
 		        path="C:\tmp\Export"
 				transferLocationName="Filserver"
@@ -30,5 +30,5 @@ being exported does not have to be part of sync
 				deleteSourceFiles="true"
 				 />
 
-###Versions
+### Versions
 Supported in Version 1.6 and above

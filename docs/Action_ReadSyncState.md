@@ -6,7 +6,7 @@ If the file does not exist, execution of the action will result in an empty sync
 state.
 
 
-###Attributes
+### Attributes
 - enable: Specifies if the action is to be executed. If value is set to false,
   the action will be skipped
 	- Allowed values:
@@ -16,9 +16,9 @@ state.
   from.
 
 
-###Example
+### Example
 	<readSyncState enable="true" fileName="C:\SyncState.xml" />
 
 
-###Versions
+### Versions
 Supported in Version 1.1.0 and above

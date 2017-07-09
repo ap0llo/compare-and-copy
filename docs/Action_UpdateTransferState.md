@@ -5,7 +5,7 @@ Updates the list of locations a file being transferred can be found in by scanni
 All files for which the state contains no locations will be removed from the sync-state
 
 
-###Attributes
+### Attributes
 - enable: Specifies if the action is to be executed. If value is set to false,
 	the action will be skipped
 	- Allowed values:
@@ -18,7 +18,7 @@ All files for which the state contains no locations will be removed from the syn
 
 
 
-###Example
+### Example
 	<updateTransferState enable="true">
 		<transferLocation transferLocationName="foo" transferLocationSubPath="bar" />
 		<interimLocation path="\\foo\bar"/>
@@ -26,5 +26,5 @@ All files for which the state contains no locations will be removed from the syn
 
 
 
-###Versions
+### Versions
 Supported in Version 1.5.0 and above

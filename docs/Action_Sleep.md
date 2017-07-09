@@ -3,7 +3,7 @@ Sleep Action
 Suspends execution of actions for a specified amount of time.
 
 
-###Attributes
+### Attributes
 - enable: Specifies if the action is to be executed. If value is set to false,
   the action will be skipped
 	- Allowed values:
@@ -11,12 +11,12 @@ Suspends execution of actions for a specified amount of time.
 		- false
 
 
-###Child Elements
+### Child Elements
 - timeout: The amount of time to wait. Time span is specified like the
   timeStampMargin element in the configuration file
 
 
-###Example
+### Example
 Suspends execution for 2 minutes
 
 	<sleep enable="true">
@@ -24,5 +24,5 @@ Suspends execution for 2 minutes
 	</sleep>
 
 
-###Versions
+### Versions
 Supported in Version 1.3.0 and above
