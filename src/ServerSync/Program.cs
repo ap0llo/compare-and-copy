@@ -28,6 +28,8 @@ namespace ServerSync
 
         public static int Main(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
+
             //Display Version Information
             WriteVersionInfo();            
 
@@ -78,6 +80,7 @@ namespace ServerSync
             return success ? 0 : 1;
         }
 
+        
         #endregion
 
 
@@ -116,6 +119,18 @@ namespace ServerSync
 
         }
 
+        static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e?.ExceptionObject is Exception ex)
+            {
+                s_Logger.Fatal("Unhandled exception", ex);
+            }
+            else
+            {
+                s_Logger.Fatal("Unknown unhandled exception");
+            }
+            Environment.Exit(2);
+        }
 
         #endregion
 
