@@ -1,5 +1,4 @@
-﻿
-namespace ServerSync.Model.Filtering
+﻿namespace ServerSync.Model.Filtering
 {
     /// <summary>
     /// Interface for nodes in the expression tree defined by filters
@@ -15,6 +14,5 @@ namespace ServerSync.Model.Filtering
         /// <param name="paramter">The parameter to pass to the visitor</param>
         /// <returns>Returns the value returned by the visitor's Visit() method</returns>
         T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 paramter);
-
     }
 }

@@ -1,14 +1,9 @@
-﻿using ServerSync.Core.Configuration;
-using ServerSync.Core.State;
-using ServerSync.Model;
-using ServerSync.Model.Actions;
+﻿using ServerSync.Model.Actions;
 using ServerSync.Model.Configuration;
 using ServerSync.Model.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerSync.Core
 {
@@ -17,18 +12,6 @@ namespace ServerSync.Core
     /// </summary>
     public abstract class AbstractAction : IAction
     {
-
-        #region Fields
-
-        readonly bool m_IsEnabled;
-        readonly ISyncConfiguration m_Configuration;
-        readonly string m_InputFilterName;
-
-        #endregion
-
-
-        #region IAction Properties
-
         /// <summary>
         /// The action's name
         /// </summary>
@@ -37,12 +20,12 @@ namespace ServerSync.Core
         /// <summary>
         /// Gets or sets whether the Action is enabled
         /// </summary>
-        public bool IsEnabled { get { return m_IsEnabled; } }
+        public bool IsEnabled { get; }
 
         /// <summary>
         /// The configuration object to be used by the Action
         /// </summary>
-        public ISyncConfiguration Configuration { get { return m_Configuration; } }
+        public ISyncConfiguration Configuration { get; }
 
         /// <summary>
         /// The current sync state (may be altered during execution of the action)
@@ -52,37 +35,19 @@ namespace ServerSync.Core
         /// <summary>
         /// The name of the filter to apply to the input before processing it
         /// </summary>
-        public string InputFilterName { get { return m_InputFilterName; } }
-
-        #endregion IAction Properties
+        public string InputFilterName { get; }
 
 
-        #region Constructor
-
-        public AbstractAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName)
+        protected AbstractAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName)
         {
-            if(configuration == null)
-            {
-                throw new ArgumentNullException("configuration");
-            }
-            
-            this.m_IsEnabled = isEnabled;
-            this.m_Configuration = configuration;
-            this.m_InputFilterName = inputFilterName;
+            IsEnabled = isEnabled;
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            InputFilterName = inputFilterName;
         }
 
 
-        #endregion
-
-
-        #region Public Methods
-
         public abstract void Run();
 
-        #endregion
-
-
-        #region Protected Members
 
         protected IEnumerable<IFileItem> GetFilteredInput()
         {
@@ -96,8 +61,5 @@ namespace ServerSync.Core
                 return filter.ApplyFilter(this.State.Files).ToList();
             }
         }
-
-        #endregion
-
     }
 }

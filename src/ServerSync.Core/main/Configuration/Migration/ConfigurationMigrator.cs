@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -14,10 +12,6 @@ namespace ServerSync.Core.Configuration.Migration
 {
     class ConfigurationMigrator : IConfigurationMigrator
     {
-
-
-        #region Constants
-
         const string s_ConfigurationSchema = "ServerSync.Core.Configuration.ConfigurationSchema.xsd";
         const string s_TransferLocation = "TransferLocation_";
 
@@ -36,18 +30,10 @@ namespace ServerSync.Core.Configuration.Migration
             XmlNames.UpdateTransferState,
             XmlNames.ExportDirectory
         };
-
-        #endregion
-
-
-        #region Fields
+        
 
         readonly Logger m_Logger = LogManager.GetCurrentClassLogger();
 
-        #endregion
-
-
-        #region IConfigurationMigrator Implementation
 
         public XDocument UpgradeConfigurationFile(XDocument currentConfiguration)
         {
@@ -77,11 +63,7 @@ namespace ServerSync.Core.Configuration.Migration
             return newConfiguration;
         }
 
-        #endregion
-
-
-        #region Private Implementation
-
+        
         /// <summary>
         /// Changes the XML namespace of all elements that do not specify a namespace to the configuration namespace
         /// </summary>
@@ -107,10 +89,10 @@ namespace ServerSync.Core.Configuration.Migration
 
             //iterate over all elements. We need to wrap all elements that are action into a <action /> element
             XElement currentActionList = null;
-            for (int i = 0; i < rootElements.Length; i++)
+            foreach (var element in rootElements)
             {
                 //current node is a action node
-                if (IsActionElement(rootElements[i]))
+                if (IsActionElement(element))
                 {
                     if (currentActionList == null)
                     {
@@ -118,9 +100,9 @@ namespace ServerSync.Core.Configuration.Migration
                         currentActionList = new XElement(XmlNames.Actions);
                     }
 
-                    m_Logger.Debug("Adding element '{0}' to action list", rootElements[i].Name.LocalName);
-                    rootElements[i].Remove();
-                    currentActionList.Add(rootElements[i]);
+                    m_Logger.Debug("Adding element '{0}' to action list", element.Name.LocalName);
+                    element.Remove();
+                    currentActionList.Add(element);
                 }
                 //current node is some other node
                 else
@@ -130,7 +112,7 @@ namespace ServerSync.Core.Configuration.Migration
                     if (currentActionList != null)
                     {
                         m_Logger.Debug("Inserting action list into configuration");
-                        rootElements[i].AddBeforeSelf(currentActionList);
+                        element.AddBeforeSelf(currentActionList);
                         currentActionList = null;
                     }
                 }
@@ -242,11 +224,8 @@ namespace ServerSync.Core.Configuration.Migration
                     action.Attribute(XmlAttributeNames.TransferLocation).Remove();
                     action.Add(new XAttribute(XmlAttributeNames.TransferLocationName, transferLocationName));
                     action.Add(new XAttribute(XmlAttributeNames.TransferLocationSubPath, transferLocationSubPath));
-
-
                 }
             }
-
         }
 
         /// <summary>
@@ -254,7 +233,6 @@ namespace ServerSync.Core.Configuration.Migration
         /// </summary>
         void UpgradeFilters(XDocument document)
         {
-
             //find all filter definitions
             var filters = document.Root.Elements(XmlNames.Filter).Where(IsLegacyFilter).ToList();
 
@@ -308,7 +286,6 @@ namespace ServerSync.Core.Configuration.Migration
                 filter.AddAfterSelf(newFilter);
                 filter.Remove();
             }
-
         }
 
         /// <summary>
@@ -324,31 +301,29 @@ namespace ServerSync.Core.Configuration.Migration
         {
             var globalTimesStampMargin = document.Root.Element(XmlNames.TimeStampMargin);
 
-            if (globalTimesStampMargin != null)
+            if (globalTimesStampMargin == null)
             {
-                globalTimesStampMargin.Remove();
+                return;
+            }
 
-                var compareActions = document.Descendants(XmlNames.Actions)
-                    .SelectMany(actionlist => actionlist.Elements(XmlNames.Compare));
+            globalTimesStampMargin.Remove();
 
-                foreach (var compareAction in compareActions)
+            var compareActions = document.Descendants(XmlNames.Actions)
+                .SelectMany(actionlist => actionlist.Elements(XmlNames.Compare));
+
+            foreach (var compareAction in compareActions)
+            {
+                if (compareAction.Element(XmlNames.TimeStampMargin) == null)
                 {
-                    if (compareAction.Element(XmlNames.TimeStampMargin) == null)
-                    {
-                        compareAction.Add(globalTimesStampMargin);
-                    }
+                    compareAction.Add(globalTimesStampMargin);
                 }
             }
         }
 
-
         /// <summary>
         /// Determines if the specified element is an action element
         /// </summary>
-        bool IsActionElement(XElement element)
-        {
-            return s_ActionNames.Contains(element.Name);
-        }
+        bool IsActionElement(XElement element) => s_ActionNames.Contains(element.Name);
 
         /// <summary>
         /// Determines if the specified filter is a legacy filter definition
@@ -359,7 +334,6 @@ namespace ServerSync.Core.Configuration.Migration
                 (filterNode.Elements().Count(element => element.Name == XmlNames.Include) == 1 ||
                 filterNode.Elements().Count(element => element.Name == XmlNames.Include) == 1);
         }
-
 
         XmlSchemaSet GetConfigutationSchema()
         {
@@ -372,8 +346,5 @@ namespace ServerSync.Core.Configuration.Migration
                 return schemaSet;
             }
         }
-
-        #endregion
-
     }
 }

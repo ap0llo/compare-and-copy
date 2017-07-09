@@ -1,61 +1,32 @@
 ﻿using ServerSync.Model.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ByteSizeLib;
 
 namespace ServerSync.Core.Copy
 {
     public class TransferLocation : ITransferLocation
     {
+        public string Name { get; }
 
-        #region Fields
+        public string RootPath { get; }
 
-        readonly string m_Name;
-        readonly string m_Path;
-        readonly ByteSize? m_MaximumSize;
+        public ByteSize? MaximumSize { get; }
 
-        #endregion
-
-        #region Properties
-
-        public string Name { get { return m_Name; } }
-
-        public string RootPath { get { return m_Path; } }
-
-        public ByteSize? MaximumSize { get { return m_MaximumSize; } }
-
-        #endregion
-
-
-        #region Constructor
 
         public TransferLocation(string name, string path, ByteSize? maximumSize)
         {
-
             if(name == null)
-            {
-                throw new ArgumentNullException("name"); ;
-            }
+                throw new ArgumentNullException(nameof(name)); ;
 
             if(path == null)
-            {
-                throw new ArgumentNullException("path");
-            }
+                throw new ArgumentNullException(nameof(path));
 
             if(String.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException("'name' must not be empty");
-            }
+                throw new ArgumentException("Value must not be empty", nameof(name));
 
-            this.m_Name = name;
-            this.m_Path = path;
-            this.m_MaximumSize = maximumSize;
+            Name = name;
+            RootPath = path;
+            MaximumSize = maximumSize;
         }
-
-        #endregion
-
     }
 }

@@ -1,46 +1,24 @@
-﻿using ServerSync.Core.Configuration;
-using ServerSync.Model.Configuration;
+﻿using ServerSync.Model.Configuration;
 
 namespace ServerSync.Core.State
 {
     class ReadSyncStateAction : AbstractAction
     {
-
-        #region Properties
-
-        public override string Name
-        {
-            get { return "ReadSyncState"; }
-        }
-
+        public override string Name => "ReadSyncState";
 
         /// <summary>
         /// The file to read the state from
         /// </summary>
-        public string FileName { get; set; }
+        public string FileName { get; }
 
-        #endregion Properties
-
-        #region Constructor
 
         public ReadSyncStateAction(bool isEnabled, ISyncConfiguration configuration, string fileName)
             : base(isEnabled, configuration, null)
         {
-            this.FileName = fileName;
+            FileName = fileName;
         }
 
-        #endregion
 
-
-        #region Public Methods
-
-        public override void Run()
-        {
-            var stateReader = new SyncStateReader();
-            this.State = stateReader.ReadSyncState(this.FileName);
-        }
-
-        #endregion Public Methods
-    
+        public override void Run() => State = new SyncStateReader().ReadSyncState(this.FileName);
     }
 }

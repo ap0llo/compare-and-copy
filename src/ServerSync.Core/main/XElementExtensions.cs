@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace ServerSync.Core
 {
@@ -9,7 +7,6 @@ namespace ServerSync.Core
     /// </summary>
     static class XElementExtensions
     {
-         
         /// <summary>
         /// Changes the namespace of every element in the currentNamespace in the element tree to newNamespace
         /// </summary>
@@ -25,6 +22,5 @@ namespace ServerSync.Core
                 childNode.ReplaceNamespace(currentNamespace, newNamespace);
             }
         }      
-
     }
 }

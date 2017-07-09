@@ -1,9 +1,4 @@
-﻿using ServerSync.Model.State;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ServerSync.Model.Filtering
 {
@@ -13,9 +8,6 @@ namespace ServerSync.Model.Filtering
     /// </summary>
     public class OrFilterExpression : MultiFilterExpression
     {
-
-        #region Constructor
-
         /// <summary>
         /// Initializes a new instance of <see cref="OrFilterExpression"/>
         /// </summary>
@@ -33,17 +25,7 @@ namespace ServerSync.Model.Filtering
         {
         }
 
-        #endregion
-
-
-        #region Overrides
-
-        public override T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter)
-        {
-            return visitor.Visit(this, parameter);
-        }
-
-        #endregion
-
+        
+        public override T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter) => visitor.Visit(this, parameter);
     }
 }

@@ -1,52 +1,24 @@
 ﻿using Microscope;
-using ServerSync.Core.State;
-using ServerSync.Model;
 using ServerSync.Model.Filtering;
 using ServerSync.Model.State;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerSync.Core.Filters
 {
     class ExpressionEvaluationVisitor : IFilterExpressionVisitor<bool, IFileItem>
     {
-
-        #region Fields
-
         readonly IFilterExpression m_RootExpression;
 
-        #endregion
-
-
-        #region Constructor
 
         public ExpressionEvaluationVisitor(IFilterExpression rootExpression)
         {
-            if(rootExpression == null)
-            {
-                throw new ArgumentNullException("rootExpression");
-            }
-
-            this.m_RootExpression = rootExpression;
+            m_RootExpression = rootExpression ?? throw new ArgumentNullException(nameof(rootExpression));
         }
 
-        #endregion
 
+        public bool IsMatch(IFileItem fileItem) => m_RootExpression.Accept(this, fileItem);
 
-        #region Public Methods
-
-        public bool IsMatch(IFileItem fileItem)
-        {
-            return m_RootExpression.Accept(this, fileItem);
-        }
-
-        #endregion
-
-
-        #region IFilterExpressionVisitor Implementation
 
         public bool Visit(AndFilterExpression expression, IFileItem parameter)
         {
@@ -83,8 +55,5 @@ namespace ServerSync.Core.Filters
         {
             return parameter.TransferState.Direction == expression.TransferState;
         }
-
-        #endregion
-
     }
 }

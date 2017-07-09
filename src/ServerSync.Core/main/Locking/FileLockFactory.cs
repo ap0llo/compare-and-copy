@@ -1,24 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ServerSync.Core.Locking
 {
     class FileLockFactory
     {
-        #region Fields
-
         //cache for FileLock objects (there must only be one instance per file)
-        static Dictionary<string, FileLock> s_FileLocks = new Dictionary<string, FileLock>();
+        static readonly Dictionary<string, FileLock> s_FileLocks = new Dictionary<string, FileLock>();
 
         //lock object to synchronize concurrent calls to the factory
-        static object s_Lock = new object();
+        static readonly object s_Lock = new object();
 
-        #endregion
-
-        #region Public Methods
 
         /// <summary>
         /// Gets the FileLock instance for the specified file that can be used to lock/unlock the file
@@ -40,16 +31,7 @@ namespace ServerSync.Core.Locking
             }            
         }
 
-        #endregion
 
-
-        #region Private Methods       
-
-        static string GetFileLockKey(string lockFileName)
-        {
-            return lockFileName.ToLower().Trim().Replace("/", "\\");
-        }
-
-        #endregion
+        static string GetFileLockKey(string lockFileName) => lockFileName.ToLower().Trim().Replace("/", "\\");
     }
 }

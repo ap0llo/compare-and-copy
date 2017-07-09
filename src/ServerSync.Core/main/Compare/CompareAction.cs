@@ -12,44 +12,25 @@ namespace ServerSync.Core.Compare
 	/// </summary>
 	class CompareAction : AbstractAction
 	{
+	    readonly Logger m_Logger = LogManager.GetCurrentClassLogger();
 
-		#region Fields
+        
+		public override string Name => "Compare";
 
-		readonly TimeSpan m_TimeStampMargin;
-		readonly Logger m_Logger = LogManager.GetCurrentClassLogger();
+	    public TimeSpan TimeStampMargin { get; }
+        
 
-		#endregion
-
-
-		#region Properties
-
-		public override string Name
-		{
-			get { return "Compare"; }
-		}
-
-		public TimeSpan TimeStampMargin { get { return m_TimeStampMargin; } }
-
-		#endregion
-
-		#region Constructor
-
-
-		public CompareAction(bool isEnabled, string inputFilterName, ISyncConfiguration configuration, TimeSpan timeStampMargin)
+	    public CompareAction(bool isEnabled, string inputFilterName, ISyncConfiguration configuration, TimeSpan timeStampMargin)
 			: base(isEnabled, configuration, inputFilterName)
 		{
-			this.m_TimeStampMargin = timeStampMargin;
+			TimeStampMargin = timeStampMargin;
 		}
 
-		#endregion
-
-
-		#region Public Methods
 
 		public override void Run()
 		{
 			//compare directories using FolderComparer
-			FolderComparer comparer = new FolderComparer(this.Configuration, this.TimeStampMargin);
+			var comparer = new FolderComparer(this.Configuration, this.TimeStampMargin);
 			var comparisonResult = comparer.Run();
 
 			if(comparisonResult == null)
@@ -61,20 +42,16 @@ namespace ServerSync.Core.Compare
 
 			//combine new and old sync states
 			var combinedState = MergeSyncStates(new SyncState(GetFilteredInput()), comparisonResult);
-			this.State = combinedState;
+			State = combinedState;
 		}
 
-		#endregion
-
-
-		#region Private Implementation
 
 		/// <summary>
 		/// Merges the existing SyncState into the new state.
 		/// Merge is done by adding setting the TransferState for files that exist in both SyncStates to the value from "exisitingSyncState"
 		/// </summary>
 		/// <returns>Returns 'newSyncState'</returns>
-		private ISyncState MergeSyncStates(ISyncState exisitingSyncState, ISyncState newSyncState)
+		ISyncState MergeSyncStates(ISyncState exisitingSyncState, ISyncState newSyncState)
 		{
 			//build dictionary with all files from existing sync state
 			var filesExisting = exisitingSyncState.Files.ToDictionary(fileItem => fileItem.RelativePath.Trim().ToLower());           
@@ -92,14 +69,10 @@ namespace ServerSync.Core.Compare
 				    {
                         fileItem.TransferState.Locations = filesExisting[key].TransferState.Locations;				        
 				    }
-
                 }
 			}         
 
 			return newSyncState;
 		}
-
-		#endregion
-
 	}
 }

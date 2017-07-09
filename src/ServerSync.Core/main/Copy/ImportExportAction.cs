@@ -15,7 +15,6 @@ namespace ServerSync.Core.Copy
 	    readonly Logger m_Logger = LogManager.GetCurrentClassLogger();
         readonly IDictionary<string, ByteSize> m_TransferLocationSizeCache = new Dictionary<string, ByteSize>();
 
-     
            
         public string TransferLocationName { get; set; }
 
@@ -24,7 +23,6 @@ namespace ServerSync.Core.Copy
         public bool AssumeExclusiveWriteAccess { get; set; }
 
         
-                
         protected ImportExportAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName,  SyncFolder syncFolder)
 			: base(isEnabled, configuration, inputFilterName, syncFolder)
 		{			
@@ -87,11 +85,9 @@ namespace ServerSync.Core.Copy
                     UpdateTransferLocationSizeCache(transferLocation, size);
                     OnItemCopied(item);
                 }
-
             }
         }
 
-    
 
         protected abstract IEnumerable<IFileItem> GetItemsToCopy();
 
@@ -110,7 +106,7 @@ namespace ServerSync.Core.Copy
         /// <summary>
         /// Checks whether copying a file of the specified size would exceed the maximum specified size for the transfer location
         /// </summary>
-        private bool CheckNextFileExceedsMaxTransferSize(ByteSize nextFileSize)
+        bool CheckNextFileExceedsMaxTransferSize(ByteSize nextFileSize)
         {
             var transferLocation = Configuration.GetTransferLocation(this.TransferLocationName);
 
@@ -146,7 +142,7 @@ namespace ServerSync.Core.Copy
 
         }
 
-        private void UpdateTransferLocationSizeCache(ITransferLocation transferLocation, ByteSize fileSize)
+        void UpdateTransferLocationSizeCache(ITransferLocation transferLocation, ByteSize fileSize)
         {
             if (AssumeExclusiveWriteAccess)
             {
@@ -154,7 +150,7 @@ namespace ServerSync.Core.Copy
             }
         }
 
-        private bool FileEquals(string path1, string path2)
+        bool FileEquals(string path1, string path2)
         {
             var fileInfo1 = new FileInfo(path1);
             var fileInfo2 = new FileInfo(path2);
@@ -169,7 +165,5 @@ namespace ServerSync.Core.Copy
             }
 
         }
-
-
     }
 }

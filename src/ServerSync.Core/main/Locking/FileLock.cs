@@ -1,9 +1,6 @@
 ﻿using NLog;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,19 +8,12 @@ namespace ServerSync.Core.Locking
 {
     class FileLock
     {
-
-        #region Fields
-
-        Logger m_Logger = LogManager.GetCurrentClassLogger();
+        readonly Logger m_Logger = LogManager.GetCurrentClassLogger();
 
         string m_LockFilePath;
         bool m_IsLocked;
         FileStream m_FileStream;
 
-        #endregion
-
-
-        #region Properties
 
         /// <summary>
         /// The path to the file being locked
@@ -67,25 +57,15 @@ namespace ServerSync.Core.Locking
             }
         }
 
-        #endregion
-
-
-        #region Constructor
 
         public FileLock(string lockFilePath)
         {
             if(String.IsNullOrEmpty(lockFilePath))
-            {
-                throw new ArgumentNullException("lockFilePath");
-            }
+                throw new ArgumentNullException(nameof(lockFilePath));
 
-            this.LockFilePath = lockFilePath;
+            LockFilePath = lockFilePath;
         }
 
-        #endregion
-
-
-        #region Public Methods
 
         /// <summary>
         /// Locks the file. 
@@ -108,7 +88,6 @@ namespace ServerSync.Core.Locking
         /// <returns>Returns whether the file lock has been acquired</returns>
         public bool Lock(TimeSpan timeout)
         {
-
             var cancellationTokenSource = new CancellationTokenSource();
 
             m_Logger.Info("Trying to acquire lock with lock-file {0} and timeout {1}", this.LockFilePath, timeout);
@@ -150,10 +129,6 @@ namespace ServerSync.Core.Locking
             }
         }
 
-        #endregion
-
-
-        #region Private Methods
 
         void LockInternal(CancellationTokenSource cancellationTokenSource)
         {
@@ -202,8 +177,5 @@ namespace ServerSync.Core.Locking
                 this.IsLocked = true;
             }
         }
-
-        #endregion
-
     }
 }

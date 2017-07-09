@@ -6,7 +6,6 @@ using ServerSync.Core.PathResolving;
 using ServerSync.Core.State;
 using System;
 using System.Linq;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -23,69 +22,42 @@ namespace ServerSync.Core.Configuration
 {
     public class ConfigurationReader : IConfigurationReader
     {
-
-        #region Fields
+        const string s_ConfigurationSchema = "ServerSync.Core.Configuration.ConfigurationSchema_Strict.xsd";
 
         readonly IConfigurationMigrator m_Migrator;
 
-        #endregion
-
-
-        #region Constants
-
-        const string s_ConfigurationSchema = "ServerSync.Core.Configuration.ConfigurationSchema_Strict.xsd";
-
-        #endregion
-
-
-        #region Constructor
-
-        public ConfigurationReader()
-            : this(new ConfigurationMigrator())
+        
+        public ConfigurationReader() : this(new ConfigurationMigrator())
         {
-
         }
 
         public ConfigurationReader(IConfigurationMigrator migrator)
         {
-            if (migrator == null)
-            {
-                throw new ArgumentNullException("migrator");
-            }
-
-            this.m_Migrator = migrator;
+            m_Migrator = migrator ?? throw new ArgumentNullException("migrator");
         }
 
-        #endregion
-
-
-        #region Public  Methods
 
         /// <summary>
         /// Reads sync configuration from the specified file
         /// </summary>
         public ISyncConfiguration ReadConfiguration(string fileName)
         {
-            XDocument configFile = XDocument.Load(fileName);
+            var configFile = XDocument.Load(fileName);
             var pathResolver = new PathResolver(Path.GetDirectoryName(fileName));
             configFile = m_Migrator.UpgradeConfigurationFile(configFile);
 
             return ReadConfiguration(configFile, pathResolver);
-
         }
-
 
         public ISyncConfiguration ReadConfiguration(XDocument document, IPathResolver pathResolver)
         {
-
             //upgrade configuration file
             document = m_Migrator.UpgradeConfigurationFile(document);
 
             //validate configuration file
-            document.Validate(GetStrictConfigutationSchema(), (s, e) => 
-                {
-                    throw new ConfigurationException("Invalid configuration file: " + e.Message); 
-                });
+            document.Validate(
+                GetStrictConfigutationSchema(), 
+                (s, e) => throw new ConfigurationException("Invalid configuration file: " + e.Message));
 
             ISyncConfiguration configuration = new SyncConfiguration();
             try
@@ -99,12 +71,8 @@ namespace ServerSync.Core.Configuration
 
             return configuration;
         }
-
-        #endregion Public Methods
-
-
-        #region Private Implementation
-
+        
+        
         void ReadSyncConfiguration(XDocument configFile, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
             foreach (var element in configFile.Root.Elements())
@@ -141,8 +109,6 @@ namespace ServerSync.Core.Configuration
             }
         }
 
-        #region SyncFolderDefinition
-
         ISyncFolderDefinition ReadSyncFolderDefinition(XElement xmlNode, IPathResolver pathResolver)
         {
             var name = xmlNode.RequireAttributeValue(XmlAttributeNames.Name);
@@ -163,10 +129,6 @@ namespace ServerSync.Core.Configuration
             }
         }
 
-        #endregion SyncFolderDefinition
-
-        #region Include
-
         void ReadInclude(XElement includeElement, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
             var includePath = pathResolver.GetAbsolutePath(includeElement.RequireAttributeValue(XmlAttributeNames.Path));
@@ -185,23 +147,18 @@ namespace ServerSync.Core.Configuration
 
         }
 
-        #endregion
-
-        #region Filter
-
         IFilter ReadFilter(XElement filterNode)
         {
             var name = filterNode.RequireAttributeValue(XmlAttributeNames.Name);
             if (filterNode.Elements().Count() != 1)
             {
-                throw new ConfigurationException(String.Format("Invalid configuration. Expected a single root expression in filter '{0}'", name));
+                throw new ConfigurationException($"Invalid configuration. Expected a single root expression in filter '{name}'");
             }
 
             var rootExpression = ReadFilterExpression(filterNode.Elements().First());
 
             return new Filter(name, rootExpression);
         }
-
 
         IFilterExpression ReadFilterExpression(XElement filterExpressionNode)
         {
@@ -247,13 +204,10 @@ namespace ServerSync.Core.Configuration
             }
             else
             {
-                throw new ConfigurationException(String.Format("Unknown filter-expression '{0}'", filterExpressionNode.Name.LocalName));
+                throw new ConfigurationException($"Unknown filter-expression '{filterExpressionNode.Name.LocalName}'");
             }
         }
 
-        #endregion Filter
-
-        #region Actions
 
         void ReadActionList(XElement actionListElement, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
@@ -391,25 +345,10 @@ namespace ServerSync.Core.Configuration
             actionInstance.TransferLocationName = actionElement.RequireAttributeValue(XmlAttributeNames.TransferLocationName);
 
             var subPathAttribute = actionElement.Attribute(XmlAttributeNames.TransferLocationSubPath);
-            if (subPathAttribute != null)
-            {
-                actionInstance.TransferLocationSubPath = subPathAttribute.Value;
-            }
-            else
-            {
-                actionInstance.TransferLocationSubPath = String.Empty;
-            }
+            actionInstance.TransferLocationSubPath = subPathAttribute?.Value ?? String.Empty;
 
             var exclusiveWriteAccessAttribute = actionElement.Attribute(XmlAttributeNames.AssumeExclusiveWriteAccess);
-            if (exclusiveWriteAccessAttribute != null)
-            {
-                actionInstance.AssumeExclusiveWriteAccess = ParseBool(exclusiveWriteAccessAttribute.Value);
-            }
-            else
-            {
-                actionInstance.AssumeExclusiveWriteAccess = false;
-            }
-        
+            actionInstance.AssumeExclusiveWriteAccess = exclusiveWriteAccessAttribute != null && ParseBool(exclusiveWriteAccessAttribute.Value);
         }
 
         bool ParseBool(string value)
@@ -436,7 +375,6 @@ namespace ServerSync.Core.Configuration
             var kiloByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.KiloByte);
             var bytes = byteSizeElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.Byte);
 
-
             return ByteSize.FromBytes(bytes)
                 .AddKiloBytes(kiloByte)
                 .AddMegaBytes(megaByte)
@@ -446,7 +384,6 @@ namespace ServerSync.Core.Configuration
 
         IAction ReadReadSyncStateAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResolver)
         {
-
             var enabled = ReadActionEnabled(actionElement);
             var fileName = pathResolver.GetAbsolutePath(actionElement.RequireAttributeValue(XmlAttributeNames.FileName));
 
@@ -470,7 +407,6 @@ namespace ServerSync.Core.Configuration
             return new ApplyFilterAction(enabled, configuration, inputFilterName);
         }
 
-
         bool ReadActionEnabled(XElement actionElement)
         {
             var value = actionElement.RequireAttributeValue(XmlAttributeNames.Enable).Trim();
@@ -485,9 +421,9 @@ namespace ServerSync.Core.Configuration
                 var value = inputFilterAttribute.Value;
                 if(String.IsNullOrEmpty(value))
                 {
-                    throw new ConfigurationException(String.Format("The value for attribute {0} must not be empty (action {1})", 
-                                                                   XmlAttributeNames.InputFilter, 
-                                                                   actionElement.Name.LocalName));
+                    throw new ConfigurationException(
+                        $"The value for attribute {XmlAttributeNames.InputFilter} must not be empty (action {actionElement.Name.LocalName})"
+                    );
                 }
 
                 return value;
@@ -546,14 +482,10 @@ namespace ServerSync.Core.Configuration
             
             var interimLocations = actionElement.Elements(XmlNames.InterimLocation)
                 .Select(xml => xml.RequireAttributeValue(XmlAttributeNames.Path))
-                .Select(p => pathResolver.GetAbsolutePath(p));
+                .Select(pathResolver.GetAbsolutePath);
 
             return new UpdateTransferStateAction(enabled, configuration, null, transferLocationPaths, interimLocations);
         }
-
-        #endregion Actions
-
-        #region TransferLocation
 
         TransferLocation ReadTransferLocation(XElement transferLocationElement, IPathResolver pathResolver)
         {
@@ -574,14 +506,9 @@ namespace ServerSync.Core.Configuration
                 element.RequireAttributeValue(XmlAttributeNames.TransferLocationSubPath));
         }
 
-        #endregion
-
-        #region Enum Parsing
-
         CompareState ParseCompareState(string value)
         {
-            CompareState state;
-            if (!Enum.TryParse<CompareState>(value, true, out state))
+            if (!Enum.TryParse(value, true, out CompareState state))
             {
                 throw new ArgumentException("Could not parse '" + value + "' as FileState");
             }
@@ -590,8 +517,7 @@ namespace ServerSync.Core.Configuration
 
         TransferDirection ParseTransferState(string value)
         {
-            TransferDirection state;
-            if (!Enum.TryParse<TransferDirection>(value, true, out state))
+            if (!Enum.TryParse(value, true, out TransferDirection state))
             {
                 throw new ArgumentException("Could not parse '" + value + "' as TransferState");
             }
@@ -600,17 +526,12 @@ namespace ServerSync.Core.Configuration
 
         SyncFolder ParseSource(string value)
         {
-            SyncFolder source;
-            if (!Enum.TryParse<SyncFolder>(value, true, out source))
+            if (!Enum.TryParse(value, true, out SyncFolder source))
             {
                 throw new ArgumentException("Could not parse '" + value + "' as Source");
             }
             return source;
         }
-
-        #endregion Enum Parsing
-
-        #region Timespan
 
         TimeSpan ReadTimeSpan(XElement timespanElement)
         {
@@ -622,21 +543,15 @@ namespace ServerSync.Core.Configuration
             return new TimeSpan(0, hours, minutes, seconds, milliSeconds);
         }
 
-        #endregion
-
         XmlSchemaSet GetStrictConfigutationSchema()
         {
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(s_ConfigurationSchema))
             {
                 var schemaSet = new XmlSchemaSet();
-
                 schemaSet.Add(null, XmlReader.Create(stream));
 
                 return schemaSet;
             }
         }
-
-        #endregion Private Implementation
-
     }
 }

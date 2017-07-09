@@ -13,42 +13,18 @@ namespace ServerSync.Model.Filtering
     /// </summary>
     public class TransferStateFilterExpression : IFilterExpression
     {
-        
-        #region Fields
-
-        readonly TransferDirection m_TransferState;
-
-        #endregion
-
-
-        #region Properties
-
         /// <summary>
         /// The TransferState to match
         /// </summary>
-        public TransferDirection TransferState { get { return this.m_TransferState; } }
+        public TransferDirection TransferState { get; }
 
-        #endregion
-
-
-        #region Constructor
 
         public TransferStateFilterExpression(TransferDirection state)
         {
-            this.m_TransferState = state;
+            TransferState = state;
         }
 
-        #endregion
 
-
-        #region IFilterExpression Implementation
-
-        public T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter)
-        {
-            return visitor.Visit(this, parameter);
-        }
-
-        #endregion
-
+        public T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter) => visitor.Visit(this, parameter);
     }
 }

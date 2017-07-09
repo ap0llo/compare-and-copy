@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NLog;
 using ServerSync.Core.Configuration;
 using ServerSync.Model.Configuration;
@@ -13,32 +11,14 @@ namespace ServerSync.Core.State
 {
     public class UpdateTransferStateAction : AbstractAction
     {
-
-        #region Fields
-
         readonly Logger m_Logger = LogManager.GetCurrentClassLogger();
+        
 
-        #endregion
+        public override string Name => "UpdateTransferStateAction";
 
+        public IEnumerable<TransferLocationReference> TransferLocationPaths { get; }
 
-        #region Properties
-
-        public IEnumerable<TransferLocationReference> TransferLocationPaths { get; private set; }
-
-        public IEnumerable<string> InterimLocations { get; private set; }
-
-        public override string Name
-        {
-            get
-            {
-                return "UpdateTransferStateAction";
-            }
-        }
-
-        #endregion
-
-
-        #region Constructor
+        public IEnumerable<string> InterimLocations { get; }
 
 
         public UpdateTransferStateAction(bool isEnabled, ISyncConfiguration configuration, 
@@ -47,24 +27,11 @@ namespace ServerSync.Core.State
                                          IEnumerable<string> interimLocations)
             : base(isEnabled, configuration, inputFilterName)
         {
-
-            if(transferLocationPaths == null)
-            {
-                throw new ArgumentNullException("transferLocationPaths");
-            }
-
-            if(interimLocations == null)
-            {
-                throw new ArgumentNullException("interimLocations");
-            }
-
-            this.TransferLocationPaths = transferLocationPaths.ToList();
-            this.InterimLocations = interimLocations.ToList();
+            TransferLocationPaths = transferLocationPaths?.ToList() ?? throw new ArgumentNullException(nameof(transferLocationPaths));
+            InterimLocations = interimLocations?.ToList() ?? throw new ArgumentNullException(nameof(interimLocations));
         }
-        #endregion
 
 
-        #region Public Methods
 
         public override void Run()
         {
@@ -73,7 +40,6 @@ namespace ServerSync.Core.State
                 m_Logger.Info($"Extended TransferState is disabled, action {Name} has no effect");
                 return;
             }
-
 
             var allPaths = TransferLocationPaths.Select(t => Path.Combine(Configuration.GetTransferLocation(t.TransferLocationName).RootPath, 
                                                                           t.TransferLocationSubPath))
@@ -106,8 +72,5 @@ namespace ServerSync.Core.State
                 State.RemoveFile(item);
             }
         }
-        
-        #endregion
-
     }
 }

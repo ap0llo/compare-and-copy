@@ -1,28 +1,19 @@
-﻿using ServerSync.Model;
-using ServerSync.Model.State;
-using System;
-using System.Collections.Generic;
+﻿using ServerSync.Model.State;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace ServerSync.Core.State
 {
     public class SyncStateWriter
     {
-
         /*
-         *  SyncState files written by SyncStateWriter currently do not follow the SyncState xml schema to be compatible with older versions
+         *  SyncState files written by SyncStateWriter currently do not conform with the SyncState xml schema to be compatible with older versions
          */
-
-        #region Public Methods
 
         public void WriteSyncState(string fileName, SyncState state)
         {        
-            XElement fileList = new XElement(XmlNames.FileList.LocalName, state.Files.Select(GetFileItemElement));
-
+            var fileList = new XElement(XmlNames.FileList.LocalName, state.Files.Select(GetFileItemElement));
             var document = new XDocument(fileList);
 
             var dir = Path.GetDirectoryName(fileName);
@@ -31,10 +22,6 @@ namespace ServerSync.Core.State
             document.Save(fileName);
         }
 
-        #endregion 
-
-
-        #region Private Implementation
 
         XElement GetFileItemElement(IFileItem file)
         {
@@ -42,16 +29,11 @@ namespace ServerSync.Core.State
                 ? file.TransferState.Locations
                 : Enumerable.Empty<string>();
 
-
             return new XElement(XmlNames.File.LocalName,
                                  new XAttribute(XmlAttributeNames.Path, file.RelativePath),
                                  new XAttribute(XmlAttributeNames.CompareState, file.CompareState),
                                  new XAttribute(XmlAttributeNames.TransferState, file.TransferState.Direction),
-                                 locations.Select(path => 
-                                    new XElement(XmlNames.Location.LocalName, new XAttribute(XmlAttributeNames.Path, path))));
+                                 locations.Select(path => new XElement(XmlNames.Location.LocalName, new XAttribute(XmlAttributeNames.Path, path))));
         }
-
-        #endregion Private Implementation
-
     }
 }

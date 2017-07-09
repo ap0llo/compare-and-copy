@@ -2,9 +2,6 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ServerSync.Core.Configuration;
 using ServerSync.Core.State;
 using NLog;
 using ServerSync.Model.Configuration;
@@ -17,25 +14,17 @@ namespace ServerSync.Core.Compare
     /// </summary>
     public class FolderComparer
     {
+        readonly Logger m_Logger = LogManager.GetCurrentClassLogger();
 
-        #region Fields
+        readonly ISyncConfiguration m_Config;
+		readonly TimeSpan m_TimeStampMargin;
 
-        Logger m_Logger = LogManager.GetCurrentClassLogger();
+        List<string> m_FilesMissingLeft = new List<string>();
+        List<string> m_FilesMissingRight = new List<string>();
+        List<string> m_Conflicts = new List<string>();
+        List<string> m_SameFiles = new List<string>();
 
-
-        readonly ISyncConfiguration config;
-		readonly TimeSpan timeStampMargin;
-
-        private List<string> filesMissingLeft = new List<string>();
-        private List<string> filesMissingRight = new List<string>();
-        private List<string> conflicts = new List<string>();
-        private List<string> sameFiles = new List<string>();
-
-        #endregion Fields
-
-
-        #region Constructor
-
+        
         /// <summary>
         /// Initializes a new instance of FolderComparer
         /// </summary>
@@ -43,32 +32,26 @@ namespace ServerSync.Core.Compare
 		/// <param name="timeStampMargin">The maximum time span by which two file timestamps may differ to be considered equal</param>
         public FolderComparer(ISyncConfiguration config, TimeSpan timeStampMargin)
         {
-			if (config == null) throw new ArgumentNullException("config");
-			
-            this.config = config;
-			this.timeStampMargin = timeStampMargin;
+            m_Config = config ?? throw new ArgumentNullException(nameof(config));
+			m_TimeStampMargin = timeStampMargin;
         }
-
-        #endregion Constructor
-
-
-        #region Public Methods
+        
 
         public ISyncState Run()
         {
             //clear lists
-            filesMissingLeft = new List<string>();
-            filesMissingRight = new List<string>();
-            conflicts = new List<string>();
-            sameFiles = new List<string>();
+            m_FilesMissingLeft = new List<string>();
+            m_FilesMissingRight = new List<string>();
+            m_Conflicts = new List<string>();
+            m_SameFiles = new List<string>();
 
-            if(!Directory.Exists(this.config.Left.RootPath))
+            if(!Directory.Exists(this.m_Config.Left.RootPath))
             {
                 m_Logger.Error("Left root directory does not exist");
                 return null;
             }
 
-            if (!Directory.Exists(this.config.Right.RootPath))
+            if (!Directory.Exists(this.m_Config.Right.RootPath))
             {
                 m_Logger.Error("Right root directory does not exist");
                 return null;
@@ -79,15 +62,15 @@ namespace ServerSync.Core.Compare
             CompareFolders("");
 
             //build SyncState object from file lists
-            var files = filesMissingLeft.Select(path => new FileItem(path) 
+            var files = m_FilesMissingLeft.Select(path => new FileItem(path) 
                 { 
                     CompareState = CompareState.MissingLeft 
                 });
-            files = files.Union(filesMissingRight.Select(path => new FileItem(path) 
+            files = files.Union(m_FilesMissingRight.Select(path => new FileItem(path) 
                 { 
                     CompareState = CompareState.MissingRight 
                 }));
-            files = files.Union(conflicts.Select(path => new FileItem(path) 
+            files = files.Union(m_Conflicts.Select(path => new FileItem(path) 
                 {  
                     CompareState = CompareState.Conflict 
                 }));
@@ -95,27 +78,23 @@ namespace ServerSync.Core.Compare
             return new SyncState(files.ToList());
         }
 
-        #endregion
 
-
-        #region Private Implementation
-
-        private void CompareFolders(string relativePath)
+        void CompareFolders(string relativePath)
         {            
 
-            var leftAbsolutePath = Path.Combine(config.Left.RootPath, relativePath);
-            var rightAbsolutePath = Path.Combine(config.Right.RootPath, relativePath);
+            var leftAbsolutePath = Path.Combine(m_Config.Left.RootPath, relativePath);
+            var rightAbsolutePath = Path.Combine(m_Config.Right.RootPath, relativePath);
 
             if(!Directory.Exists(leftAbsolutePath))
             {
-                filesMissingLeft.AddRange(GetFiles(rightAbsolutePath, true).Select(absPath => IOHelper.GetRelativePath(absPath, rightAbsolutePath, true)));
+                m_FilesMissingLeft.AddRange(GetFiles(rightAbsolutePath, true).Select(absPath => IOHelper.GetRelativePath(absPath, rightAbsolutePath, true)));
                 return;
             }
 
 
             if(!Directory.Exists(rightAbsolutePath))
             {
-                filesMissingRight.AddRange(GetFiles(leftAbsolutePath, true).Select(absPath => IOHelper.GetRelativePath(absPath, leftAbsolutePath, true)));
+                m_FilesMissingRight.AddRange(GetFiles(leftAbsolutePath, true).Select(absPath => IOHelper.GetRelativePath(absPath, leftAbsolutePath, true)));
                 return;
             }
 
@@ -128,17 +107,17 @@ namespace ServerSync.Core.Compare
 
             //get absolute paths of directories only found in the left folder
             var uniqueLeft = leftDirectories.Where(lName => !rightDirectories.Contains(lName, StringComparer.InvariantCultureIgnoreCase))
-                                            .Select(name => Path.Combine(config.Left.RootPath, relativePath, name));
+                                            .Select(name => Path.Combine(m_Config.Left.RootPath, relativePath, name));
 
             //add all files in the subtree to the list of files only found in one location
-            this.filesMissingRight.AddRange(uniqueLeft.SelectMany(dir => GetFiles(dir, true)).Select(fullPath => IOHelper.GetRelativePath(fullPath, config.Left.RootPath, true)));
+            this.m_FilesMissingRight.AddRange(uniqueLeft.SelectMany(dir => GetFiles(dir, true)).Select(fullPath => IOHelper.GetRelativePath(fullPath, m_Config.Left.RootPath, true)));
 
             //get absolute paths of directories only found in the right folder
             var uniqueRight = rightDirectories.Where(rName => !leftDirectories.Contains(rName, StringComparer.InvariantCultureIgnoreCase))
-                                              .Select(name => Path.Combine(config.Right.RootPath, relativePath, name));
+                                              .Select(name => Path.Combine(m_Config.Right.RootPath, relativePath, name));
 
             //add all files in the subtree to the list of files only found in one location
-            this.filesMissingLeft.AddRange(uniqueRight.SelectMany(dir => GetFiles(dir, true)).Select(fullPath => IOHelper.GetRelativePath(fullPath, config.Right.RootPath, true)));
+            this.m_FilesMissingLeft.AddRange(uniqueRight.SelectMany(dir => GetFiles(dir, true)).Select(fullPath => IOHelper.GetRelativePath(fullPath, m_Config.Right.RootPath, true)));
 
 
             //compare directories found on both sides
@@ -151,21 +130,16 @@ namespace ServerSync.Core.Compare
 
 
             //compare files
-            var filesLeft = GetFiles(leftAbsolutePath, false)
-                                     .Select(path => Path.GetFileName(path));
-
-
-            var filesRight = GetFiles(rightAbsolutePath, false)
-                                      .Select(path => Path.GetFileName(path));
+            var filesLeft = GetFiles(leftAbsolutePath, false).Select(Path.GetFileName);
+            var filesRight = GetFiles(rightAbsolutePath, false).Select(Path.GetFileName);
                              
-
             lock(this)
             {
 
-                filesMissingRight.AddRange(filesLeft.Where(lName => !filesRight.Contains(lName, StringComparer.InvariantCultureIgnoreCase))
+                m_FilesMissingRight.AddRange(filesLeft.Where(lName => !filesRight.Contains(lName, StringComparer.InvariantCultureIgnoreCase))
                                                     .Select(name => Path.Combine(relativePath, name)));
 
-                filesMissingLeft.AddRange(filesRight.Where(name => !filesLeft.Contains(name, StringComparer.InvariantCultureIgnoreCase))
+                m_FilesMissingLeft.AddRange(filesRight.Where(name => !filesLeft.Contains(name, StringComparer.InvariantCultureIgnoreCase))
                                                     .Select(name => Path.Combine(relativePath, name)));
             }
 
@@ -178,47 +152,42 @@ namespace ServerSync.Core.Compare
                 {
                     lock(this)
                     {
-                        this.conflicts.Add(filePath);
+                        m_Conflicts.Add(filePath);
                     }
                 }
                 else
                 {
                     lock(this)
                     {
-                        this.sameFiles.Add(filePath);
+                        m_SameFiles.Add(filePath);
                     }
                 }           
-            };            
+            }            
         }
 
-        private IEnumerable<string> GetFiles(string dirAbsoultePath, bool recurse)
+        IEnumerable<string> GetFiles(string dirAbsoultePath, bool recurse)
         {
             m_Logger.Info("Scanning {0}", dirAbsoultePath);
 
-
-            var childFiles = recurse ?
-                Directory.GetDirectories(dirAbsoultePath).SelectMany(dir => GetFiles(dir, recurse)).Select(relPath => Path.Combine(dirAbsoultePath, relPath)) :
-                Enumerable.Empty<string>();
+            var childFiles = recurse 
+                ? Directory.GetDirectories(dirAbsoultePath).SelectMany(dir => GetFiles(dir, true)).Select(relPath => Path.Combine(dirAbsoultePath, relPath)) 
+                : Enumerable.Empty<string>();
 
             var allFiles = Directory.GetFiles(dirAbsoultePath).Union(childFiles);
-
 
             //apply filter
             return allFiles; 
         }
         
-        private bool FilesAreEqual(string relativePath)
+        bool FilesAreEqual(string relativePath)
         {
-            var info1 = new FileInfo(Path.Combine(config.Left.RootPath, relativePath));
-            var info2 = new FileInfo(Path.Combine(config.Right.RootPath, relativePath));
+            var info1 = new FileInfo(Path.Combine(m_Config.Left.RootPath, relativePath));
+            var info2 = new FileInfo(Path.Combine(m_Config.Right.RootPath, relativePath));
 
             var sizeDifference = info1.Length - info2.Length;           
             var modifiedDifference = (info1.LastWriteTime - info2.LastWriteTime).TotalMilliseconds;
 
-            return sizeDifference == 0 && Math.Abs(modifiedDifference) <= timeStampMargin.TotalMilliseconds;
+            return sizeDifference == 0 && Math.Abs(modifiedDifference) <= m_TimeStampMargin.TotalMilliseconds;
         }        
-
-        #endregion Private Implementation
-    
     }
 }

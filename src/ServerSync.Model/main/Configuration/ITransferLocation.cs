@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ByteSizeLib;
+﻿using ByteSizeLib;
 
 namespace ServerSync.Model.Configuration
 {
@@ -27,6 +22,5 @@ namespace ServerSync.Model.Configuration
         /// Comsumers of the tranfer location definition must not write anything to the transfer location if it would exceced this limit
         /// </summary>
         ByteSize? MaximumSize { get; }
-
     }
 }

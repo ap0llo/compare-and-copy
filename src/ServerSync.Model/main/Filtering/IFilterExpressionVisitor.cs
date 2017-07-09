@@ -1,5 +1,4 @@
-﻿
-namespace ServerSync.Model.Filtering
+﻿namespace ServerSync.Model.Filtering
 {
     /// <summary>
     /// Interface for visitors to traverse the expression tree of a filter

@@ -14,13 +14,11 @@ namespace ServerSync.Core.Copy
 		public override string Name => "Export";
 
 
-
 	    public ExportAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, SyncFolder syncFolder)
 			: base(isEnabled, configuration, inputFilterName, syncFolder)
 		{
 		}
 
-	
 
 	    protected override IEnumerable<IFileItem> GetItemsToCopy()
 	    {
@@ -66,7 +64,6 @@ namespace ServerSync.Core.Copy
             var newTransferDirection = SyncFolder == SyncFolder.Left ?
               TransferDirection.InTransferToRight :
               TransferDirection.InTransferToLeft;
-
 
             //set the item's new state
             item.TransferState.Direction = newTransferDirection;

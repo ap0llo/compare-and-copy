@@ -1,88 +1,46 @@
-﻿using ServerSync.Model;
-using ServerSync.Model.State;
+﻿using ServerSync.Model.State;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerSync.Core.State
 {
     public class FileItem : IFileItem
     {
-
-        #region Fields
-
-        readonly string m_RelativePath;
         readonly string m_NormalizedRelativePath;
-        readonly TransferState m_TransferState;
+        
 
-        #endregion
-
-
-        #region IFileItem Implementation
-
-        public string RelativePath { get { return m_RelativePath; } }
+        public string RelativePath { get; }
 
         public CompareState CompareState { get; set; }
 
-        public TransferState TransferState { get { return m_TransferState; } }
+        public TransferState TransferState { get; }
 
-        #endregion
-
-
-        #region Constructor
 
         public FileItem(string relativePath) : this(relativePath, new TransferState())
         {
-
         }
 
         public FileItem(string relativePath, TransferState transferState)
         {
-            if(relativePath == null)
-            {
-                throw new ArgumentNullException("relativePath");
-            }
-
-            if(transferState == null)
-            {
-                throw new ArgumentNullException("transferState");
-            }
-
-            this.m_RelativePath = relativePath;
-            this.m_NormalizedRelativePath = GetNormalizedRelativePath(m_RelativePath);
-            this.m_TransferState = transferState;
+            RelativePath = relativePath ?? throw new ArgumentNullException(nameof(relativePath));
+            TransferState = transferState ?? throw new ArgumentNullException(nameof(transferState));
+            m_NormalizedRelativePath = GetNormalizedRelativePath(RelativePath);
         }
 
-        #endregion
 
-
-        #region Overrides
-
-        public override int GetHashCode()
-        {
-            return m_NormalizedRelativePath.ToLower().GetHashCode();
-        }
+        public override int GetHashCode() => m_NormalizedRelativePath.ToLower().GetHashCode();
 
         public override bool Equals(object obj)
         {
-            if(!(obj is IFileItem))
+            if(obj is IFileItem other)
             {
-                return false;
+                return m_NormalizedRelativePath.Equals(GetNormalizedRelativePath(other.RelativePath), StringComparison.InvariantCultureIgnoreCase) &&
+                       CompareState == other.CompareState &&
+                       TransferState.Equals(other.TransferState); 
             }
 
-            var other = obj as IFileItem;
-            return this.m_NormalizedRelativePath.Equals(GetNormalizedRelativePath(other.RelativePath), 
-                                                        StringComparison.InvariantCultureIgnoreCase)  &&
-                this.CompareState == other.CompareState &&
-                this.TransferState.Equals(other.TransferState);
+            return false;
         }
 
-        #endregion
-
-
-        #region Private Implementation
 
         string GetNormalizedRelativePath(string path)
         {
@@ -95,9 +53,6 @@ namespace ServerSync.Core.State
             }
 
             return path;
-
         }
-
-        #endregion
     }
 }

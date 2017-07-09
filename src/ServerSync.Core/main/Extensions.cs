@@ -1,23 +1,12 @@
-﻿using ServerSync.Core.Filters;
-using ServerSync.Core.State;
-using ServerSync.Model;
-using ServerSync.Model.Filtering;
-using ServerSync.Model.State;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using ByteSizeLib;
-
 
 namespace ServerSync.Core
 {
     static class Extensions
     {
-
         public static string RequireAttributeValue(this XElement element, XName attributeName)
         {
             var attribute = element.Attribute(attributeName);
@@ -26,7 +15,6 @@ namespace ServerSync.Core
             {
                 throw new ArgumentException("Attribute not found " + attributeName);
             }
-
 
             if(String.IsNullOrWhiteSpace(attribute.Value))
             {
@@ -39,31 +27,12 @@ namespace ServerSync.Core
         public static long ReadLongAttributeValueOrDefault(this XElement element, XName attributeName)
         {
             var attribute = element.Attribute(attributeName);
-
-            if(attribute == null)
-            {
-                return 0;
-            }
-            else
-            {
-                return long.Parse(attribute.Value);
-            }
-
+            return attribute == null ? 0 : long.Parse(attribute.Value);
         }
-
-
-
-        public static IEnumerable<IFileItem> ApplyFilter(this IEnumerable<IFileItem> items, IFilter filter)
-        {
-            return filter.ApplyFilter(items);
-        }
-
-
-
+        
         public static ByteSize GetByteSize(this FileInfo fileInfo)
         {
             return ByteSize.FromBytes(fileInfo.Length);
         }
-
     }
 }

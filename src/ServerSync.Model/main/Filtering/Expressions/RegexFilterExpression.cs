@@ -1,10 +1,5 @@
-﻿using ServerSync.Model.State;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace ServerSync.Model.Filtering
 {
@@ -14,25 +9,11 @@ namespace ServerSync.Model.Filtering
     /// </summary>
     public class RegexFilterExpression : IFilterExpression
     {
-        
-        #region Fields
-
-        readonly Regex m_Regex;
-
-        #endregion
-
-
-        #region Properties
-
         /// <summary>
         /// The regular expression to be used to evaluate a FileItem's relative path
         /// </summary>
-        public Regex Regex { get { return this.m_Regex; } }
+        public Regex Regex { get; }
 
-        #endregion
-
-
-        #region Constructor
 
         /// <summary>
         /// Initializes a new instance of <see cref="RegexFilterExpression"/>
@@ -41,24 +22,12 @@ namespace ServerSync.Model.Filtering
         public RegexFilterExpression(string pattern)
         {
             if(pattern == null)
-            {
-                throw new ArgumentNullException("pattern");
-            }
+                throw new ArgumentNullException(nameof(pattern));
 
-            this.m_Regex = new Regex(pattern);
+            Regex = new Regex(pattern);
         }
 
-        #endregion
 
-
-        #region IFilterEexpression Implementation
-
-        public T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter)
-        {
-            return visitor.Visit(this, parameter);
-        }
-
-        #endregion
-    
+        public T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter) => visitor.Visit(this, parameter);
     }
 }

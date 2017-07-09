@@ -13,9 +13,6 @@ namespace ServerSync.Model.Filtering
     /// </summary>
     public class AndFilterExpression : MultiFilterExpression
     {
-
-        #region Constructor
-        
         /// <summary>
         /// Initializes a new instance of <see cref="AndFilterExpression"/>
         /// </summary>
@@ -32,17 +29,7 @@ namespace ServerSync.Model.Filtering
         {
         }
 
-        #endregion
 
-
-        #region Overrides
-
-        public override T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter)
-        {
-            return visitor.Visit(this, parameter);
-        }
-
-        #endregion
-
+        public override T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter) => visitor.Visit(this, parameter);
     }
 }

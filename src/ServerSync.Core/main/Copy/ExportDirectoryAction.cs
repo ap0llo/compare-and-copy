@@ -1,9 +1,4 @@
-﻿// // -----------------------------------------------------------------------------------------------------------
-// //  Copyright (c) 2015-2016, Andreas Grünwald
-// //  Licensed under the MIT License. See LICENSE.txt file in the project root for full license information.  
-// // -----------------------------------------------------------------------------------------------------------
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NLog;
@@ -17,23 +12,20 @@ namespace ServerSync.Core.Copy
     {
         readonly Logger m_Logger = LogManager.GetCurrentClassLogger();
 
-
-
+        
         public override string Name => "ExportDirectory";
 
         public string SourcePath { get; set; }
 
         public bool DeleteSourceFiles { get; set; }
 
-
-
+        
         public ExportDirectoryAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, SyncFolder syncFolder) 
             : base(isEnabled, configuration, inputFilterName, syncFolder)
         {
         }
 
-
-
+        
         public override void Run()
         {
             // save original state
@@ -49,6 +41,7 @@ namespace ServerSync.Core.Copy
             // reset state to original value
             State = syncState;
         }
+
 
         protected override IEnumerable<IFileItem> GetItemsToCopy() => State.Files;
 
@@ -91,7 +84,5 @@ namespace ServerSync.Core.Copy
                 }
             }
         }
-
-       
     }
 }

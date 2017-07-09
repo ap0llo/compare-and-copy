@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ServerSync.Model.Configuration
+﻿namespace ServerSync.Model.Configuration
 {
     /// <summary>
     /// Interface for the definition of a folder to be synced

@@ -1,16 +1,8 @@
-﻿using NLog;
-using ServerSync.Core.Configuration;
-using ServerSync.Core.State;
-using ServerSync.Model;
-using ServerSync.Model.Configuration;
+﻿using ServerSync.Model.Configuration;
 using ServerSync.Model.State;
-using System;
 using System.Collections.Generic;
-using System.Data.Odbc;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerSync.Core.Copy
 {
@@ -19,11 +11,9 @@ namespace ServerSync.Core.Copy
 		public override string Name => "Import";
 
 
-
 	    public ImportAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, SyncFolder syncFolder)
 			: base(isEnabled, configuration, inputFilterName, syncFolder)
 		{
-
 		}
 
 
@@ -71,6 +61,5 @@ namespace ServerSync.Core.Copy
 	    {
             State.RemoveFile(item);
         }
-
 	}
 }

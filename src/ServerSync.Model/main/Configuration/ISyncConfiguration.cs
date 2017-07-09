@@ -1,6 +1,5 @@
 ﻿using ServerSync.Model.Actions;
 using ServerSync.Model.Filtering;
-using System;
 using System.Collections.Generic;
 
 namespace ServerSync.Model.Configuration
@@ -10,9 +9,6 @@ namespace ServerSync.Model.Configuration
     /// </summary>
     public interface ISyncConfiguration
     {
-
-        #region Properties
-
         /// <summary>
         /// The "left" of the folders to be synced
         /// </summary>
@@ -38,10 +34,6 @@ namespace ServerSync.Model.Configuration
         /// </summary>
         IEnumerable<ITransferLocation> TransferLocations { get; }
 
-        #endregion 
-
-
-        #region Public Methods
 
         /// <summary>
         /// Adds a filter to the sync configuration
@@ -72,8 +64,5 @@ namespace ServerSync.Model.Configuration
         /// </summary>
         /// <param name="name">The name of the transfer location to search for</param>        
         ITransferLocation GetTransferLocation(string name);       
-
-        #endregion
-
     }
 }

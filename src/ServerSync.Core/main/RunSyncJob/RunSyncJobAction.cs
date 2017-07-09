@@ -2,37 +2,21 @@
 using ServerSync.Core.Configuration;
 using ServerSync.Model.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerSync.Core
 {
 	public class RunSyncJobAction : AbstractAction
 	{
-
-		#region Fields
-
 		readonly Logger m_Logger = LogManager.GetCurrentClassLogger();
-		readonly string m_ConfigurationPath;
 
-		#endregion
+        
+	    public override string Name => "RunSyncJob";
 
-
-		#region Properties
-
-		public override string Name { get { return "RunSyncJob"; } }
-
-		/// <summary>
+	    /// <summary>
 		/// The path of the sync configuration file to load and execute
 		/// </summary>
-		public string ConfigurationPath { get { return m_ConfigurationPath; } }
+		public string ConfigurationPath { get; }
 
-		#endregion
-
-
-		#region Constructor
 
 		/// <summary>
 		/// Initializes a new instance of RunSyncJobAction
@@ -47,19 +31,17 @@ namespace ServerSync.Core
 			: base(isEnabled, configuration, inputFilterName)
 		{
 			if (configurationPath == null)
-				throw new ArgumentNullException("configurationPath");
+				throw new ArgumentNullException(nameof(configurationPath));
 
-			if (string.IsNullOrWhiteSpace(configurationPath))
-				throw new ArgumentException("Value must not be empty", "configurationPath");
+			if (String.IsNullOrWhiteSpace(configurationPath))
+				throw new ArgumentException("Value must not be empty", nameof(configurationPath));
 
-			this.m_ConfigurationPath = configurationPath;
+			ConfigurationPath = configurationPath;
 		}
 
-		#endregion
 
 		public override void Run()
 		{
-
 			m_Logger.Info("Loading sync configuration from '{0}'", this.ConfigurationPath);
 			var configurationReader = new ConfigurationReader();
 			var configuration = configurationReader.ReadConfiguration(this.ConfigurationPath);
@@ -70,7 +52,6 @@ namespace ServerSync.Core
 			var success = jobRunner.Run();
 
 			m_Logger.Info("Sync job completed {0}", success ? "successfully" : "with errors");
-		
 		}
 	}
 }

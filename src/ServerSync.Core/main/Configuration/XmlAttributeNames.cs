@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ServerSync.Core.Configuration
+﻿namespace ServerSync.Core.Configuration
 {
     class XmlAttributeNames
     {
-        
         public const string Name = "name";
 
         public const string RootPath = "rootPath";
@@ -62,6 +55,5 @@ namespace ServerSync.Core.Configuration
         public const string Seconds = "s";
 
         public const string MilliSeconds = "ms";
-
     }
 }

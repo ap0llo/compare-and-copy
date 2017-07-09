@@ -8,47 +8,21 @@ namespace ServerSync.Model.Filtering
     /// </summary>
     public class MicroscopeFilterExpression : IFilterExpression
     {
-
-        #region Fields
-
-        readonly string m_Query;        
-
-        #endregion
-
-
-        #region Properties
-
         /// <summary>
         /// The Microscope query to be evaluated
         /// </summary>
-        public string Query { get { return m_Query; } }
+        public string Query { get; }
 
-        #endregion
-
-
-        #region Constructor
-
+        
         public MicroscopeFilterExpression(string query)
         {
-            if(query == null)
-            {
-                throw new ArgumentNullException("query");
-            }
-
-            this.m_Query = query;            
+            Query = query ?? throw new ArgumentNullException(nameof(query));            
         }
 
-        #endregion
-
-
-        #region IFilterExpression Implementation
 
         public T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter)
         {
             return visitor.Visit(this, parameter);
         }
-
-        #endregion
-
     }
 }

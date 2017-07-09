@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace ServerSync.Core.Test
 {
     public class IOHelperTests
     {
-
         [Fact]
         public void Test_PathLeavesRoot_True()
         {
@@ -23,7 +17,6 @@ namespace ServerSync.Core.Test
 
             Assert.True(IOHelper.PathLeavesRoot(@"C:\foo", @"C:\bar"));
         }
-
 
         [Fact]
         public void Test_PathLeavesRoot_False()
@@ -40,6 +33,5 @@ namespace ServerSync.Core.Test
 
             Assert.False(IOHelper.PathLeavesRoot(@"C:\foo", @"C:\foo\bar"));
         }
-
     }
 }

@@ -1,30 +1,20 @@
-﻿using NLog;
-using ServerSync.Core.Configuration;
+﻿using System.IO;
+using NLog;
 using ServerSync.Model.Configuration;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerSync.Core.Copy
 {
     class CopyAction : IOAction
     {
+        readonly Logger m_Logger = LogManager.GetCurrentClassLogger();
 
-        Logger m_Logger = LogManager.GetCurrentClassLogger();
 
+        public override string Name => "Copy";
 
-        public override string Name
-        {
-            get { return "Copy"; }
-        }
 
         public CopyAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, SyncFolder syncFolder)
             :base(isEnabled, configuration, inputFilterName, syncFolder)
         {
-
         }
 
 
@@ -32,9 +22,9 @@ namespace ServerSync.Core.Copy
         {
             var sourceRoot = GetSyncFolderDefinition().RootPath;
 
-            var targetRoot = this.SyncFolder == SyncFolder.Left ?
-                                    Configuration.Right.RootPath :
-                                    Configuration.Left.RootPath;
+            var targetRoot = SyncFolder == SyncFolder.Left 
+                ? Configuration.Right.RootPath 
+                : Configuration.Left.RootPath;
 
             foreach (var file in GetFilteredInput())
             {
@@ -42,14 +32,12 @@ namespace ServerSync.Core.Copy
                 {
                     if(IOHelper.PathLeavesRoot(sourceRoot, file.RelativePath))
                     {
-                        throw new InvalidPathException(String.Format("Relative path '{0}' references file outside the root directory '{1}'", 
-                            file.RelativePath, sourceRoot));                    
+                        throw new InvalidPathException($"Relative path '{file.RelativePath}' references file outside the root directory '{sourceRoot}'");                    
                     }
 
                     if (IOHelper.PathLeavesRoot(targetRoot, file.RelativePath))
                     {
-                        throw new InvalidPathException(String.Format("Relative path '{0}' references file outside the root directory '{1}'",
-                            file.RelativePath, sourceRoot));
+                        throw new InvalidPathException($"Relative path '{file.RelativePath}' references file outside the root directory '{sourceRoot}'");
                     }
                 }
                 catch (PathTooLongException ex)

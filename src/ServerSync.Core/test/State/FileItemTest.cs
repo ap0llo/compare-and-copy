@@ -1,18 +1,11 @@
 ﻿using ServerSync.Core.State;
 using ServerSync.Model.State;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace ServerSync.Core.Test.State
 {
     public class FileItemTest
     {
-
-
         [Fact]
         public void Test_GetHashCode()
         {
@@ -23,7 +16,6 @@ namespace ServerSync.Core.Test.State
             Assert.Equal(fileItem1.GetHashCode(), fileItem2.GetHashCode());
             Assert.Equal(fileItem1.GetHashCode(), fileItem3.GetHashCode());             
         }
-
 
         [Fact]
         public void Test_Equals()
@@ -65,7 +57,5 @@ namespace ServerSync.Core.Test.State
             Assert.Equal(fileItem3.Equals(fileItem5), fileItem5.Equals(fileItem3));
 
         }
-
-
     }
 }

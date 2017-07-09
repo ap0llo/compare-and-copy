@@ -3,17 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ByteSizeLib;
 
 namespace ServerSync.Core
 {
     public class IOHelper
     {
-
-        #region Private Type
-
         /// <summary>
         /// Class used for caching directory sizes in GetDirectorySize()
         /// </summary>
@@ -30,28 +25,15 @@ namespace ServerSync.Core
             public DateTime Created { get; set; }
         }
 
-        #endregion
-
-
-        #region Constants
 
         //the amount of time a value is considered up to date in the cache used by GetDirectorySize()
         static readonly TimeSpan s_CacheTime = new TimeSpan(0, 0, 5);
-
-        #endregion
-
-
-        #region Fields
 
         //cache used by GetDirectorySize() to speed up determining the size of a directory
         static Dictionary<String, ByteSizeCacheEntry> s_GetDirectorySizeCache = new Dictionary<string, ByteSizeCacheEntry>();
 
         static readonly Logger s_Logger = LogManager.GetCurrentClassLogger();
 
-        #endregion
-
-
-        #region Public Methods
 
         public static void EnsureDirectoryExists(string path)
         {
@@ -73,8 +55,8 @@ namespace ServerSync.Core
                 relativeTo = Path.Combine(relativeTo, "dummy");
             }
 
-            Uri fileUri = new Uri(absolutePath);
-            Uri relativeToUri = new Uri(relativeTo);
+            var fileUri = new Uri(absolutePath);
+            var relativeToUri = new Uri(relativeTo);
 
             var resultUri = relativeToUri.MakeRelativeUri(fileUri);
             return Uri.UnescapeDataString(resultUri.ToString());
@@ -172,11 +154,7 @@ namespace ServerSync.Core
 
         public static bool CopyFile(string sourcePath, string destinationPath)
         {
-
-
-
             var tmpPath = destinationPath + ".tmp";
-            
             try
             {
                 EnsureDirectoryExists(Path.GetDirectoryName(destinationPath));
@@ -204,10 +182,8 @@ namespace ServerSync.Core
                 }
             }
 
-
             return true;
         }
-
 
         /// <summary>
         /// Determines if the specified relative path, when combined with the specified root path,
@@ -217,12 +193,12 @@ namespace ServerSync.Core
         {
             if(rootPath == null)
             {
-                throw new ArgumentNullException("rootPath");
+                throw new ArgumentNullException(nameof(rootPath));
             }
 
             if(relativePath == null)
             {
-                throw new ArgumentNullException("relativePath");
+                throw new ArgumentNullException(nameof(relativePath));
             }
 
             if(String.IsNullOrWhiteSpace(rootPath))
@@ -232,7 +208,8 @@ namespace ServerSync.Core
 
             rootPath = Path.GetFullPath(rootPath);
             string absolutePath;
-            if(Path.IsPathRooted(relativePath))
+
+            if (Path.IsPathRooted(relativePath))
             {
                 absolutePath = relativePath;
             }
@@ -244,7 +221,6 @@ namespace ServerSync.Core
 
             return !absolutePath.StartsWith(rootPath, StringComparison.InvariantCultureIgnoreCase);
         }
-
 
         public static IEnumerable<string> GetAllFilesRelative(string directory)
         {
@@ -258,8 +234,5 @@ namespace ServerSync.Core
                 return allFiles.Select(path => GetRelativePath(path, directory, true));
             }
         } 
-
-        #endregion
-
     }
 }

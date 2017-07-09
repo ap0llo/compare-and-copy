@@ -8,8 +8,6 @@ namespace ServerSync.Core.PathResolving
 {
     public interface IPathResolver
     {
-
         string GetAbsolutePath(string inputPath);
-
     }
 }

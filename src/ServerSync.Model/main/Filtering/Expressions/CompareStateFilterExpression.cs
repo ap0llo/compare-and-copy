@@ -8,42 +8,18 @@ namespace ServerSync.Model.Filtering
     /// </summary>
     public class CompareStateFilterExpression : IFilterExpression
     {
-
-        #region Fields
-
-        readonly CompareState m_CompareState;
-
-        #endregion
-
-
-        #region Properties
-
         /// <summary>
         /// The CompareState to match
         /// </summary>
-        public CompareState CompareState { get { return this.m_CompareState; } }
+        public CompareState CompareState { get; }
 
-        #endregion
-
-
-        #region Constructor
 
         public CompareStateFilterExpression(CompareState state)
         {
-            this.m_CompareState = state;
+            CompareState = state;
         }
 
-        #endregion
 
-
-        #region IFilterExpression Implementation
-
-        public T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter)
-        {
-            return visitor.Visit(this, parameter);
-        }
-
-        #endregion
-
+        public T1 Accept<T1, T2>(IFilterExpressionVisitor<T1, T2> visitor, T2 parameter) => visitor.Visit(this, parameter);
     }
 }

@@ -1,12 +1,8 @@
-﻿using ServerSync.Model;
-using ServerSync.Model.State;
+﻿using ServerSync.Model.State;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -15,14 +11,8 @@ namespace ServerSync.Core.State
 {
     public class SyncStateReader
     {
-        #region Constants
-
         const string s_SyncStateSchema = "ServerSync.Core.State.SyncStateSchema.xsd";
 
-        #endregion
-
-
-        #region Public Methods
 
         public SyncState ReadSyncState(string fileName)
         {
@@ -41,48 +31,39 @@ namespace ServerSync.Core.State
                 throw new JobExecutionException("Error reading the sync state file. File is not valid xml");
             }
 
-
             if(String.IsNullOrEmpty(document.Root.Name.NamespaceName))
             {
                 document.Root.ReplaceNamespace("", XmlNames.GetNamespace());
             }
 
-            document.Validate(GetSyncStateSchema(), (o, e) => { throw new SyncStateException(e.Message); });
-
+            document.Validate(GetSyncStateSchema(), (o, e) => throw new SyncStateException(e.Message));
 
             var files = document.Descendants(XmlNames.File).Select(ReadFileItem);
-
             return new SyncState(files.ToList());
         }
 
-        #endregion
-
-
-        #region Private Implementation
 
         IFileItem ReadFileItem(XElement item)
         {
-            string path = item.Attribute(XmlAttributeNames.Path).Value;
+            var path = item.Attribute(XmlAttributeNames.Path).Value;
 
             if(String.IsNullOrEmpty(path))
             {
                 throw new SyncStateException("Empty path found in item list");
             }
 
-            string compareStateStr = item.RequireAttributeValue(XmlAttributeNames.CompareState);
-            CompareState compareState;
-            if(!Enum.TryParse<CompareState>(compareStateStr, true, out compareState))
+            var compareStateStr = item.RequireAttributeValue(XmlAttributeNames.CompareState);
+            if (!Enum.TryParse(compareStateStr, true, out CompareState compareState))
             {
                 throw new SyncStateException("Unknown type: " + compareStateStr);
             }
 
             var transferStateStr = item.RequireAttributeValue(XmlAttributeNames.TransferState);
-            TransferDirection transferDirection;
-            if(!Enum.TryParse<TransferDirection>(transferStateStr, out transferDirection))
+            if (!Enum.TryParse(transferStateStr, out TransferDirection transferDirection))
             {
                 throw new SyncStateException("Unknown type: " + transferStateStr);
             }
-            
+
             var locations = Flags.EnabledExtendedTransferState
                 ? item.Elements(XmlNames.Location).Select(xml => xml.RequireAttributeValue(XmlAttributeNames.Path))
                 : Enumerable.Empty<string>();
@@ -95,15 +76,9 @@ namespace ServerSync.Core.State
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(s_SyncStateSchema))
             {
                 var schemaSet = new XmlSchemaSet();
-
                 schemaSet.Add(null, XmlReader.Create(stream));
-
                 return schemaSet;
             }
         }
-
-
-        #endregion
-
     }
 }

@@ -1,5 +1,4 @@
-﻿using ServerSync.Core.Configuration;
-using ServerSync.Model.Configuration;
+﻿using ServerSync.Model.Configuration;
 
 namespace ServerSync.Core.Copy
 {
@@ -8,43 +7,21 @@ namespace ServerSync.Core.Copy
     /// </summary>
     abstract class IOAction : AbstractAction
     {
-
-        #region Fields
-
-        readonly SyncFolder m_SyncFolder;
-
-        #endregion
+        public SyncFolder SyncFolder { get; }
 
 
-        #region Properties
-
-        public SyncFolder SyncFolder { get { return m_SyncFolder; } }
-
-        #endregion
-
-
-        #region Constructor
-
-        public IOAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, SyncFolder syncFolder)
+        protected IOAction(bool isEnabled, ISyncConfiguration configuration, string inputFilterName, SyncFolder syncFolder)
             : base(isEnabled, configuration, inputFilterName)
         {
-            this.m_SyncFolder = syncFolder;
+            SyncFolder = syncFolder;
         }
 
-
-        #endregion
-
-
-        #region Protected Methods
 
         protected ISyncFolderDefinition GetSyncFolderDefinition()
         {
-            return this.SyncFolder == SyncFolder.Left ?
-                this.Configuration.Left :
-                this.Configuration.Right;
+            return SyncFolder != SyncFolder.Left 
+                ? Configuration.Right 
+                : Configuration.Left;
         }
-
-        #endregion
-
     }
 }
