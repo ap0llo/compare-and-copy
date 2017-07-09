@@ -1,5 +1,8 @@
+ServerSync
+==========
+
 Acknowledgments
-================
+---------------
 
 The ServerSync tool directly depends on several thrid-party libraries
 
