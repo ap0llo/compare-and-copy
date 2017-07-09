@@ -5,7 +5,7 @@
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 
-        <BaseOutputPath Condition=" '$(BaseOutputPath)' == '' ">$(MSBuildThisFileDirectory)..\build\</BaseOutputPath> 
+        <BaseOutputPath Condition=" '$(BaseOutputPath)' == '' ">$(RepositoryRootDirectory)build\</BaseOutputPath> 
         <OutputPath  Condition=" '$(OutputPath)' == '' ">$(BaseOutputPath)$(Configuration)\</OutputPath>
         <BaseIntermediateOutputPath Condition=" '$(BaseIntermediateOutputPath)' == '' ">$(BaseOutputPath)\intermediate\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 
