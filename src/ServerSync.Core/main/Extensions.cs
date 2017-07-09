@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using ByteSizeLib;
 
 
 namespace ServerSync.Core
@@ -59,9 +60,9 @@ namespace ServerSync.Core
 
 
 
-        public static ByteSize.ByteSize GetByteSize(this FileInfo fileInfo)
+        public static ByteSize GetByteSize(this FileInfo fileInfo)
         {
-            return ByteSize.ByteSize.FromBytes(fileInfo.Length);
+            return ByteSize.FromBytes(fileInfo.Length);
         }
 
     }

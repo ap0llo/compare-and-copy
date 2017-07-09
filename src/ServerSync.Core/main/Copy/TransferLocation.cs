@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ByteSizeLib;
 
 namespace ServerSync.Core.Copy
 {
@@ -14,7 +15,7 @@ namespace ServerSync.Core.Copy
 
         readonly string m_Name;
         readonly string m_Path;
-        readonly ByteSize.ByteSize? m_MaximumSize;
+        readonly ByteSize? m_MaximumSize;
 
         #endregion
 
@@ -24,14 +25,14 @@ namespace ServerSync.Core.Copy
 
         public string RootPath { get { return m_Path; } }
 
-        public ByteSize.ByteSize? MaximumSize { get { return m_MaximumSize; } }
+        public ByteSize? MaximumSize { get { return m_MaximumSize; } }
 
         #endregion
 
 
         #region Constructor
 
-        public TransferLocation(string name, string path, ByteSize.ByteSize? maximumSize)
+        public TransferLocation(string name, string path, ByteSize? maximumSize)
         {
 
             if(name == null)

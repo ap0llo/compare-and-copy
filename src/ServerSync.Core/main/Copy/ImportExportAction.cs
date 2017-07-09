@@ -1,6 +1,7 @@
 ﻿using ServerSync.Model.Configuration;
 using System.Collections.Generic;
 using System.IO;
+using ByteSizeLib;
 using NLog;
 using ServerSync.Model.State;
 
@@ -12,7 +13,7 @@ namespace ServerSync.Core.Copy
 	abstract class ImportExportAction : IOAction
 	{        
 	    readonly Logger m_Logger = LogManager.GetCurrentClassLogger();
-        readonly IDictionary<string, ByteSize.ByteSize> m_TransferLocationSizeCache = new Dictionary<string, ByteSize.ByteSize>();
+        readonly IDictionary<string, ByteSize> m_TransferLocationSizeCache = new Dictionary<string, ByteSize>();
 
      
            
@@ -109,7 +110,7 @@ namespace ServerSync.Core.Copy
         /// <summary>
         /// Checks whether copying a file of the specified size would exceed the maximum specified size for the transfer location
         /// </summary>
-        private bool CheckNextFileExceedsMaxTransferSize(ByteSize.ByteSize nextFileSize)
+        private bool CheckNextFileExceedsMaxTransferSize(ByteSize nextFileSize)
         {
             var transferLocation = Configuration.GetTransferLocation(this.TransferLocationName);
 
@@ -145,7 +146,7 @@ namespace ServerSync.Core.Copy
 
         }
 
-        private void UpdateTransferLocationSizeCache(ITransferLocation transferLocation, ByteSize.ByteSize fileSize)
+        private void UpdateTransferLocationSizeCache(ITransferLocation transferLocation, ByteSize fileSize)
         {
             if (AssumeExclusiveWriteAccess)
             {

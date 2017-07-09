@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
+using ByteSizeLib;
 using ServerSync.Model.Configuration;
 using ServerSync.Model.Filtering;
 using ServerSync.Model.Actions;
@@ -427,7 +428,7 @@ namespace ServerSync.Core.Configuration
             }
         }
 
-        ByteSize.ByteSize ReadByteSize(XElement byteSizeElement)
+        ByteSize ReadByteSize(XElement byteSizeElement)
         {
             var teraByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.TeraByte);
             var gigaByte = byteSizeElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.GigaByte);
@@ -436,11 +437,11 @@ namespace ServerSync.Core.Configuration
             var bytes = byteSizeElement.ReadLongAttributeValueOrDefault(XmlAttributeNames.Byte);
 
 
-            return ByteSize.ByteSize.FromBytes(bytes)
-                                    .AddKiloBytes(kiloByte)
-                                    .AddMegaBytes(megaByte)
-                                    .AddGigaBytes(gigaByte)
-                                    .AddTeraBytes(teraByte);
+            return ByteSize.FromBytes(bytes)
+                .AddKiloBytes(kiloByte)
+                .AddMegaBytes(megaByte)
+                .AddGigaBytes(gigaByte)
+                .AddTeraBytes(teraByte);
         }
 
         IAction ReadReadSyncStateAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResolver)
@@ -556,7 +557,7 @@ namespace ServerSync.Core.Configuration
 
         TransferLocation ReadTransferLocation(XElement transferLocationElement, IPathResolver pathResolver)
         {
-            ByteSize.ByteSize? maximumSize = null;
+            ByteSize? maximumSize = null;
             if (transferLocationElement.Element(XmlNames.MaximumSize) != null)
             {
                 maximumSize = ReadByteSize(transferLocationElement.Element(XmlNames.MaximumSize));

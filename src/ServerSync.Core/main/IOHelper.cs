@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ByteSizeLib;
 
 namespace ServerSync.Core
 {
@@ -21,7 +22,7 @@ namespace ServerSync.Core
             /// <summary>
             /// The size to be cached
             /// </summary>
-            public ByteSize.ByteSize Value { get; set; }
+            public ByteSize Value { get; set; }
 
             /// <summary>
             /// The time the cache entry was created
@@ -85,7 +86,7 @@ namespace ServerSync.Core
         /// <param name="path">The path of the directory to determine the size of</param>
         /// <param name="useCache">Enables or disables the cache. If set to false, the size of the directory will not be 
         /// looked up in the cache nor will the determined size be written to the cache </param>
-        public static ByteSize.ByteSize GetDirectorySize(string path, bool useCache = true)
+        public static ByteSize GetDirectorySize(string path, bool useCache = true)
         {
             //if enabled, look up the size of the directory in the cache
             var cacheKey = path.ToLower().Trim();
@@ -112,7 +113,7 @@ namespace ServerSync.Core
 
             //determine size of directory
 
-            var result = ByteSize.ByteSize.FromBytes(0);
+            var result = ByteSize.FromBytes(0);
 
             string[] files;            
             try

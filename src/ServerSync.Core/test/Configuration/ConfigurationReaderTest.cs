@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using ByteSizeLib;
 using Xunit;
 using Xunit.Extensions;
 using Xunit.Sdk;
@@ -66,7 +67,7 @@ namespace ServerSync.Core.Test.Configuration
 
             //Assert exactly one filter was read from the configuration
             Assert.Equal(1, config.Filters.Count());
-            Assert.DoesNotThrow(new Assert.ThrowsDelegate(() => config.GetFilter(s_Filter1)));
+            _ = config.GetFilter(s_Filter1);
 
             //test the filter
             var filter = config.GetFilter(s_Filter1);
@@ -171,7 +172,7 @@ namespace ServerSync.Core.Test.Configuration
 
             Assert.Equal(@"\\path\to\transfer\location", transferLocation.RootPath);
             Assert.NotNull(transferLocation.MaximumSize);
-            Assert.Equal(ByteSize.ByteSize.FromGigaBytes(20), transferLocation.MaximumSize.Value);
+            Assert.Equal(ByteSize.FromGigaBytes(20), transferLocation.MaximumSize.Value);
             Assert.False(String.IsNullOrWhiteSpace(transferLocation.Name));
         }
 
@@ -211,7 +212,7 @@ namespace ServerSync.Core.Test.Configuration
 
             Assert.Equal(@"\\path\to\transfer", transferLocation.RootPath);
             Assert.NotNull(transferLocation.MaximumSize);
-            Assert.Equal(ByteSize.ByteSize.FromGigaBytes(20), transferLocation.MaximumSize.Value);
+            Assert.Equal(ByteSize.FromGigaBytes(20), transferLocation.MaximumSize.Value);
             Assert.False(String.IsNullOrWhiteSpace(transferLocation.Name));
 
         }
@@ -278,7 +279,7 @@ namespace ServerSync.Core.Test.Configuration
             Assert.Equal(transferLocationName, transferLocation.Name);
             Assert.Equal(transferLocationPath, transferLocation.RootPath);
             Assert.NotNull(transferLocation.MaximumSize);
-            Assert.Equal(ByteSize.ByteSize.FromMegaBytes(23), transferLocation.MaximumSize);
+            Assert.Equal(ByteSize.FromMegaBytes(23), transferLocation.MaximumSize);
         }
 
 
@@ -305,7 +306,7 @@ namespace ServerSync.Core.Test.Configuration
             Assert.Equal(transferLocationName, transferLocation.Name);
             Assert.True(Path.Combine(dir, transferLocationPath).Equals(transferLocation.RootPath, StringComparison.InvariantCultureIgnoreCase));
             Assert.NotNull(transferLocation.MaximumSize);
-            Assert.Equal(ByteSize.ByteSize.FromMegaBytes(23), transferLocation.MaximumSize);
+            Assert.Equal(ByteSize.FromMegaBytes(23), transferLocation.MaximumSize);
         }
 
 

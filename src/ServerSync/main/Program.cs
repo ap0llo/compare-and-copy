@@ -7,7 +7,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using Microsoft.Framework.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace ServerSync
 {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ByteSizeLib;
 
 namespace ServerSync.Model.Configuration
 {
@@ -25,7 +26,7 @@ namespace ServerSync.Model.Configuration
         /// If set, specifies the maximum size all files in the transfer location combined.
         /// Comsumers of the tranfer location definition must not write anything to the transfer location if it would exceced this limit
         /// </summary>
-        ByteSize.ByteSize? MaximumSize { get; }
+        ByteSize? MaximumSize { get; }
 
     }
 }
