@@ -1,0 +1,10 @@
+<!-- 
+  Defines the 'Test' target that executes all test in a project 
+-->
+<Project>
+
+  <PropertyGroup>
+    <XunitVersion>2.2.0</XunitVersion>
+  </PropertyGroup>
+
+</Project>
