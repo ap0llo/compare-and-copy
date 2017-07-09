@@ -9,12 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerSync.Core", "ServerSy
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{A3153372-B768-4E26-A265-0DD77C842E8D}"
 	ProjectSection(SolutionItems) = preProject
-		Common\Common.properties = Common\Common.properties
-		Common\Common.targets = Common\Common.targets
-		Common\CommonAssemblyInfo.cs = Common\CommonAssemblyInfo.cs
-		Common\MSBuild.Community.Tasks.dll = Common\MSBuild.Community.Tasks.dll
-		Common\MSBuild.Community.Tasks.Targets = Common\MSBuild.Community.Tasks.Targets
-		Common\MSBuild.Community.Tasks.xsd = Common\MSBuild.Community.Tasks.xsd
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerSync.Model", "ServerSync.Model\main\ServerSync.Model.csproj", "{374C13C6-AA45-4D65-9F0C-228AD35EBB25}"

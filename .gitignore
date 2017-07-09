@@ -1,4 +1,4 @@
-﻿# Restored Nuget packages
+# Restored Nuget packages
 /src/packages
 
 # Visual studio preferences
@@ -14,3 +14,4 @@ x86/
 bld/
 [Bb]in/
 [Oo]bj/
+build/
