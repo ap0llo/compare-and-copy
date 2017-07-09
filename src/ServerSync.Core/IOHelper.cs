@@ -54,13 +54,15 @@ namespace ServerSync.Core
 
         public static void EnsureDirectoryExists(string path)
         {
-            if (!Directory.Exists(path))
+            if (path == null || Directory.Exists(path))
             {
-                var parent = Path.GetDirectoryName(path);
-                EnsureDirectoryExists(parent);
-
-                Directory.CreateDirectory(path);
+                return;
             }
+
+            var parent = Path.GetDirectoryName(path);
+            EnsureDirectoryExists(parent);
+            
+            Directory.CreateDirectory(path);
         }
 
         public static string GetRelativePath(string absolutePath, string relativeTo, bool relativeToIsDirectory)
