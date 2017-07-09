@@ -33,20 +33,7 @@ namespace ServerSync.Core
         static Dictionary<String, ByteSizeCacheEntry> s_GetDirectorySizeCache = new Dictionary<string, ByteSizeCacheEntry>();
 
         static readonly Logger s_Logger = LogManager.GetCurrentClassLogger();
-
-
-        public static void EnsureDirectoryExists(string path)
-        {
-            if (path == null || Directory.Exists(path))
-            {
-                return;
-            }
-
-            var parent = Path.GetDirectoryName(path);
-            EnsureDirectoryExists(parent);
-            
-            Directory.CreateDirectory(path);
-        }
+   
 
         public static string GetRelativePath(string absolutePath, string relativeTo, bool relativeToIsDirectory)
         {
@@ -157,7 +144,7 @@ namespace ServerSync.Core
             var tmpPath = destinationPath + ".tmp";
             try
             {
-                EnsureDirectoryExists(Path.GetDirectoryName(destinationPath));
+                Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
 
                 File.Copy(sourcePath, tmpPath, true);
 

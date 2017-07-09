@@ -17,7 +17,7 @@ namespace ServerSync.Core.State
             var document = new XDocument(fileList);
 
             var dir = Path.GetDirectoryName(fileName);
-            IOHelper.EnsureDirectoryExists(dir);
+            Directory.CreateDirectory(dir);
 
             document.Save(fileName);
         }

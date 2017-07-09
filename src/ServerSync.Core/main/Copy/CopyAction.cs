@@ -58,7 +58,6 @@ namespace ServerSync.Core.Copy
                 if(!(sourceInfo.Exists && targetInfo.Exists && sourceInfo.LastWriteTime == targetInfo.LastWriteTime
                     && sourceInfo.Length == targetInfo.Length))
                 {
-                    IOHelper.EnsureDirectoryExists(Path.GetDirectoryName(absTarget));
                     IOHelper.CopyFile(absSource, absTarget);
                 }                
 

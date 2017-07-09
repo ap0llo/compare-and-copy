@@ -140,7 +140,7 @@ namespace ServerSync.Core.Locking
                     return;
                 }
 
-                IOHelper.EnsureDirectoryExists(Path.GetDirectoryName(this.LockFilePath));
+                Directory.CreateDirectory(Path.GetDirectoryName(this.LockFilePath));
 
                 while (true)
                 {
