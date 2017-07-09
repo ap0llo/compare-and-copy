@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\Common\Common.properties" />
+  <PropertyGroup>
+    <ProjectGuid>{5BFF8047-2DCF-4CAC-A628-02A0FEDAE137}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ServerSync</RootNamespace>
+    <AssemblyName>ServerSync</AssemblyName>
+    <RestorePackages>true</RestorePackages>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Framework.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Framework.Configuration.1.0.0-beta8\lib\net45\Microsoft.Framework.Configuration.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Framework.Configuration.Abstractions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Framework.Configuration.Abstractions.1.0.0-beta8\lib\net45\Microsoft.Framework.Configuration.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Framework.Configuration.FileExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Framework.Configuration.FileExtensions.1.0.0-beta8\lib\net45\Microsoft.Framework.Configuration.FileExtensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Framework.Configuration.Ini, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Framework.Configuration.Ini.1.0.0-beta8\lib\net45\Microsoft.Framework.Configuration.Ini.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog">
+      <HintPath>..\..\packages\NLog.3.1.0.0\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ServerSync.Core\main\ServerSync.Core.csproj">
+      <Project>{660ffcf6-e738-4bf3-9959-81efd54f1ee4}</Project>
+      <Name>ServerSync.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ServerSync.Model\main\ServerSync.Model.csproj">
+      <Project>{374c13c6-aa45-4d65-9f0c-228ad35ebb25}</Project>
+      <Name>ServerSync.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <Import Project="$(MSBuildThisFileDirectory)..\..\Common\Common.targets" />
+  <PropertyGroup>
+    <PretzelInputDirectory>$(MSBuildThisFileDirectory)..\..\..\docs\</PretzelInputDirectory>
+    <PretzelOutputDirectory>$(OutputPath)docs\</PretzelOutputDirectory>
+    <PretzelTempDirectory>$(MSBuildThisFileDirectory)obj\docs\</PretzelTempDirectory>
+  </PropertyGroup>
+  <Import Project="$(MSBuildThisFileDirectory)..\..\common\Pretzel.targets" />
+  <ItemGroup>
+    <PackageFiles Include="$(OutputPath)*.dll" />
+    <PackageFiles Include="$(OutputPath)$(AssemblyName).exe" />
+    <PackageFiles Include="$(OutputPath)NLog.config" />
+    <PackageFiles Include="$(PretzelOutputDirectory)*.*" />
+  </ItemGroup>
+  <!--Set output parameters for the PackageApplication target (Output name should be ServerSync-VERSION-MERCURIALVERSION)-->
+  <Target Name="_CreatePackageFileName" DependsOnTargets="GetMercurialVersion;Build">
+    <!--Get the version of the assembly that was built-->
+    <GetAssemblyIdentity AssemblyFiles="$(OutputPath)$(AssemblyName).exe">
+      <Output TaskParameter="Assemblies" ItemName="ServerSyncAssemblyIdentities" />
+    </GetAssemblyIdentity>
+    <!--Set name of package file-->
+    <CreateProperty Value="$(AssemblyName)-%(ServerSyncAssemblyIdentities.Version)">
+      <Output TaskParameter="Value" PropertyName="PackageFileName" />
+    </CreateProperty>
+    <!--If we're building debug, append the id of the mercurial changeset to the package filename-->
+    <CreateProperty Condition="'$(Configuration)' == 'Debug'" Value="$(PackageFileName)-$(MercurialVersion)">
+      <Output TaskParameter="Value" PropertyName="PackageFileName" />
+    </CreateProperty>
+  </Target>
+  <!--Make sure the _CreatePackageFileName target is executed before the package file is created-->
+  <PropertyGroup>
+    <PackageApplicationDependsOn>PretzelBake;_CreatePackageFileName;$(PackageApplicationDependsOn)</PackageApplicationDependsOn>
+  </PropertyGroup>
+  <Import Project="$(MSBuildThisFileDirectory)..\..\common\Packaging.targets" />
+</Project>

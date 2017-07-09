@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<syncConfiguration xmlns="http://grynwald.net/schemas/2014/ServerSync/v1/Configuration/">
+
+
+	<updateTransferState enable="true">
+		<transferLocation transferLocationName="foo" transferLocationSubPath="bar" />
+		<interimLocation path="\\foo\bar"/>
+	</updateTransferState>
+
+
+</syncConfiguration>
