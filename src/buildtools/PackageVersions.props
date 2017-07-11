@@ -5,6 +5,8 @@
 
   <PropertyGroup>
     <XunitVersion>2.2.0</XunitVersion>
+    <SquirrelVersion>1.7.5</SquirrelVersion>
+    <NugetVersion>4.1.0</NugetVersion>
   </PropertyGroup>
 
 </Project>

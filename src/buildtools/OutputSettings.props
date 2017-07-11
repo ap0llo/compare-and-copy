@@ -6,8 +6,9 @@
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 
         <BaseOutputPath Condition=" '$(BaseOutputPath)' == '' ">$(RepositoryRootDirectory)build\</BaseOutputPath> 
-        <OutputPath  Condition=" '$(OutputPath)' == '' ">$(BaseOutputPath)$(Configuration)\</OutputPath>
+        <OutputPath  Condition=" '$(OutputPath)' == '' ">$(BaseOutputPath)$(Configuration)\$(MSBuildProjectName)\</OutputPath>
         <BaseIntermediateOutputPath Condition=" '$(BaseIntermediateOutputPath)' == '' ">$(BaseOutputPath)\intermediate\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+        <SetupOutputPath>$(BaseOutputPath)$(Configuration)\Setup\</SetupOutputPath>
 
         <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
 
