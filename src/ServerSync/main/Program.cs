@@ -1,13 +1,13 @@
 ﻿using NLog;
 using ServerSync.Core;
 using ServerSync.Core.Configuration;
-using ServerSync.Core.State;
 using ServerSync.Model.Configuration;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
+using ServerSync.Installation;
 
 namespace ServerSync
 {
@@ -22,55 +22,85 @@ namespace ServerSync
         {
             AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
 
+            // handle installation events in case the application was launched by squirrel after installation
+            Installer.HandleInstallationEvents();
+
             //Display Version Information
-            WriteVersionInfo();            
+            WriteVersionInfo();
+
+
+            // initialize updater            
+            var updater = new Updater(Configuration.Current.UpdateOptions);
+            updater.Start();
+
 
             LoadFlags();
 
+
+            var exitCode = 0; 
+
             //Check arguments
-            if(args.Length < 1)
+            if (args.Length < 1)
             {
                 s_Logger.Error("You need to specify at least one Sync Configuration file");
-                return 1;
+                exitCode = 1;
             }
-
-            var success = true;
-
-            //Execute all configuration files specified via commandline
-            foreach (var arg in args)
+            else
             {
-                var stopWatch = new Stopwatch();
-                stopWatch.Start();
-
-                //Load file
-                var configFilePath = Path.GetFullPath(arg);
-                if (!File.Exists(configFilePath))
+                //Execute all configuration files specified via commandline
+                foreach (var arg in args)
                 {
-                    s_Logger.Error("Could not find configuration file at '{0}'", configFilePath);
-                    return 2;
-                }
+                    var stopWatch = new Stopwatch();
+                    stopWatch.Start();
 
-                ISyncConfiguration config;
-                try
-                {
-                    config = new ConfigurationReader().ReadConfiguration(configFilePath);
-                }
-                catch(ConfigurationException ex)
-                {
-                    s_Logger.Error(ex, "Error reading configuration");
-                    return 1;
-                }
+                    //Load file
+                    var configFilePath = Path.GetFullPath(arg);
+                    if (!File.Exists(configFilePath))
+                    {
+                        s_Logger.Error("Could not find configuration file at '{0}'", configFilePath);                    
+                        exitCode = 2;
+                        break;
+                    }
+
+                    ISyncConfiguration config;
+                    try
+                    {
+                        config = new ConfigurationReader().ReadConfiguration(configFilePath);
+                    }
+                    catch(ConfigurationException ex)
+                    {
+                        s_Logger.Error(ex, "Error reading configuration");
+                        exitCode = 1;
+                        break;
+                    }
 
 
-                var jobRunner = new JobRunner(config);
-                success &= jobRunner.Run();
+                    var jobRunner = new JobRunner(config);
+                    var success = jobRunner.Run();
+                    if (!success)
+                    {
+                        exitCode = 1;
+                    }
                 
-                stopWatch.Stop();
+                    stopWatch.Stop();
 
-                s_Logger.Info("Elapsed Time : " + stopWatch.Elapsed.ToString());
+                    s_Logger.Info("Elapsed Time : " + stopWatch.Elapsed.ToString());
+                }
+                
             }
-           
-            return success ? 0 : 1;
+            
+            // wait for completion of updater
+            if (updater.Status == UpdaterStatus.Running)
+            {
+                s_Logger.Info("Application update is in progress, awaiting completion");
+            }
+            updater.Stop();
+            if (updater.Status == UpdaterStatus.Failed)
+            {
+                s_Logger.Warn($"Update failed: \n\t{updater.Error.Replace("\n", "\n\t")}");                
+            }
+
+            return exitCode;
         }
 
         
