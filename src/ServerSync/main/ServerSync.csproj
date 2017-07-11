@@ -19,8 +19,7 @@
 
   <!-- Nuget depdendencies -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(PackageVersion-Microsoft-Extensions-Configuration)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="$(PackageVersion-Microsoft-Extensions-Configuration)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(PackageVersion-Microsoft-Extensions-Configuration)" />    
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(PackageVersion-Microsoft-Extensions-Configuration)" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="$(PackageVersion-Microsoft-Extensions-Configuration)" />
     <PackageReference Include="NLog" Version="$(PackageVersion-NLog)" />
@@ -37,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration.cs" />
+    <Compile Include="FlagsOptions.cs" />
     <Compile Include="Installation\ApplicationInfo.cs" />
     <Compile Include="Installation\IInstallerStep.cs" />
     <Compile Include="Installation\Installer.cs" />

@@ -12,9 +12,7 @@ using ServerSync.Installation;
 namespace ServerSync
 {
     class Program
-    {
-
-        const string s_ServerSyncIniFileName = "ServerSync.ini";
+    {        
         static readonly Logger s_Logger = LogManager.GetCurrentClassLogger();
         
 
@@ -29,13 +27,11 @@ namespace ServerSync
             WriteVersionInfo();
 
 
-            // initialize updater            
+            // initialize updater                        
             var updater = new Updater(Configuration.Current.UpdateOptions);
             updater.Start();
 
-
             LoadFlags();
-
 
             var exitCode = 0; 
 
@@ -115,24 +111,9 @@ namespace ServerSync
 
         static void LoadFlags()
         {
-            var directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var fileName = Path.Combine(directory, s_ServerSyncIniFileName);
-
-            if (File.Exists(fileName))
-            {                
-                var config = new ConfigurationBuilder()
-                    .AddIniFile(fileName)
-                    .Build();
-
-                Flags.EnabledExtendedTransferState = GetFlag(config, nameof(Flags.EnabledExtendedTransferState));                
-            }
+            Flags.EnabledExtendedTransferState = Configuration.Current.FlagsOptions.EnabledExtendedTransferState;
         }
 
-        static bool GetFlag(IConfiguration configuration, string flagName)
-        {
-            var strValue = configuration[$"Flags:{flagName}"];
-            return strValue != null && bool.Parse(strValue);
-        }
 
         static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {

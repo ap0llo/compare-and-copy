@@ -11,13 +11,17 @@ namespace ServerSync
         public const string ConfigFileName = "config.json";
         public const string DebugConfigFileName = "config.Debug.json";
         const string s_UpdateOptionsSectionName = "Update";
+        const string s_FlagsOptionsSectionName = "Flags";
 
 
         public UpdateOptions UpdateOptions { get; }
 
+        public FlagsOptions FlagsOptions { get; }
+        
 
-        private Configuration([NotNull] UpdateOptions updateOptions)
+        private Configuration([NotNull] UpdateOptions updateOptions, [NotNull] FlagsOptions flagsOptions)
         {
+            FlagsOptions = flagsOptions ?? throw new ArgumentNullException(nameof(flagsOptions));
             UpdateOptions = updateOptions ?? throw new ArgumentNullException(nameof(updateOptions));
         }
 
@@ -32,8 +36,9 @@ namespace ServerSync
                     .Build();
 
                 var updateOptions = GetSection<UpdateOptions>(root, s_UpdateOptionsSectionName);
+                var flagsOptions = GetSection<FlagsOptions>(root, s_FlagsOptionsSectionName);
 
-                return new Configuration(updateOptions);
+                return new Configuration(updateOptions, flagsOptions);
             }
         }
 
