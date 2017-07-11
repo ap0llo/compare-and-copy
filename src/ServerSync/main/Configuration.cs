@@ -14,41 +14,41 @@ namespace ServerSync
         const string s_FlagsOptionsSectionName = "Flags";
 
 
-        public UpdateOptions UpdateOptions { get; }
+        public static Configuration Current { get; }
 
-        public FlagsOptions FlagsOptions { get; }
+
+        static Configuration()
+        {
+            var root = new ConfigurationBuilder()
+                .AddJsonFile(Path.Combine(ApplicationInfo.RootDirectory, ConfigFileName), true)
+                .AddJsonFile(Path.Combine(ApplicationInfo.RootDirectory, DebugConfigFileName), true)
+                .Build();
+
+            var updateOptions = GetSection<UpdateOptions>(root, s_UpdateOptionsSectionName);
+            var flagsOptions = GetSection<FlagsOptions>(root, s_FlagsOptionsSectionName);
+
+            Current = new Configuration(updateOptions, flagsOptions);
+        }
+
         
-
-        private Configuration([NotNull] UpdateOptions updateOptions, [NotNull] FlagsOptions flagsOptions)
-        {
-            FlagsOptions = flagsOptions ?? throw new ArgumentNullException(nameof(flagsOptions));
-            UpdateOptions = updateOptions ?? throw new ArgumentNullException(nameof(updateOptions));
-        }
-
-
-        public static Configuration Current
-        {
-            get
-            {
-                var root = new ConfigurationBuilder()
-                    .AddJsonFile(Path.Combine(ApplicationInfo.RootDirectory, ConfigFileName), true)
-                    .AddJsonFile(Path.Combine(ApplicationInfo.RootDirectory, DebugConfigFileName), true)
-                    .Build();
-
-                var updateOptions = GetSection<UpdateOptions>(root, s_UpdateOptionsSectionName);
-                var flagsOptions = GetSection<FlagsOptions>(root, s_FlagsOptionsSectionName);
-
-                return new Configuration(updateOptions, flagsOptions);
-            }
-        }
-
-
         static T GetSection<T>(IConfigurationRoot configurationRoot, string sectionName) where T : class, new()
         {
             var section = configurationRoot.GetSection(sectionName).Get<T>();
             section = section ?? new T();
 
             return section;
+        }
+        
+
+        public UpdateOptions UpdateOptions { get; }
+
+        public FlagsOptions FlagsOptions { get; }
+
+
+        private Configuration([NotNull] UpdateOptions updateOptions, [NotNull] FlagsOptions flagsOptions)
+        {
+            FlagsOptions = flagsOptions ?? throw new ArgumentNullException(nameof(flagsOptions));
+            UpdateOptions = updateOptions ?? throw new ArgumentNullException(nameof(updateOptions));
         }
     }
 }
