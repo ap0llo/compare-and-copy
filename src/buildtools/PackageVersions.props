@@ -4,9 +4,15 @@
 <Project>
 
   <PropertyGroup>
-    <XunitVersion>2.2.0</XunitVersion>
-    <SquirrelVersion>1.7.5</SquirrelVersion>
-    <NugetVersion>4.1.0</NugetVersion>
+    <PackageVersion-xunit>2.2.0</PackageVersion-xunit>
+    <PackageVersion-Squirrel-Windows>1.7.5</PackageVersion-Squirrel-Windows>
+    <PackageVersion-Nuget-CommandLine>4.1.0</PackageVersion-Nuget-CommandLine>
+    <PackageVersion-Microsoft-Extensions-Configuration>1.1.2</PackageVersion-Microsoft-Extensions-Configuration>
+    <PackageVersion-NLog>4.4.11</PackageVersion-NLog>
+    <PackageVersion-ByteSize>1.3.0</PackageVersion-ByteSize>
+    <PackageVersion-Microscope>1.2.3</PackageVersion-Microscope>
+    <PackageVersion-System-Collections-Immutable>1.3.1</PackageVersion-System-Collections-Immutable>
+    <PackageVersion-Moq>4.7.63</PackageVersion-Moq>   
   </PropertyGroup>
 
 </Project>

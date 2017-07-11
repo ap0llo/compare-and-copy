@@ -18,14 +18,15 @@
     <PackageVersion>1.6.0</PackageVersion>   
   </PropertyGroup>
   
-
+  <!-- Nuget depdendencies -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="1.1.2" />
-    <PackageReference Include="NLog" Version="4.4.11" />
-    <PackageReference Include="Nuget.CommandLine" Version="$(NugetVersion)" />
-    <PackageReference Include="Squirrel.Windows" Version="$(SquirrelVersion)" /> 
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(PackageVersion-Microsoft-Extensions-Configuration)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="$(PackageVersion-Microsoft-Extensions-Configuration)" />
+    <PackageReference Include="NLog" Version="$(PackageVersion-NLog)" />
+    <PackageReference Include="Nuget.CommandLine" Version="$(PackageVersion-Nuget-CommandLine)" />
+    <PackageReference Include="Squirrel.Windows" Version="$(PackageVersion-Squirrel-Windows)" /> 
   </ItemGroup>
+
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />

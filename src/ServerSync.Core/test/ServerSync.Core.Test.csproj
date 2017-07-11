@@ -10,11 +10,11 @@
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ByteSize" Version="1.3.0" />
-    <PackageReference Include="Moq" Version="4.7.63" />
-    <PackageReference Include="xunit" Version="$(XunitVersion)" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="$(XunitVersion)" />
-    <PackageReference Include="xunit.runner.console" Version="$(XunitVersion)" />
+    <PackageReference Include="ByteSize" Version="$(PackageVersion-ByteSize)" />
+    <PackageReference Include="Moq" Version="$(PackageVersion-Moq)" />
+    <PackageReference Include="xunit" Version="$(PackageVersion-xunit)" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="$(PackageVersion-xunit)" />
+    <PackageReference Include="xunit.runner.console" Version="$(PackageVersion-xunit)" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

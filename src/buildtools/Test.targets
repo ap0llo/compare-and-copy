@@ -3,11 +3,16 @@
 -->
 <Project>
 
+
+  <!--
+    TODO: Remove logic to determine xunit path once xunit 2.3 is released
+    and use variable defined in the build props that are part of the xunit package
+  -->
   <Target Name="Test" Condition="$(IsTestProject)">  
     <Message Text="Running Tests for $(AssemblyName)" />	      
-    <Error Text="Cannot run tests, XunitVersion is not set"
-            Condition="'$(XunitVersion)' == ''" />              
-    <Exec Command="$(NuGetPackageRoot)xunit.runner.console\$(XunitVersion)\tools\xunit.console.exe &quot;$(OutputPath)$(AssemblyName).dll&quot;"  />	
+    <Error Text="Cannot run tests, PackageVersion-xunit is not set"
+            Condition="'$(PackageVersion-xunit)' == ''" />              
+    <Exec Command="$(NuGetPackageRoot)xunit.runner.console\$(PackageVersion-xunit)\tools\xunit.console.exe &quot;$(OutputPath)$(AssemblyName).dll&quot;"  />	
   </Target>
 
 </Project>

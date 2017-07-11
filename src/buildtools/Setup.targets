@@ -53,11 +53,11 @@
             DependsOnTargets="_CreateNuspec">
 
         <PropertyGroup>
-            <_NugetPath>$(NuGetPackageRoot)Nuget.CommandLine\$(NugetVersion)\tools\nuget.exe</_NugetPath>
+            <_NugetPath>$(NuGetPackageRoot)Nuget.CommandLine\$(PackageVersion-Nuget-CommandLine)\tools\nuget.exe</_NugetPath>
         </PropertyGroup>
 
-        <Error Text="Nuget version could not be determined. Make sure Nuget.Commandline package is installed and the 'NugetVersion' variable ist set"
-               Condition=" '$(NugetVersion)' == ''"/>        
+        <Error Text="Nuget version could not be determined. Make sure Nuget.Commandline package is installed and the 'PackageVersion-Nuget-CommandLine' variable ist set"
+               Condition=" '$(PackageVersion-Nuget-CommandLine)' == ''"/>        
         <Error Text="nuget.exe could not be found. Make sure the 'Nuget.Commandline' package is installed. Path: '$(_NugetPath)'"
                Condition="!Exists('$(_NugetPath)')" />        
 
@@ -70,11 +70,11 @@
     <Target Name="_RunSquirrel">
 
         <PropertyGroup>
-            <_SquirrelPath>$(NuGetPackageRoot)Squirrel.Windows\$(SquirrelVersion)\tools\Squirrel.exe</_SquirrelPath>
+            <_SquirrelPath>$(NuGetPackageRoot)Squirrel.Windows\$(PackageVersion-Squirrel-Windows)\tools\Squirrel.exe</_SquirrelPath>
         </PropertyGroup>
 
-        <Error Text="Squirrel version could not be determined. Make sure Squirrel.Windows is installed and teh SquirrelVersion variable ist set"
-               Condition=" '$(SquirrelVersion)' == ''"/>        
+        <Error Text="Squirrel version could not be determined. Make sure Squirrel.Windows is installed and the PackageVersion-Squirrel-Windows variable ist set"
+               Condition=" '$(PackageVersion-Squirrel-Windows)' == ''"/>        
         <Error Text="Squirrel.exe could not be found. Make sure Squirrel.Windows is installed. Path: '$(_SquirrelPath)'"
                Condition="!Exists('$(_SquirrelPath)')" />        
 
