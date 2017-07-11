@@ -12,5 +12,4 @@ using System.Runtime.InteropServices;
 [assembly: Guid("ccb42adc-6315-4aee-afac-b851053eaa97")]
 
 
-[assembly: InternalsVisibleTo("ServerSync.Core.Test")]
 
