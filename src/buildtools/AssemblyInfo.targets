@@ -1,0 +1,32 @@
+<Project>
+	
+  
+  <Target Name="GenerateAssemblyInfo" AfterTargets="PrepareForBuild">
+		<PropertyGroup>
+			<GeneratedFilePath>$(BaseIntermediateOutputPath)$(Configuration)/$(AssemblyName).g.cs</GeneratedFilePath>
+		</PropertyGroup>
+		
+		<ItemGroup>
+			<AssemblyInfoLine Include="[assembly: System.Reflection.AssemblyVersion(&quot;$(AssemblyVersion)&quot;)]" />
+			<AssemblyInfoLine Include="[assembly: System.Reflection.AssemblyFileVersion(&quot;$(FileVersion)&quot;)]" />
+			<AssemblyInfoLine Include="[assembly: System.Reflection.AssemblyInformationalVersion(&quot;$(InformationalVersion)&quot;)]" />
+		</ItemGroup>
+		
+		<!-- For non-test projects, automatically generate a assembly info file that makes the internal members visible to the corresponding test project -->
+		<ItemGroup>
+			<AssemblyInfoLine Include="[assembly:System.Runtime.CompilerServices.InternalsVisibleTo(&quot;$(AssemblyName).Test&quot;)]" />
+			<AssemblyInfoLine Include="[assembly:System.Runtime.CompilerServices.InternalsVisibleTo(&quot;$(AssemblyName).TestHelpers&quot;)]" />
+		</ItemGroup>
+		
+		<WriteLinesToFile File="$(GeneratedFilePath)"  
+						  Lines="@(AssemblyInfoLine)" 
+						  Overwrite="true"  
+						  Encoding="Unicode" 
+						  Condition="!Exists('$(GeneratedFilePath)')"/>  
+			
+		<CreateItem Include="$(GeneratedFilePath)">
+			<Output TaskParameter="Include" ItemName="Compile" /> 
+		</CreateItem>		
+  </Target>
+  
+</Project>

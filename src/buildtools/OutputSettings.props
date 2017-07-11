@@ -11,6 +11,16 @@
         <SetupOutputPath>$(BaseOutputPath)$(Configuration)\Setup\</SetupOutputPath>
 
         <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+        
+        <BaseVersion Condition=" '$(BaseVersion)' == ''">1.7.0</BaseVersion>
+        <BuildNumber Condition=" '$(BuildNumber)' == ''">0</BuildNumber>
+        
+        <!-- Build version info -->    
+        <AssemblyVersion>$(BaseVersion).$(BuildNumber)</AssemblyVersion>
+        <FileVersion>$(AssemblyVersion)</FileVersion>
+        <!-- nuget package uses semantic versioning => do not add build number -->        
+        <PackageVersion>$(BaseVersion)</PackageVersion>   
+        <InformationalVersion>$(PackageVersion)</InformationalVersion> 	
 
     </PropertyGroup>
 

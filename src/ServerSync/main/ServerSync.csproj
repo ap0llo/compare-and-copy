@@ -14,8 +14,7 @@
   <PropertyGroup>
     <PackageId>$(MsBuildProjectName)</PackageId>
     <Authors>Andreas Gruenwald</Authors>
-    <Description>$(MsBuildProjectName)</Description>     
-    <PackageVersion>1.6.0</PackageVersion>   
+    <Description>$(MsBuildProjectName)</Description>    
   </PropertyGroup>
   
   <!-- Nuget depdendencies -->
