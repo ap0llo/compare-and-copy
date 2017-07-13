@@ -26,6 +26,7 @@
     <PackageReference Include="Nuget.CommandLine" Version="$(PackageVersion-Nuget-CommandLine)" />
     <PackageReference Include="Squirrel.Windows" Version="$(PackageVersion-Squirrel-Windows)" />
     <PackageReference Include="JetBrains.Annotations" Version="$(PackageVersion-JetBrains-Annotations)" />
+    <PackageReference Include="DeltaCompressionDotNet" Version="$(PackageVersion-DeltaCompressionDotNet)" />
   </ItemGroup>
 
   <ItemGroup>
