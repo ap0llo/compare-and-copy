@@ -61,7 +61,7 @@
         <Error Text="nuget.exe could not be found. Make sure the 'Nuget.Commandline' package is installed. Path: '$(_NugetPath)'"
                Condition="!Exists('$(_NugetPath)')" />        
 
-        <Exec Command="&quot;$(_NugetPath)&quot; pack &quot;$(SetupTmpPath)$(_SetupPackageIdAndVersion).nuspec&quot;"
+        <Exec Command="&quot;$(_NugetPath)&quot; pack $(SetupTmpPath)$(_SetupPackageIdAndVersion).nuspec"
               WorkingDirectory="$(SetupTmpPath)" />
     </Target>
 
@@ -79,7 +79,7 @@
                Condition="!Exists('$(_SquirrelPath)')" />        
 
         <MakeDir Directories="$(SetupOutputPath)" />
-        <Exec Command="&quot;$(_SquirrelPath)&quot; --releasify &quot;$(SetupTmpPath)$(_SetupPackageIdAndVersion).nupkg&quot; --no-msi --no-delta &quot;--releaseDir=$(SetupOutputPath)&quot;" 
+        <Exec Command="$(_SquirrelPath) --releasify $(SetupTmpPath)$(_SetupPackageIdAndVersion).nupkg --no-msi --no-delta --releaseDir=$(SetupOutputPath)" 
               WorkingDirectory="$(SetupTmpPath)" />
     </Target>
    
