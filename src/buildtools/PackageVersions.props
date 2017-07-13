@@ -5,7 +5,7 @@
 
   <PropertyGroup>
     <PackageVersion-xunit>2.2.0</PackageVersion-xunit>
-    <PackageVersion-Squirrel-Windows>1.7.5</PackageVersion-Squirrel-Windows>
+    <PackageVersion-Squirrel-Windows>1.7.7</PackageVersion-Squirrel-Windows>
     <PackageVersion-Nuget-CommandLine>4.1.0</PackageVersion-Nuget-CommandLine>
     <PackageVersion-Microsoft-Extensions-Configuration>1.1.2</PackageVersion-Microsoft-Extensions-Configuration>
     <PackageVersion-NLog>4.4.11</PackageVersion-NLog>
