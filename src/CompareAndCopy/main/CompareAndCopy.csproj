@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <ProjectGuid>{5BFF8047-2DCF-4CAC-A628-02A0FEDAE137}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>$(MsBuildProjectName)</RootNamespace>
+    <AssemblyName>$(MsBuildProjectName)</AssemblyName>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <!-- Nuget package properties -->
+  <PropertyGroup>
+    <Authors>Andreas Gruenwald</Authors>
+  </PropertyGroup>
+  <!-- Nuget depdendencies -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(PackageVersion-Microsoft-Extensions-Configuration)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(PackageVersion-Microsoft-Extensions-Configuration)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="$(PackageVersion-Microsoft-Extensions-Configuration)" />
+    <PackageReference Include="NLog" Version="$(PackageVersion-NLog)" />
+    <PackageReference Include="Nuget.CommandLine" Version="$(PackageVersion-Nuget-CommandLine)" />
+    <PackageReference Include="Squirrel.Windows" Version="$(PackageVersion-Squirrel-Windows)" />
+    <PackageReference Include="JetBrains.Annotations" Version="$(PackageVersion-JetBrains-Annotations)" />
+    <PackageReference Include="DeltaCompressionDotNet" Version="$(PackageVersion-DeltaCompressionDotNet)" />
+    <PackageReference Include="Grynwald.Utilities.Squirrel.Build" Version="1.0.15" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration.cs" />
+    <Compile Include="FlagsOptions.cs" />
+    <Compile Include="Installation\ApplicationInfo.cs" />
+    <Compile Include="Installation\IInstallerStep.cs" />
+    <Compile Include="Installation\Installer.cs" />
+    <Compile Include="Installation\UpdateOptions.cs" />
+    <Compile Include="Installation\Updater.cs" />
+    <Compile Include="Installation\UpdaterStatus.cs" />
+    <Compile Include="Installation\UpdateSource.cs" />
+    <Compile Include="Installation\_Steps\CompositeInstallerStep.cs" />
+    <Compile Include="Installation\_Steps\ConfigFileInstallerStep.cs" />
+    <Compile Include="Installation\_Steps\ExceptionLoggingInstallerStep.cs" />
+    <Compile Include="Installation\_Steps\InstallationFlagFileInstallerStep.cs" />
+    <Compile Include="Installation\_Steps\LauncherFileInstallerStep.cs" />
+    <Compile Include="Installation\_Steps\PathVariableInstallerStep.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="config.Debug.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <EmbeddedResource Include="config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CompareAndCopy.Core\main\CompareAndCopy.Core.csproj">
+      <Project>{660ffcf6-e738-4bf3-9959-81efd54f1ee4}</Project>
+      <Name>CompareAndCopy.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CompareAndCopy.Model\main\CompareAndCopy.Model.csproj">
+      <Project>{374c13c6-aa45-4d65-9f0c-228ad35ebb25}</Project>
+      <Name>CompareAndCopy.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="DetermineSetupInputFiles">
+    <ItemGroup>
+      <SetupInputFiles Include="$(OutputPath)**\*.dll" />
+      <SetupInputFiles Remove="$(OutDir)JetBrains.Annotations.dll" />
+      <SetupInputFiles Include="$(OutDir)$(AssemblyName).exe" />
+      <SetupInputFiles Include="$(OutDir)$(AssemblyName).exe.config" />
+      <SetupInputFiles Include="$(OutDir)NLog.config" />
+    </ItemGroup>
+  </Target>
+</Project>

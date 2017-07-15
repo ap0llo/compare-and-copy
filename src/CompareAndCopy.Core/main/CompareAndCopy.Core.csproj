@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <ProjectGuid>{660FFCF6-E738-4BF3-9959-81EFD54F1EE4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>CompareAndCopy.Core</RootNamespace>
+    <AssemblyName>CompareAndCopy.Core</AssemblyName>
+    <RestorePackages>true</RestorePackages>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ByteSize" Version="$(PackageVersion-ByteSize)" />
+    <PackageReference Include="Microscope" Version="$(PackageVersion-Microscope)" />
+    <PackageReference Include="NLog" Version="$(PackageVersion-NLog)" />
+    <PackageReference Include="System.Collections.Immutable" Version="$(PackageVersion-System-Collections-Immutable)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AbstractAction.cs" />
+    <Compile Include="Compare\CompareAction.cs" />
+    <Compile Include="Configuration\ConfigurationException.cs" />
+    <Compile Include="Configuration\Migration\ConfigurationMigrator.cs" />
+    <Compile Include="Configuration\Migration\IConfigurationMigrator.cs" />
+    <Compile Include="Configuration\Migration\MigrationException.cs" />
+    <Compile Include="Configuration\TransferLocationPath.cs" />
+    <Compile Include="Copy\ExportDirectoryAction.cs" />
+    <Compile Include="Copy\TransferLocation.cs" />
+    <Compile Include="Filters\Model\Filter.cs" />
+    <Compile Include="Filters\Visitor\ExpressionEvaluationVisitor.cs" />
+    <Compile Include="InvalidPathException.cs" />
+    <Compile Include="JobExecutionException.cs" />
+    <Compile Include="JobRunner.cs" />
+    <Compile Include="Locking\AcquireLockAction.cs" />
+    <Compile Include="Locking\FileLock.cs" />
+    <Compile Include="Locking\FileLockFactory.cs" />
+    <Compile Include="Locking\LockAction.cs" />
+    <Compile Include="Locking\ReleaseLockAction.cs" />
+    <Compile Include="PathResolving\PathResolver.cs" />
+    <Compile Include="RunSyncJob\RunSyncJobAction.cs" />
+    <Compile Include="SleepAction.cs" />
+    <Compile Include="State\UpdateTransferStateAction.cs" />
+    <Compile Include="XElementExtensions.cs" />
+    <Compile Include="Configuration\XmlAttributeNames.cs" />
+    <Compile Include="Configuration\XmlNames.cs" />
+    <Compile Include="Copy\CopyAction.cs" />
+    <Compile Include="Copy\ImportExportAction.cs" />
+    <Compile Include="Copy\ImportAction.cs" />
+    <Compile Include="Copy\IOAction.cs" />
+    <Compile Include="IOHelper.cs" />
+    <Compile Include="Filters\ApplyFilterAction.cs" />
+    <Compile Include="State\FileItem.cs" />
+    <Compile Include="State\WriteSyncStateAction.cs" />
+    <Compile Include="State\ReadSyncStateAction.cs" />
+    <Compile Include="State\SyncStateException.cs" />
+    <Compile Include="State\SyncStateReader.cs" />
+    <Compile Include="State\SyncStateWriter.cs" />
+    <Compile Include="State\SyncState.cs" />
+    <Compile Include="State\XmlAttributeNames.cs" />
+    <Compile Include="State\XmlNames.cs" />
+    <Compile Include="Configuration\ConfigurationReader.cs" />
+    <Compile Include="Compare\FolderComparer.cs" />
+    <Compile Include="Filters\Model\LegacyFilter.cs" />
+    <Compile Include="Copy\ExportAction.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Configuration\SyncConfiguration.cs" />
+    <Compile Include="Configuration\SyncFolderDefinition.cs" />
+    <Compile Include="Extensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\ConfigurationSchema.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\ConfigurationSchema_Strict.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="State\SyncStateSchema.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CompareAndCopy.Model\main\CompareAndCopy.Model.csproj">
+      <Project>{374c13c6-aa45-4d65-9f0c-228ad35ebb25}</Project>
+      <Name>CompareAndCopy.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

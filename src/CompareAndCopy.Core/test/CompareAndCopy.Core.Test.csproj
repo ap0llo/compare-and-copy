@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <ProjectGuid>{543E1DD9-40E3-45F5-A5D6-0927AEBDD2F3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>CompareAndCopy.Core.Test</RootNamespace>
+    <AssemblyName>CompareAndCopy.Core.Test</AssemblyName>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ByteSize" Version="$(PackageVersion-ByteSize)" />
+    <PackageReference Include="Moq" Version="$(PackageVersion-Moq)" />
+    <PackageReference Include="xunit" Version="$(PackageVersion-xunit)" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="$(PackageVersion-xunit)" />
+    <PackageReference Include="xunit.runner.console" Version="$(PackageVersion-xunit)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\ConfigurationReaderTest.cs" />
+    <Compile Include="IOHelperTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="State\FileItemTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\TestFilter1.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\main\CompareAndCopy.Core.csproj">
+      <Project>{660ffcf6-e738-4bf3-9959-81efd54f1ee4}</Project>
+      <Name>CompareAndCopy.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CompareAndCopy.Model\main\CompareAndCopy.Model.csproj">
+      <Project>{374c13c6-aa45-4d65-9f0c-228ad35ebb25}</Project>
+      <Name>CompareAndCopy.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\ImplicitTransferLocation1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\ImplicitTransferLocation2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\ImplicitTransferLocation3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\TransferLocation1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\TransferLocation2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\TransferLocation3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Actions1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Actions2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Actions3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\NoNamespace.xml" />
+    <EmbeddedResource Include="Configuration\TestData\TransferLocation4_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\TransferLocation4_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_AcquireLock_Success_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_AcquireLock_Success_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_AcquireLock_Success_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_AcquireLock_Fail_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_AcquireLock_Fail_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_AcquireLock_Fail_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ApplyFilter_Success_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ApplyFilter_Success_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ApplyFilter_Fail_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ApplyFilter_Fail_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ApplyFilter_Fail_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ApplyFilter_Success_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Compare_Success_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Compare_Success_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Compare_Success_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Compare_Success_4.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Compare_Success_5.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Compare_Fail_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Compare_Fail_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Compare_Fail_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Copy_Success_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Copy_Success_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Copy_Success_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Copy_Success_4.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Copy_Success_5.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Copy_Fail_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Copy_Fail_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Copy_Fail_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Copy_Fail_4.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReadSyncState_Success_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReadSyncState_Success_4.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReadSyncState_Success_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReadSyncState_Success_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReadSyncState_Fail_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReadSyncState_Fail_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReadSyncState_Fail_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReadSyncState_Fail_4.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReadSyncState_Fail_5.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReleaseLock_Success_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReleaseLock_Success_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReleaseLock_Success_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReleaseLock_Success_4.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReleaseLock_Fail_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReleaseLock_Fail_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_ReleaseLock_Fail_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Sleep_Success_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Sleep_Success_1 - Copy.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Sleep_Success_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Sleep_Success_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Sleep_Success_4.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Sleep_Fail_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Sleep_Fail_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Success_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Success_4.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Success_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Success_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Fail_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Fail_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Fail_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Fail_4.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_WriteSyncState_Fail_5.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Export_Success_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Export_Success_4.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Export_Success_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Export_Success_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Export_Fail_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Export_Fail_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Export_Fail_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Export_Fail_3 - Copy.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Export_Fail_4.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Export_Fail_5.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Export_Fail_6.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_Export_Fail_7.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_RunSyncJob_Success_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_RunSyncJob_Success_4.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_RunSyncJob_Success_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_RunSyncJob_Success_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_RunSyncJob_Fail_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_RunSyncJob_Fail_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_RunSyncJob_Fail_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_RunSyncJob_Fail_4.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_RunSyncJob_Fail_5.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_UpdateTransferState_Success_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_UpdateTransferState_Success_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_UpdateTransferState_Success_3.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_UpdateTransferState_Success_4.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_UpdateTransferState_Fail_1.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_UpdateTransferState_Fail_2.xml" />
+    <EmbeddedResource Include="Configuration\TestData\Action_UpdateTransferState_Fail_3.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
