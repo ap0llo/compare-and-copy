@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema id="ConfigurationSchema"
     elementFormDefault="qualified"
-    targetNamespace="http://grynwald.net/schemas/2014/ServerSync/v1/Configuration/"
-    xmlns="http://grynwald.net/schemas/2014/ServerSync/v1/Configuration/"
+    targetNamespace="http://grynwald.net/schemas/2017/CompareAndCopy/v1/Configuration/"
+    xmlns="http://grynwald.net/schemas/2017/CompareAndCopy/v1/Configuration/"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
 

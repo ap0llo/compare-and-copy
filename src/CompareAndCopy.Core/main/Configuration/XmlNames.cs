@@ -4,7 +4,8 @@ namespace CompareAndCopy.Core.Configuration
 {
     class XmlNames
     {
-        static readonly XNamespace s_Namespace = "http://grynwald.net/schemas/2014/ServerSync/v1/Configuration/";
+        static readonly XNamespace s_LegacyNamespace = "http://grynwald.net/schemas/2014/ServerSync/v1/Configuration/";
+        static readonly XNamespace s_Namespace = "http://grynwald.net/schemas/2017/CompareAndCopy/v1/Configuration/";
 
         public static readonly XName Left = s_Namespace.GetName("left");
         public static readonly XName Right = s_Namespace.GetName("right");
@@ -40,9 +41,8 @@ namespace CompareAndCopy.Core.Configuration
         public static readonly XName InterimLocation = s_Namespace.GetName("interimLocation");
         public static readonly XName ExportDirectory = s_Namespace.GetName("exportDirectory");
 
-        public static XNamespace GetNamespace()
-        {
-            return s_Namespace;
-        }
+        public static XNamespace GetLegacyNamespace() => s_LegacyNamespace;
+
+        public static XNamespace GetNamespace() => s_Namespace;
     }
 }

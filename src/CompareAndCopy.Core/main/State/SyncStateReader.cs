@@ -35,6 +35,10 @@ namespace CompareAndCopy.Core.State
             {
                 document.Root.ReplaceNamespace("", XmlNames.GetNamespace());
             }
+            else if (document.Root.Name.Namespace.Equals(XmlNames.GetLegacyNamespace()))
+            {
+                document.Root.ReplaceNamespace(XmlNames.GetLegacyNamespace(), XmlNames.GetNamespace());
+            }
 
             document.Validate(GetSyncStateSchema(), (o, e) => throw new SyncStateException(e.Message));
 

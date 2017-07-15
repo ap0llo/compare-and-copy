@@ -74,6 +74,11 @@ namespace CompareAndCopy.Core.Configuration.Migration
                 m_Logger.Debug("Updating XML Namespace");
                 document.Root.ReplaceNamespace("", XmlNames.GetNamespace());
             }
+            else if (document.Root.Name.Namespace.Equals(XmlNames.GetLegacyNamespace()))
+            {
+                m_Logger.Debug("Updating XML Namespace");
+                document.Root.ReplaceNamespace(XmlNames.GetLegacyNamespace(), XmlNames.GetNamespace());
+            }
         }
 
         /// <summary>
