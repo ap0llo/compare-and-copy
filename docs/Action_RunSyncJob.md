@@ -1,6 +1,6 @@
 RunSyncJob Action
 ==============
-Runs the specified sync configuration in the current instance of ServerSync
+Runs the specified sync configuration in the current instance of CompareAndCopy
 
 ### Attributes
 - enable: Specifies if the action is to be executed. If value is set to false,

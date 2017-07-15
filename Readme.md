@@ -1,10 +1,10 @@
-ServerSync
-==========
+CompareAndCopy
+=============
 
 Acknowledgments
 ---------------
 
-The ServerSync tool directly depends on several thrid-party libraries
+The CompareAndCopy tool directly depends on several thrid-party libraries
 
 - [ByteSize](https://github.com/omar/ByteSize), licensed under the MIT-License
 - [Microscope](http://github.com/clotheshorse/microscope), licensed under the MIT-License

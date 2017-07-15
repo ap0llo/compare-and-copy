@@ -1,10 +1,10 @@
-ServerSync Introduction
+CompareAndCopy Introduction
 =======================
-ServerSync is a tool to compare the contents of two directory trees and execute
+CompareAndCopy is a tool to compare the contents of two directory trees and execute
 actions based on the results it finds. The two directories being compared to are
 labeled "Left" and "Right".
 
-Core to understanding how ServerSync works is the concept of the "SyncState".
+Core to understanding how CompareAndCopy works is the concept of the "SyncState".
 The sync state is a list of files which are different between the left and the
 right directory. Each of these files has 3 properties
 
@@ -29,7 +29,7 @@ right directory. Each of these files has 3 properties
 	  the right directory.
 
 
-Based on this concept, ServerSync allows to execute so called "actions" which
+Based on this concept, CompareAndCopy allows to execute so called "actions" which
 depending on the action change the current state.
 
 Definitions of the directories to be synced and the actions to be executed are

@@ -1,15 +1,15 @@
 AcquireLock Action
 ==================
 Locks the specified file. While the file is locked, it cannot be accessed or
-changed by any application, including ServerSync itslef. Thus you should never
-lock files that are processed by ServerSync (like configuration or syncstate
+changed by any application, including CompareAndCopy itself. Thus you should never
+lock files that are processed by CompareAndCopy (like configuration or syncstate
 files).
 
 By locking files which's sole purpose is being locked ("lock files") execution
-of multiple ServerSync instances can be synchronized to avoid conflicts that
+of multiple CompareAndCopy instances can be synchronized to avoid conflicts that
 would normally occur when several instances modify the same sync state file.
 
-If the file is already locked, ServerSync will wait until a lock on the file
+If the file is already locked, CompareAndCopy will wait until a lock on the file
 can be acquired.
 
 

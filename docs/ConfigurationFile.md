@@ -1,6 +1,6 @@
-ServerSync Configuration File
+CompareAndCopy Configuration File
 =============================
-The configuration file controls all behavior of the ServerSync tool and consists
+The configuration file controls all behavior of the CompareAndCopy tool and consists
 of both definitions of global properties and a list of actions to execute.
 
 Basics
@@ -15,12 +15,12 @@ Basics
 Global Elements
 -----------------
 ### Folder definitions
-Most of the actions that can be executed by ServerSync require the sync-folders
+Most of the actions that can be executed by CompareAndCopy require the sync-folders
 to be defined. There must be exactly one "left" and one "right" sync folder.
 
 #### Attributes
 - *name* : Defines the name of the sync folder
-- *rootPath*: The root path of the sync folder. ServerSync references all files
+- *rootPath*: The root path of the sync folder. CompareAndCopy references all files
    using relative paths which are relative to the root paths of the sync folders.
 
 #### Example
@@ -161,7 +161,7 @@ is performed internally if such a filter is encountered in a configuration file)
 --------------------------------------------------------------------------------
 
 ### Actions
-After parsing a configuration file ServerSync will execute all actions found in
+After parsing a configuration file CompareAndCopy will execute all actions found in
 the file in the order in which they appear.  
 Actions appear inside a "action group". Action groups only exists to give
 structure to the configuration file and have no influence on the execution
