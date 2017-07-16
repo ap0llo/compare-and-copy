@@ -1,0 +1,24 @@
+version: 1.7.{build}
+build_script:
+- cmd: .\build.bat
+test_script:
+- cmd: .\test.bat
+image: Visual Studio 2017
+
+artifacts:
+  - path: .\build\Release\Setup\RELEASES    
+  - path: .\build\Release\Setup\Setup.exe
+  - path: .\build\Release\Setup\*.nupkg
+
+skip_tags: true
+deploy:
+  release: v$(appveyor_build_version)
+  description: 'Automatic Release by AppVeyor'
+  provider: GitHub
+  auth_token:
+    secure: Ezm9yOuGI+UAT4+HvumnvKyIh15SWeNS4PvrzbXnQWIjSCJUMwcl2/zaXS69MrqZ
+  prerelease: true
+  on:
+    branch: master
+
+
