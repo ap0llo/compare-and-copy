@@ -15,3 +15,11 @@ The CompareAndCopy tool directly depends on several thrid-party libraries
 - [xUnit](https://xunit.github.io/), licensed under the Apache License, Version 2.0
 
 
+
+Build Status
+-------------
+
+|**master**|**develop**|
+|:--:|:--:|
+|[![Build status](https://ci.appveyor.com/api/projects/status/9hxfmn83ufuwfruf/branch/master?svg=true)](https://ci.appveyor.com/project/ap0llo/compare-and-copy/branch/master)|[![Build status](https://ci.appveyor.com/api/projects/status/9hxfmn83ufuwfruf/branch/develop?svg=true)](https://ci.appveyor.com/project/ap0llo/compare-and-copy/branch/develop)|
+
