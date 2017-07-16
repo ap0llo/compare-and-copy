@@ -1,8 +1,8 @@
 ﻿{
   "Update": {
     "Enable": true,
-    "Source": "FileSystem",
-    "Path": "",
+    "Source": "GitHub",
+    "Path": "https://github.com/ap0llo/compare-and-copy",
     "InstallPreReleaseVersions": true,
 
     // The interval between update checks
