@@ -37,7 +37,7 @@ namespace CompareAndCopy.Core.Configuration.Migration
 
         public XDocument UpgradeConfigurationFile(XDocument currentConfiguration)
         {
-            m_Logger.Info("Upgrading configuration file to latest configuration version");
+            m_Logger.Debug("Upgrading configuration file to latest configuration version");
 
 
             //validate input (against a backwards compatible schema that allows all constructs that will be removed during migration)

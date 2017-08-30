@@ -167,7 +167,7 @@ namespace CompareAndCopy.Core.Compare
 
         IEnumerable<string> GetFiles(string dirAbsoultePath, bool recurse)
         {
-            m_Logger.Info("Scanning {0}", dirAbsoultePath);
+            m_Logger.Debug("Scanning {0}", dirAbsoultePath);
 
             var childFiles = recurse 
                 ? Directory.GetDirectories(dirAbsoultePath).SelectMany(dir => GetFiles(dir, true)).Select(relPath => Path.Combine(dirAbsoultePath, relPath)) 
