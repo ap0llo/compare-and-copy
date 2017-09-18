@@ -41,6 +41,8 @@ namespace CompareAndCopy.Core.Copy
             }
 
 
+            var skippedSize = ByteSize.FromBytes(0);
+            var copiedSize = ByteSize.FromBytes(0);
             foreach (var item in itemsToCopy)
             {
                 //determine absolute paths for the copy operation
@@ -72,11 +74,12 @@ namespace CompareAndCopy.Core.Copy
                 //this way the copy as much as possible                 
                 if (CheckNextFileExceedsMaxTransferSize(size))
                 {
-                    m_Logger.Info("Skipping '{0}' because copying it would exceed the maximum transfer size", item.RelativePath);
+                    m_Logger.Info($"Skipping '{item.RelativePath}' ({size}) because copying it would exceed the maximum transfer size");
+                    skippedSize += size;
                     continue;
                 }
 
-                m_Logger.Info("Copying {0}", item.RelativePath);
+                m_Logger.Info($"Copying {item.RelativePath} ({size})");
 
                 var success = FileEquals(absSource, absTarget) || IOHelper.CopyFile(absSource, absTarget); 
 
@@ -84,8 +87,11 @@ namespace CompareAndCopy.Core.Copy
                 {
                     UpdateTransferLocationSizeCache(transferLocation, size);
                     OnItemCopied(item);
+                    copiedSize += size;
                 }
             }
+
+            m_Logger.Info($"Copying complete. {copiedSize} worth of files were copied, {skippedSize} worth of files were skipped");
         }
 
 
