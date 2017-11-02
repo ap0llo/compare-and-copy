@@ -271,6 +271,10 @@ namespace CompareAndCopy.Core.Configuration
             {
                 configuration.AddAction(ReadExportDirectoryAction(element, configuration, pathResolver));
             }
+            else if(element.Name == XmlNames.TouchFile)
+            {
+                configuration.AddAction(ReadTouchFileAction(element, configuration, pathResolver));
+            }
             else
 			{
 				throw new ConfigurationException("Unknown element " + element.Name.LocalName + " in Configuration");
@@ -332,6 +336,14 @@ namespace CompareAndCopy.Core.Configuration
                 DeleteSourceFiles = ParseBool(actionElement.Attribute(XmlAttributeNames.DeleteSourceFiles)?.Value ?? "false")
             };
             ApplyCommonImportExportActionProperties(actionElement, action, configuration, pathResolver);
+            return action;
+        }
+
+        IAction ReadTouchFileAction(XElement actionElement, ISyncConfiguration configuration, IPathResolver pathResolver)
+        {
+            var enabled = ReadActionEnabled(actionElement);
+            var path = pathResolver.GetAbsolutePath(actionElement.RequireAttributeValue(XmlAttributeNames.Path));
+            var action = new TouchFileAction(enabled, configuration, path);
             return action;
         }
 

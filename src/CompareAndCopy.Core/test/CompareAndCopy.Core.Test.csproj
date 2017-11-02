@@ -147,5 +147,14 @@
     <EmbeddedResource Include="Configuration\TestData\Action_UpdateTransferState_Fail_2.xml" />
     <EmbeddedResource Include="Configuration\TestData\Action_UpdateTransferState_Fail_3.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_TouchFile_Fail_1.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_TouchFile_Success_1.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_TouchFile_Success_2.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

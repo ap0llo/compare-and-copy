@@ -33,6 +33,7 @@
 				<xs:element name="runSyncJob" type="typeRunSyncJobAction" />
 				<xs:element name="updateTransferState" type="typeUpdateTransferStateAction" />
         <xs:element name="exportDirectory" type="typeExportDirectoryAction" />
+        <xs:element name="touchFile" type="typeTouchFileAction" />
 			</xs:choice>
 			<xs:element name="actions" type="typeActionList" />
 		</xs:choice>
@@ -84,6 +85,7 @@
 			<xs:element name="runSyncJob" type="typeRunSyncJobAction" />
 			<xs:element name="updateTransferState" type="typeUpdateTransferStateAction" />
       <xs:element name="exportDirectory" type="typeExportDirectoryAction" />
+      <xs:element name="touchFile" type="typeTouchFileAction" />
 		</xs:choice>
 	</xs:complexType>
 
@@ -149,6 +151,11 @@
 		</xs:sequence>
 		<xs:attribute name="enable" type="xs:boolean" use="required" />
 	</xs:complexType>
+
+  <xs:complexType name="typeTouchFileAction">
+    <xs:attribute name="path" type="xs:string" use="required" />
+    <xs:attribute name="enable" type="xs:boolean" use="required" />
+  </xs:complexType>
 
 	<xs:complexType name="typeAcquireLockAction">
 		<xs:sequence>

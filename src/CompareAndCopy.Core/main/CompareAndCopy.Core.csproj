@@ -46,6 +46,7 @@
     <Compile Include="RunSyncJob\RunSyncJobAction.cs" />
     <Compile Include="SleepAction.cs" />
     <Compile Include="State\UpdateTransferStateAction.cs" />
+    <Compile Include="TouchFileAction.cs" />
     <Compile Include="XElementExtensions.cs" />
     <Compile Include="Configuration\XmlAttributeNames.cs" />
     <Compile Include="Configuration\XmlNames.cs" />
