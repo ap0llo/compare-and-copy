@@ -11,8 +11,8 @@
   <Target Name="Test" Condition="$(IsTestProject)">  
     <Message Text="Running Tests for $(AssemblyName)" />	      
     <Error Text="Cannot run tests, PackageVersion-xunit is not set"
-            Condition="'$(PackageVersion-xunit)' == ''" />              
-    <Exec Command="$(NuGetPackageRoot)xunit.runner.console\$(PackageVersion-xunit)\tools\xunit.console.exe &quot;$(OutputPath)$(AssemblyName).dll&quot;"  />	
+            Condition="'2.2.0' == ''" />              
+    <Exec Command="$(NuGetPackageRoot)xunit.runner.console\2.2.0\tools\xunit.console.exe &quot;$(OutputPath)$(AssemblyName).dll&quot;"  />	
   </Target>
 
 </Project>
