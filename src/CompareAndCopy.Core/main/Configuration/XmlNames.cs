@@ -40,6 +40,7 @@ namespace CompareAndCopy.Core.Configuration
         public static readonly XName UpdateTransferState = s_Namespace.GetName("updateTransferState");
         public static readonly XName InterimLocation = s_Namespace.GetName("interimLocation");
         public static readonly XName ExportDirectory = s_Namespace.GetName("exportDirectory");
+        public static readonly XName TouchFile = s_Namespace.GetName("touchFile");
 
         public static XNamespace GetLegacyNamespace() => s_LegacyNamespace;
 

@@ -10,10 +10,10 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ByteSize" Version="$(PackageVersion-ByteSize)" />
-    <PackageReference Include="Microscope" Version="$(PackageVersion-Microscope)" />
-    <PackageReference Include="NLog" Version="$(PackageVersion-NLog)" />
-    <PackageReference Include="System.Collections.Immutable" Version="$(PackageVersion-System-Collections-Immutable)" />
+    <PackageReference Include="ByteSize" Version="1.3.0" />
+    <PackageReference Include="Microscope" Version="1.2.3" />
+    <PackageReference Include="NLog" Version="4.4.11" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.3.1" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -46,6 +46,7 @@
     <Compile Include="RunSyncJob\RunSyncJobAction.cs" />
     <Compile Include="SleepAction.cs" />
     <Compile Include="State\UpdateTransferStateAction.cs" />
+    <Compile Include="TouchFileAction.cs" />
     <Compile Include="XElementExtensions.cs" />
     <Compile Include="Configuration\XmlAttributeNames.cs" />
     <Compile Include="Configuration\XmlNames.cs" />

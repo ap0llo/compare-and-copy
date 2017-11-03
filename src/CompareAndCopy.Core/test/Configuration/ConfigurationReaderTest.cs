@@ -138,8 +138,6 @@ namespace CompareAndCopy.Core.Test.Configuration
         }
 
         
-
-
         /// <summary>
         /// Tests reading of implicitly defined transfer locations 
         /// (Maximum size specified for the transfer location path)
@@ -405,6 +403,7 @@ namespace CompareAndCopy.Core.Test.Configuration
         [InlineData("CompareAndCopy.Core.Test.Configuration.TestData.Action_UpdateTransferState_Fail_1.xml")]
         [InlineData("CompareAndCopy.Core.Test.Configuration.TestData.Action_UpdateTransferState_Fail_2.xml")]
         [InlineData("CompareAndCopy.Core.Test.Configuration.TestData.Action_UpdateTransferState_Fail_3.xml")]
+        [InlineData("CompareAndCopy.Core.Test.Configuration.TestData.Action_TouchFile_Fail_1.xml")]        
         public void ReadAction_Fail(string resourceName)
         {
 
@@ -677,6 +676,33 @@ namespace CompareAndCopy.Core.Test.Configuration
         }
 
         #endregion
+
+
+        #region Touch File Action
+
+        [Theory]
+        [InlineData("CompareAndCopy.Core.Test.Configuration.TestData.Action_TouchFile_Success_1.xml", true, "filePath")]
+        [InlineData("CompareAndCopy.Core.Test.Configuration.TestData.Action_TouchFile_Success_2.xml", true, "filePath")]
+        public void ReadAction_TouchFile_Success(string resourceName, bool expectedEnable, string expectedPath)
+        {
+            var mock = GetDefaultPathResolverMock();
+
+            var configurationReader = new ConfigurationReader();
+            var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
+
+            mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Once());
+
+            Assert.Single(config.Actions);
+
+            var action = config.Actions.First() as TouchFileAction;
+            Assert.NotNull(action);
+
+            Assert.Equal(expectedEnable, action.IsEnabled);
+            Assert.Equal(expectedPath, action.Path);
+        }
+
+        #endregion
+
 
         #region WriteSyncState Action
 

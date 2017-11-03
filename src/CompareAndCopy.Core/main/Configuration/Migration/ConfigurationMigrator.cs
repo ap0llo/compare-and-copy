@@ -28,7 +28,8 @@ namespace CompareAndCopy.Core.Configuration.Migration
             XmlNames.Sleep,
 			XmlNames.RunSyncJob,
             XmlNames.UpdateTransferState,
-            XmlNames.ExportDirectory
+            XmlNames.ExportDirectory,
+            XmlNames.TouchFile
         };
         
 

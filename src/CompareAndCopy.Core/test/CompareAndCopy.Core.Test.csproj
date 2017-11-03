@@ -10,11 +10,11 @@
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ByteSize" Version="$(PackageVersion-ByteSize)" />
-    <PackageReference Include="Moq" Version="$(PackageVersion-Moq)" />
-    <PackageReference Include="xunit" Version="$(PackageVersion-xunit)" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="$(PackageVersion-xunit)" />
-    <PackageReference Include="xunit.runner.console" Version="$(PackageVersion-xunit)" />
+    <PackageReference Include="ByteSize" Version="1.3.0" />
+    <PackageReference Include="Moq" Version="4.7.63" />
+    <PackageReference Include="xunit" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.console" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -146,6 +146,15 @@
     <EmbeddedResource Include="Configuration\TestData\Action_UpdateTransferState_Fail_1.xml" />
     <EmbeddedResource Include="Configuration\TestData\Action_UpdateTransferState_Fail_2.xml" />
     <EmbeddedResource Include="Configuration\TestData\Action_UpdateTransferState_Fail_3.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_TouchFile_Fail_1.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_TouchFile_Success_1.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\TestData\Action_TouchFile_Success_2.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

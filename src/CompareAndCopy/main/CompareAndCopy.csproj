@@ -15,14 +15,14 @@
   </PropertyGroup>
   <!-- Nuget depdendencies -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(PackageVersion-Microsoft-Extensions-Configuration)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(PackageVersion-Microsoft-Extensions-Configuration)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="$(PackageVersion-Microsoft-Extensions-Configuration)" />
-    <PackageReference Include="NLog" Version="$(PackageVersion-NLog)" />
-    <PackageReference Include="Nuget.CommandLine" Version="$(PackageVersion-Nuget-CommandLine)" />
-    <PackageReference Include="Squirrel.Windows" Version="$(PackageVersion-Squirrel-Windows)" />
-    <PackageReference Include="JetBrains.Annotations" Version="$(PackageVersion-JetBrains-Annotations)" />
-    <PackageReference Include="DeltaCompressionDotNet" Version="$(PackageVersion-DeltaCompressionDotNet)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="1.1.2" />
+    <PackageReference Include="NLog" Version="4.4.11" />
+    <PackageReference Include="Nuget.CommandLine" Version="4.1.0" />
+    <PackageReference Include="Squirrel.Windows" Version="1.7.7" />
+    <PackageReference Include="JetBrains.Annotations" Version="10.4.0" />
+    <PackageReference Include="DeltaCompressionDotNet" Version="1.1.0" />
     <PackageReference Include="Grynwald.Utilities.Squirrel.Build" Version="1.0.15" />
   </ItemGroup>
   <ItemGroup>
