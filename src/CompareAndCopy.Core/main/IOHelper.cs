@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ByteSizeLib;
+using System.Threading;
 
 namespace CompareAndCopy.Core
 {
@@ -27,7 +28,9 @@ namespace CompareAndCopy.Core
 
 
         //the amount of time a value is considered up to date in the cache used by GetDirectorySize()
-        static readonly TimeSpan s_CacheTime = new TimeSpan(0, 0, 5);
+        static readonly TimeSpan s_CacheTime = TimeSpan.FromSeconds(5);
+        const int s_NumberOfRetries = 2;
+        static readonly TimeSpan s_RetryDelay = TimeSpan.FromSeconds(3);
 
         //cache used by GetDirectorySize() to speed up determining the size of a directory
         static Dictionary<String, ByteSizeCacheEntry> s_GetDirectorySizeCache = new Dictionary<string, ByteSizeCacheEntry>();
@@ -87,7 +90,7 @@ namespace CompareAndCopy.Core
             string[] files;            
             try
             {
-                files = Directory.GetFiles(path);                
+                files = GetFiles(path);                
             }
             catch (UnauthorizedAccessException)
             {
@@ -104,7 +107,7 @@ namespace CompareAndCopy.Core
             string[] dirs;
             try
             {
-                dirs = Directory.GetDirectories(path);
+                dirs = GetDirectories(path);
             }
             catch (UnauthorizedAccessException)
             {
@@ -217,9 +220,38 @@ namespace CompareAndCopy.Core
             }
             else
             {
-                var allFiles = Directory.GetFiles(directory, "*", SearchOption.AllDirectories);
+                var allFiles = GetFiles(directory, "*", SearchOption.AllDirectories);
                 return allFiles.Select(path => GetRelativePath(path, directory, true));
             }
-        } 
+        }
+
+        public static string[] GetDirectories(string path) => 
+            ExecuteWithRetries($"Getting directories in '{path}'", () => Directory.GetDirectories(path));
+        
+        public static string[] GetFiles(string path) => 
+            ExecuteWithRetries($"Getting files for in '{path}'", () => Directory.GetFiles(path));
+
+        public static string[] GetFiles(string path, string searchPattern, SearchOption searchOption) =>
+            ExecuteWithRetries($"Getting files for in '{path}'", () => Directory.GetFiles(path, searchPattern, searchOption));
+        
+        static T ExecuteWithRetries<T>(string logMessage, Func<T> action)
+        {
+            s_Logger.Debug(logMessage);
+
+            var remainingRetries = s_NumberOfRetries;
+            while(true)
+            {                
+                try
+                {
+                    return action();
+                }
+                catch (IOException) when (remainingRetries > 0)
+                {
+                    s_Logger.Warn($"Caught IOExeption thrown by operation '{logMessage}', retrying");
+                    Thread.Sleep(s_RetryDelay);
+                    remainingRetries -= 1;
+                }                
+            }            
+        }
     }
 }

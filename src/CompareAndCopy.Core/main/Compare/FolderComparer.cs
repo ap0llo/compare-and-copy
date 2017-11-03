@@ -91,7 +91,6 @@ namespace CompareAndCopy.Core.Compare
                 return;
             }
 
-
             if(!Directory.Exists(rightAbsolutePath))
             {
                 m_FilesMissingRight.AddRange(GetFiles(leftAbsolutePath, true).Select(absPath => IOHelper.GetRelativePath(absPath, leftAbsolutePath, true)));
@@ -99,25 +98,23 @@ namespace CompareAndCopy.Core.Compare
             }
 
             //compare directories
-            var leftDirectories = Directory.GetDirectories(leftAbsolutePath)                                           
-                                           .Select(path => Path.GetFileName(path));
+            var leftDirectories = IOHelper.GetDirectories(leftAbsolutePath).Select(path => Path.GetFileName(path));
 
-            var rightDirectories = Directory.GetDirectories(rightAbsolutePath)                                            
-                                            .Select(path => Path.GetFileName(path));
+            var rightDirectories = IOHelper.GetDirectories(rightAbsolutePath).Select(path => Path.GetFileName(path));
 
             //get absolute paths of directories only found in the left folder
             var uniqueLeft = leftDirectories.Where(lName => !rightDirectories.Contains(lName, StringComparer.InvariantCultureIgnoreCase))
                                             .Select(name => Path.Combine(m_Config.Left.RootPath, relativePath, name));
 
             //add all files in the subtree to the list of files only found in one location
-            this.m_FilesMissingRight.AddRange(uniqueLeft.SelectMany(dir => GetFiles(dir, true)).Select(fullPath => IOHelper.GetRelativePath(fullPath, m_Config.Left.RootPath, true)));
+            m_FilesMissingRight.AddRange(uniqueLeft.SelectMany(dir => GetFiles(dir, true)).Select(fullPath => IOHelper.GetRelativePath(fullPath, m_Config.Left.RootPath, true)));
 
             //get absolute paths of directories only found in the right folder
             var uniqueRight = rightDirectories.Where(rName => !leftDirectories.Contains(rName, StringComparer.InvariantCultureIgnoreCase))
                                               .Select(name => Path.Combine(m_Config.Right.RootPath, relativePath, name));
 
             //add all files in the subtree to the list of files only found in one location
-            this.m_FilesMissingLeft.AddRange(uniqueRight.SelectMany(dir => GetFiles(dir, true)).Select(fullPath => IOHelper.GetRelativePath(fullPath, m_Config.Right.RootPath, true)));
+            m_FilesMissingLeft.AddRange(uniqueRight.SelectMany(dir => GetFiles(dir, true)).Select(fullPath => IOHelper.GetRelativePath(fullPath, m_Config.Right.RootPath, true)));
 
 
             //compare directories found on both sides
@@ -170,10 +167,10 @@ namespace CompareAndCopy.Core.Compare
             m_Logger.Debug("Scanning {0}", dirAbsoultePath);
 
             var childFiles = recurse 
-                ? Directory.GetDirectories(dirAbsoultePath).SelectMany(dir => GetFiles(dir, true)).Select(relPath => Path.Combine(dirAbsoultePath, relPath)) 
+                ? IOHelper.GetDirectories(dirAbsoultePath).SelectMany(dir => GetFiles(dir, true)).Select(relPath => Path.Combine(dirAbsoultePath, relPath)) 
                 : Enumerable.Empty<string>();
 
-            var allFiles = Directory.GetFiles(dirAbsoultePath).Union(childFiles);
+            var allFiles = IOHelper.GetFiles(dirAbsoultePath).Union(childFiles);
 
             //apply filter
             return allFiles; 
