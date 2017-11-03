@@ -29,8 +29,8 @@ namespace CompareAndCopy.Core
 
         //the amount of time a value is considered up to date in the cache used by GetDirectorySize()
         static readonly TimeSpan s_CacheTime = TimeSpan.FromSeconds(5);
-        const int s_NumberOfRetries = 2;
-        static readonly TimeSpan s_RetryDelay = TimeSpan.FromSeconds(3);
+        const int s_NumberOfRetries = 5;
+        static readonly TimeSpan s_RetryDelay = TimeSpan.FromSeconds(5);
 
         //cache used by GetDirectorySize() to speed up determining the size of a directory
         static Dictionary<String, ByteSizeCacheEntry> s_GetDirectorySizeCache = new Dictionary<string, ByteSizeCacheEntry>();
