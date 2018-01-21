@@ -66,7 +66,7 @@ namespace CompareAndCopy.Core.Test.Configuration
             pathResolverMock.Verify(r => r.GetAbsolutePath(It.IsAny<string>()), Times.Never());
 
             //Assert exactly one filter was read from the configuration
-            Assert.Equal(1, config.Filters.Count());
+            Assert.Single(config.Filters);
             _ = config.GetFilter(s_Filter1);
 
             //test the filter
@@ -92,7 +92,7 @@ namespace CompareAndCopy.Core.Test.Configuration
 
             var actualFilterOutput = filter.ApplyFilter(filterInput).ToList();
 
-            Assert.Equal(1, actualFilterOutput.Count);
+            Assert.Single(actualFilterOutput);
             Assert.Empty(actualFilterOutput.Except(expectedOutput));
         }
 
@@ -123,8 +123,8 @@ namespace CompareAndCopy.Core.Test.Configuration
             //check the configuration read by the configuration reader
             //config contains a single export action that implicitly defines a transfer location
             Assert.NotNull(config);
-            Assert.Equal(1, config.TransferLocations.Count());
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.TransferLocations);
+            Assert.Single(config.Actions);
 
             var action = (ExportAction) config.Actions.First();
             var transferLocation = config.GetTransferLocation(action.TransferLocationName);
@@ -159,8 +159,8 @@ namespace CompareAndCopy.Core.Test.Configuration
             //check configuration
             //export action specifies a maximum transfer size which must be the maximum size for the implicitly defined transfer location            
             Assert.NotNull(config);
-            Assert.Equal(1, config.TransferLocations.Count());
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.TransferLocations);
+            Assert.Single(config.Actions);
 
             var action = (ExportAction)config.Actions.First();
             var transferLocation = config.GetTransferLocation(action.TransferLocationName);
@@ -198,8 +198,8 @@ namespace CompareAndCopy.Core.Test.Configuration
             //Because the maximum size applies to the parent directory, the transfer location's path should be the parent directory
             //to keep the path, the TransferLocationSubPath property of the action must be set accordingly
             Assert.NotNull(config);
-            Assert.Equal(1, config.TransferLocations.Count());
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.TransferLocations);
+            Assert.Single(config.Actions);
 
 
             var action = (ExportAction)config.Actions.First();
@@ -237,7 +237,7 @@ namespace CompareAndCopy.Core.Test.Configuration
             pathResolverMock.Verify(r => r.GetAbsolutePath(It.IsAny<string>()), Times.Once());
 
 
-            Assert.Equal(1, config.TransferLocations.Count());
+            Assert.Single(config.TransferLocations);
             
             var transferLocation = config.GetTransferLocation(transferLocationName);
             Assert.NotNull(transferLocation);
@@ -269,7 +269,7 @@ namespace CompareAndCopy.Core.Test.Configuration
             pathResolverMock.Verify(r => r.GetAbsolutePath(It.IsAny<string>()), Times.Once());
 
 
-            Assert.Equal(1, config.TransferLocations.Count());
+            Assert.Single(config.TransferLocations);
 
             var transferLocation = config.GetTransferLocation(transferLocationName);
             Assert.NotNull(transferLocation);
@@ -296,7 +296,7 @@ namespace CompareAndCopy.Core.Test.Configuration
 
             var config = configurationReader.ReadConfiguration(input, new PathResolver(dir));
 
-            Assert.Equal(1, config.TransferLocations.Count());
+            Assert.Single(config.TransferLocations);
 
             var transferLocation = config.GetTransferLocation(transferLocationName);
             Assert.NotNull(transferLocation);
@@ -434,7 +434,7 @@ namespace CompareAndCopy.Core.Test.Configuration
             var configurationReader = new ConfigurationReader();          
             var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
 
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.Actions);
 
             var action = config.Actions.First() as AcquireLockAction;
             Assert.NotNull(action);
@@ -471,7 +471,7 @@ namespace CompareAndCopy.Core.Test.Configuration
 
             mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Never());
 
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.Actions);
 
             var action = config.Actions.First() as ApplyFilterAction;
             Assert.NotNull(action);
@@ -501,7 +501,7 @@ namespace CompareAndCopy.Core.Test.Configuration
 
             mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Never());
 
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.Actions);
 
             var action = config.Actions.First() as CompareAction;
             Assert.NotNull(action);
@@ -531,7 +531,7 @@ namespace CompareAndCopy.Core.Test.Configuration
 
             mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Never());
 
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.Actions);
 
             var action = config.Actions.First() as CopyAction;
             Assert.NotNull(action);
@@ -567,7 +567,7 @@ namespace CompareAndCopy.Core.Test.Configuration
 
             mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Never());
 
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.Actions);
 
             var action = config.Actions.First() as ExportAction;
             Assert.NotNull(action);
@@ -604,7 +604,7 @@ namespace CompareAndCopy.Core.Test.Configuration
 
             mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Once());
 
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.Actions);
 
             var action = config.Actions.First() as ReadSyncStateAction;
             Assert.NotNull(action);
@@ -637,7 +637,7 @@ namespace CompareAndCopy.Core.Test.Configuration
 
             mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Once());
 
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.Actions);
 
             var action = config.Actions.First() as ReleaseLockAction;
             Assert.NotNull(action);
@@ -666,7 +666,7 @@ namespace CompareAndCopy.Core.Test.Configuration
 
             mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Never());
 
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.Actions);
 
             var action = config.Actions.First() as SleepAction;
             Assert.NotNull(action);
@@ -724,7 +724,7 @@ namespace CompareAndCopy.Core.Test.Configuration
 
             mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Once());
 
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.Actions);
 
             var action = config.Actions.First() as WriteSyncStateAction;
             Assert.NotNull(action);
@@ -758,7 +758,7 @@ namespace CompareAndCopy.Core.Test.Configuration
 
             mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Once());
 
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.Actions);
 
             var action = config.Actions.First() as RunSyncJobAction;
             Assert.NotNull(action);
@@ -788,17 +788,17 @@ namespace CompareAndCopy.Core.Test.Configuration
 
             mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Once());
 
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.Actions);
 
             var action = config.Actions.First() as UpdateTransferStateAction;
             Assert.NotNull(action);
 
-            Assert.Equal(true, action.IsEnabled);
-            Assert.Equal(1, action.TransferLocationPaths.Count());
+            Assert.True(action.IsEnabled);
+            Assert.Single(action.TransferLocationPaths);
             Assert.Equal("foo", action.TransferLocationPaths.First().TransferLocationName);
             Assert.Equal("bar", action.TransferLocationPaths.First().TransferLocationSubPath);
 
-            Assert.Equal(1, action.InterimLocations.Count());
+            Assert.Single(action.InterimLocations);
             Assert.Equal(expectedPath, action.InterimLocations.First());
         }
 
@@ -816,19 +816,19 @@ namespace CompareAndCopy.Core.Test.Configuration
             var config = configurationReader.ReadConfiguration(LoadResource(resourceName), mock.Object);
             
 
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.Actions);
 
             var action = config.Actions.First() as UpdateTransferStateAction;
             Assert.NotNull(action);
 
-            Assert.Equal(false, action.IsEnabled);
-            Assert.Equal(1, action.TransferLocationPaths.Count());
+            Assert.False(action.IsEnabled);
+            Assert.Single(action.TransferLocationPaths);
             Assert.Equal("foo", action.TransferLocationPaths.First().TransferLocationName);
             Assert.Equal("bar", action.TransferLocationPaths.First().TransferLocationSubPath);
 
 
 
-            Assert.Equal(0, action.InterimLocations.Count());
+            Assert.Empty(action.InterimLocations);
         }
 
         [Theory]
@@ -845,15 +845,15 @@ namespace CompareAndCopy.Core.Test.Configuration
 
             mock.Verify(m => m.GetAbsolutePath(It.IsAny<string>()), Times.Once());
 
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.Actions);
 
             var action = config.Actions.First() as UpdateTransferStateAction;
             Assert.NotNull(action);
 
-            Assert.Equal(false, action.IsEnabled);
-            Assert.Equal(0, action.TransferLocationPaths.Count());
+            Assert.False(action.IsEnabled);
+            Assert.Empty(action.TransferLocationPaths);
 
-            Assert.Equal(1, action.InterimLocations.Count());
+            Assert.Single(action.InterimLocations);
             Assert.Equal(expectedPath, action.InterimLocations.First());
         }
 
@@ -871,15 +871,15 @@ namespace CompareAndCopy.Core.Test.Configuration
 
             
 
-            Assert.Equal(1, config.Actions.Count());
+            Assert.Single(config.Actions);
 
             var action = config.Actions.First() as UpdateTransferStateAction;
             Assert.NotNull(action);
 
-            Assert.Equal(true, action.IsEnabled);
-            Assert.Equal(0, action.TransferLocationPaths.Count());
+            Assert.True(action.IsEnabled);
+            Assert.Empty(action.TransferLocationPaths);
 
-            Assert.Equal(0, action.InterimLocations.Count());            
+            Assert.Empty(action.InterimLocations);            
         }
 
         #endregion
@@ -906,7 +906,7 @@ namespace CompareAndCopy.Core.Test.Configuration
 
             Assert.Equal("left", config.Left.Name);
             Assert.Equal("right", config.Right.Name);
-            Assert.Equal(1, config.Actions.Count());            
+            Assert.Single(config.Actions);            
         }
 
 

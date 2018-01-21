@@ -74,7 +74,7 @@ namespace CompareAndCopy.Core.Copy
                 //this way the copy as much as possible                 
                 if (CheckNextFileExceedsMaxTransferSize(size))
                 {
-                    m_Logger.Info($"Skipping '{item.RelativePath}' ({size}) because copying it would exceed the maximum transfer size");
+                    m_Logger.Debug($"Skipping '{item.RelativePath}' ({size}) because copying it would exceed the maximum transfer size");
                     skippedSize += size;
                     continue;
                 }
